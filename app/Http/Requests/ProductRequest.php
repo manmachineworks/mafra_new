@@ -40,6 +40,12 @@ class ProductRequest extends FormRequest
         } else {
             $rules['discount'] = 'sometimes|required|numeric|lt:100';
         }
+        $rules['short_description'] = 'nullable|string|max:1000';
+        $rules['buy_another_links'] = 'nullable|array';
+        $rules['buy_another_links.*.url'] = 'nullable|url';
+        $rules['buy_another_links.*.btn'] = 'nullable|string|max:255';
+        $rules['buy_another_url'] = 'nullable|url';
+        $rules['buy_another_btn'] = 'nullable|string|max:255';
         $rules['current_stock'] = 'sometimes|required|numeric';
         $rules['starting_bid']  = 'sometimes|required|numeric|min:1';
         $rules['auction_date_range']  = 'sometimes|required';
@@ -68,6 +74,11 @@ class ProductRequest extends FormRequest
             'discount.required'         => translate('Discount is required'),
             'discount.numeric'          => translate('Discount must be numeric'),
             'discount.lt'               => translate('Discount should be less than unit price'),
+            'short_description.max'     => translate('Short description may not be greater than 500 characters'),
+            'buy_another_links.*.url'   => translate('Buy another URL must be a valid URL'),
+            'buy_another_links.*.btn'   => translate('Buy another button text may not be greater than 255 characters'),
+            'buy_another_url.url'       => translate('Buy another URL must be a valid URL'),
+            'buy_another_btn.max'       => translate('Buy another button text may not be greater than 255 characters'),
             'current_stock.required'    => translate('Current stock is required'),
             'current_stock.numeric'     => translate('Current stock must be numeric'),
             'starting_bid.required'     => translate('Starting Bid is required'),

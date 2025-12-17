@@ -146,7 +146,7 @@ Route::controller(HomeController::class)->group(function () {
     Route::post('/home/section/home-categories', 'load_home_categories_section')->name('home.section.home_categories');
     Route::post('/home/section/best-sellers', 'load_best_sellers_section')->name('home.section.best_sellers');
     Route::post('/home/section/preorder-products', 'load_preorder_featured_products_section')->name('home.section.preorder_products');
-
+    Route::get('/how-to-order', 'how_to_order')->name('how_to_order');
     //category dropdown menu ajax call
     Route::post('/category/nav-element-list', 'get_category_items')->name('category.elements');
 

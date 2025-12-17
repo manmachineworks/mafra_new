@@ -269,6 +269,7 @@ class ProductController extends Controller
             'name',
             'unit',
             'description',
+            'short_description',
             'product_id'
         ]));
 
@@ -415,7 +416,8 @@ class ProductController extends Controller
             $request->only([
                 'name',
                 'unit',
-                'description'
+                'description',
+                'short_description'
             ])
         );
 

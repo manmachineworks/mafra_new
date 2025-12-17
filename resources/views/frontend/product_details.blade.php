@@ -56,6 +56,134 @@
 @endsection
 
 @section('content')
+<div class="product-page-modern">
+    <style>
+        :root {
+            --brand-primary: #c70a04;
+            --brand-dark: #212121;
+            --brand-light: #ffffff;
+            --brand-muted: #f5f5f7;
+            --brand-border: #e5e7eb;
+            --brand-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+        }
+        .product-page-modern {
+            color: var(--brand-dark);
+        }
+       
+        .product-page-modern .btn-brand,
+        .product-page-modern .btn-primary,
+        .product-page-modern .btn-dark {
+            background: var(--brand-primary) !important;
+            border-color: var(--brand-primary) !important;
+            color: #fff !important;
+            box-shadow: 0 8px 18px rgba(199, 10, 4, 0.25);
+        }
+       
+        .product-page-modern .btn-outline-brand {
+            border: 1px solid var(--brand-primary);
+            color: var(--brand-primary);
+            background: transparent;
+        }
+        .product-page-modern .btn-outline-brand:hover {
+            background: var(--brand-primary);
+            color: #fff;
+        }
+        .product-page-modern .card-panel {
+            background: var(--brand-light);
+            border: 1px solid var(--brand-border);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: var(--brand-shadow);
+        }
+        .product-page-modern .status-pill {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid transparent;
+            background: var(--brand-muted);
+            color: var(--brand-dark);
+        }
+        .product-page-modern .status-pill.success { background: rgba(49, 196, 141, 0.12); color: #1c8a5a; border-color: rgba(49, 196, 141, 0.2); }
+        .product-page-modern .status-pill.warning { background: rgba(255, 166, 0, 0.12); color: #a46405; border-color: rgba(255, 166, 0, 0.2); }
+        .product-page-modern .status-pill.info { background: rgba(32, 117, 243, 0.12); color: #205fbe; border-color: rgba(32, 117, 243, 0.2); }
+        .product-page-modern .coupon-pill {
+            display: inline-flex;
+            align-items: center;
+            background: var(--brand-primary);
+            color: #fff;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-weight: 700;
+        }
+        .product-page-modern .coupon-pill.disabled {
+            background: #9ca3af;
+        }
+        .product-page-modern .shop-card .badge-success-soft,
+        .product-page-modern .shop-card .badge-warning-soft {
+            padding: 6px 10px;
+            border-radius: 10px;
+            background: var(--brand-muted);
+        }
+        .product-page-modern .brand-logo img {
+            max-width: 63px;
+            max-height: 42px;
+            object-fit: contain;
+        }
+        .product-page-modern .offer-stack .status-pill { width: 100%; border-radius: 12px; }
+        .product-page-modern .icon-card svg { opacity: 0.9; }
+        .product-page-modern .aiz-carousel .slick-arrow {
+            background: rgba(0,0,0,0.55);
+            border-radius: 50%;
+        }
+        .product-page-modern .product-gallery-thumb img {
+            border-radius: 10px;
+            border: 1px solid var(--brand-border);
+        }
+        .product-page-modern .product-gallery-thumb .slick-current img {
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 2px rgba(199,10,4,0.2);
+        }
+        .product-page-modern .nav-tabs .nav-link.active,
+        .product-page-modern .nav-tabs .nav-item.show .nav-link {
+            color: var(--brand-primary);
+            border-color: var(--brand-primary) var(--brand-primary) #fff;
+        }
+        .product-page-modern .nav-tabs .nav-link:hover {
+            color: var(--brand-primary);
+        }
+        .product-page-modern .badge-primary,
+        .product-page-modern .bg-primary {
+            background: var(--brand-primary) !important;
+        }
+        .product-page-modern .modal-content,
+        .product-modal .modal-content {
+            border-radius: 14px;
+            border: 1px solid var(--brand-border);
+            box-shadow: var(--brand-shadow);
+        }
+        .product-page-modern .modal-header,
+        .product-modal .modal-header {
+            border-bottom: 1px solid var(--brand-border);
+            background: var(--brand-muted);
+        }
+        .product-page-modern .modal-footer,
+        .product-modal .modal-footer {
+            border-top: 1px solid var(--brand-border);
+        }
+        .product-page-modern .product-quantity .btn-light {
+            background: var(--brand-muted);
+            border-color: var(--brand-border);
+        }
+        .product-page-modern .aiz-plus-minus .input-number {
+            background: #fff;
+            border: 1px solid var(--brand-border);
+        }
+        .product-page-modern .badge-success { background: #1c8a5a; }
+        
+    </style>
     <section class="mb-4 pt-3">
         <div class="container">
             <div class="bg-white py-3">
@@ -77,48 +205,55 @@
     <section class="mb-4">
         <div class="container">
             @if ($detailedProduct->auction_product)
-                <!-- Reviews & Ratings -->
-                @include('frontend.product_details.review_section')
+               
                 
                 <!-- Description, Video, Downloads -->
                 @include('frontend.product_details.description')
-                
+                 <!-- Reviews & Ratings -->
+                @include('frontend.product_details.review_section')
                 <!-- Product Query -->
                 @include('frontend.product_details.product_queries')
             @else
                 <div class="row gutters-16">
-                    <!-- Left side -->
-                    <div class="col-lg-3">
-                        <!-- Seller Info -->
-                        @include('frontend.product_details.seller_info')
 
-                        <!-- Top Selling Products -->
-                       <div class="d-none d-lg-block">
-                            @include('frontend.product_details.top_selling_products')
-                       </div>
+                   @php
+                       // Provide the right-hand partials with the product instance they expect
+                       $product = $detailedProduct;
+                   @endphp
+
+                   <!-- Product Image Gallery -->
+                <div class="col-md-8 mb-4">
+                    @include('frontend.product_details.description')
+                    @include('frontend.product_details.review_section')
+                    @include('frontend.product_details.frequently_bought_products')
+                    @include('frontend.product_details.product_queries')
+                    <div class="d-lg-none">
+                        @include('frontend.product_details.top_selling_products')
                     </div>
-
-                    <!-- Right side -->
-                    <div class="col-lg-9">
-                        
-                        <!-- Reviews & Ratings -->
-                        @include('frontend.product_details.review_section')
-
-                        <!-- Description, Video, Downloads -->
-                        @include('frontend.product_details.description')
-                        
-                        <!-- Frequently Bought products -->
-                        @include('frontend.product_details.frequently_bought_products')
-
-                        <!-- Product Query -->
-                        @include('frontend.product_details.product_queries')
-                        
-                        <!-- Top Selling Products -->
-                        <div class="d-lg-none">
-                             @include('frontend.product_details.top_selling_products')
-                        </div>
-
-                    </div>
+                </div>
+                <div class="col-md-4">
+                     <!-- offer   -->
+                    @include('frontend.product_details.right.offer')
+                    <!-- Coupon    -->
+                    @if($product->is_coupon)
+                    @include('frontend.product_details.right.coupon')
+                    @endif
+                    <!-- brand   -->
+                    @include('frontend.product_details.right.brand')
+                    <!-- shop   -->
+                    @include('frontend.product_details.right.shop')
+                    <!-- Shipping   -->
+                    @include('frontend.product_details.right.shipping')
+                    <!-- Refund   -->
+                    @if($product->is_refundable)
+                    @include('frontend.product_details.right.refund')
+                    @endif
+                    <!-- icon-section   -->
+                    @include('frontend.product_details.right.icon_section')
+                    <!-- faq   -->
+                    @include('frontend.product_details.right.faq')
+                </div>
+                 
                 </div>
             @endif
         </div>
@@ -126,6 +261,7 @@
 
     @include('frontend.smart_bar')
 
+</div>
 @endsection
 
 @section('modal')

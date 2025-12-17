@@ -31,12 +31,16 @@
                         <span class="d-none" id="full-text-{{ $product->preorder_shipping?->note?->id }}">
                             {{ $product->preorder_shipping?->note?->description }}
                         </span>
+                        @if (strlen($product->preorder_cod?->note?->description) > 100)
                         <a href="javascript:void(0);" onclick="toggleText({{ $product->preorder_shipping?->note?->id }})" id="toggle-link-{{ $product->preorder_shipping?->note?->id }}">
                             {{ translate('See More') }}
                         </a>
+                        @endif
                     </p>
                 @endif
-                <p class="preorder-text-light-grey"><a href="#product_query" class="preorder-text-secondary">{{translate('Contact Us')}}</a> for shipping time for larger orders.</p>
+                @if(get_setting('product_query_activation') == 1)
+                <p class="preorder-text-light-grey"><a href="#product_query" class="preorder-text-secondary">{{translate('Contact Us')}}</a> {{translate('for shipping time for larger orders.')}}</p>
+                @endif
             </div>
         </div>
 
@@ -69,9 +73,12 @@
                         <span class="d-none" id="full-text-{{ $product->preorder_cod?->note?->id }}">
                             {{ $product->preorder_cod?->note?->description }}
                         </span>
+                        @if (strlen($product->preorder_cod?->note?->description) > 100)
                         <a href="javascript:void(0);" onclick="toggleText({{ $product->preorder_cod?->note?->id }})" id="toggle-link-{{ $product->preorder_cod?->note?->id }}">
                             {{ translate('See More') }}
                         </a>
+                        @endif
+
                     </p>
                 @endif
 

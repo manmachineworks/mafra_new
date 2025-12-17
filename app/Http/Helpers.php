@@ -215,6 +215,48 @@ if (!function_exists('convert_price')) {
     }
 }
 
+
+
+//Shows Price on page based on low to high
+if (!function_exists('purchase_price')) {
+    function purchase_price($product, $formatted = true)
+    {
+        $lowest_price = $product->purchase_price;
+        $highest_price = $product->purchase_price;
+
+        if ($product->variant_product) {
+            foreach ($product->stocks as $key => $stock) {
+                if ($lowest_price > $stock->price) {
+                    $lowest_price = $stock->price;
+                }
+                if ($highest_price < $stock->price) {
+                    $highest_price = $stock->price;
+                }
+            }
+        }
+
+        foreach ($product->taxes as $product_tax) {
+            if ($product_tax->tax_type == 'percent') {
+                $lowest_price += ($lowest_price * $product_tax->tax) / 100;
+                $highest_price += ($highest_price * $product_tax->tax) / 100;
+            } elseif ($product_tax->tax_type == 'amount') {
+                $lowest_price += $product_tax->tax;
+                $highest_price += $product_tax->tax;
+            }
+        }
+
+        if ($formatted) {
+            if ($lowest_price == $highest_price) {
+                return format_price(convert_price($lowest_price));
+            } else {
+                return format_price(convert_price($highest_price));
+            }
+        } else {
+            return $highest_price;
+        }
+    }
+}
+
 //gets currency symbol
 if (!function_exists('currency_symbol')) {
     function currency_symbol()
@@ -2496,17 +2538,55 @@ if (!function_exists('ifUserHasWelcomeCouponAndNotUsed')) {
 }
 
 
-// Get Thumbnail Image
+// // Get Thumbnail Image
+// if (!function_exists('get_image')) {
+//     function get_image($image)
+//     {
+//         $image_url = static_asset('assets/img/placeholder.jpg');
+//         if ($image != null) {
+//             $image_url = $image->external_link == null ? my_asset($image->file_name) : $image->external_link;
+//         }
+//         return $image_url;
+//     }
+// }
+
+
 if (!function_exists('get_image')) {
     function get_image($image)
     {
-        $image_url = static_asset('assets/img/placeholder.jpg');
-        if ($image != null) {
-            $image_url = $image->external_link == null ? my_asset($image->file_name) : $image->external_link;
+        if ($image == null) {
+            return static_asset('assets/img/placeholder.jpg');
         }
-        return $image_url;
+
+        // If image is a string (ID or path)
+        if (is_numeric($image)) {
+            $img = \App\Models\Upload::find($image);
+            if ($img && $img->external_link != null) {
+                return $img->external_link;
+            } elseif ($img && $img->file_name) {
+                return uploaded_asset($img->id);
+            } else {
+                return static_asset('assets/img/placeholder.jpg');
+            }
+        }
+
+        // If image is a URL string (not an object)
+        if (is_string($image)) {
+            return $image;
+        }
+
+        // If image is an object
+        if (is_object($image)) {
+            if ($image->external_link != null) {
+                return $image->external_link;
+            }
+            return uploaded_asset($image->id);
+        }
+
+        return static_asset('assets/img/placeholder.jpg');
     }
 }
+
 
 //Get 1st prodyct image
 if (!function_exists('get_first_product_image')) {

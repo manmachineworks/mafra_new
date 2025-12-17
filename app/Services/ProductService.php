@@ -51,7 +51,8 @@ class ProductService
             $collection['meta_title'] = $collection['name'];
         }
         if ($collection['meta_description'] == null) {
-            $collection['meta_description'] = strip_tags($collection['description']);
+            $metaDescriptionSource = $collection['short_description'] ?? $collection['description'];
+            $collection['meta_description'] = $metaDescriptionSource ? strip_tags($metaDescriptionSource) : null;
         }
 
         if ($collection['meta_img'] == null) {
@@ -203,7 +204,8 @@ class ProductService
             $collection['meta_title'] = $collection['name'];
         }
         if ($collection['meta_description'] == null) {
-            $collection['meta_description'] = strip_tags($collection['description']);
+            $metaDescriptionSource = $collection['short_description'] ?? $collection['description'];
+            $collection['meta_description'] = $metaDescriptionSource ? strip_tags($metaDescriptionSource) : null;
         }
 
         if ($collection['meta_img'] == null) {
@@ -214,6 +216,7 @@ class ProductService
             unset($collection['name']);
             unset($collection['unit']);
             unset($collection['description']);
+            unset($collection['short_description']);
         }
         unset($collection['lang']);
 

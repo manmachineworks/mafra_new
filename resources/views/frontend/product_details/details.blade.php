@@ -342,13 +342,19 @@
                 <div class="row no-gutters mb-3">
                     <div class="col-sm-2">
                         <div class="text-secondary fs-13 fw-400">{{ translate('Price') }}</div>
+                                  
                     </div>
                     <div class="col-sm-10">
                         <div class="d-flex align-items-center">
                             <!-- Discount Price -->
+                             
+                                    
                             <strong class="fs-16 fw-700">
-                                {{ home_discounted_price($detailedProduct) }}
+                               <del class="text-secondary fs-15 fw-700">{{ purchase_price($detailedProduct) }}/-</del>
+                                 {{ home_discounted_price($detailedProduct) }}
+                                 
                             </strong>
+                            
                             <!-- Unit -->
                             @if ($detailedProduct->unit != null)
                                 <span class="opacity-70">/{{ $detailedProduct->getTranslation('unit') }}</span>
@@ -510,7 +516,7 @@
                                 <i class="la la-share"></i> {{ translate($detailedProduct->external_link_btn) }}
                             </a>
                             @else
-                            <button type="button" class="btn bg-soft-primary add-to-cart fw-600 min-w-150px w-75 rounded-1  text-primary hov-bg-primary hov-text-light" @if (Auth::check() || get_Setting('guest_checkout_activation')==1) onclick="addToCart()" @else onclick="showLoginModal()" @endif>
+                            <button type="button" class="btn bg-soft-primary add-to-cart fw-600 min-w-150px w-75 rounded-1  text-primary hov-bg-primary hov-text-light" @if (Auth::check() || get_setting('guest_checkout_activation')==1) onclick="addToCart()" @else onclick="showLoginModal()" @endif>
                                 <i class="las la-shopping-bag"></i> {{ translate('Add to cart') }}
                             </button>
                             @endif
@@ -523,9 +529,10 @@
                         <div class="product-quantity d-flex align-items-center">
                             @if (((get_setting('product_external_link_for_seller') == 1) && ($detailedProduct->added_by == "seller") && ($detailedProduct->external_link != null)) || (($detailedProduct->added_by != "seller") && ($detailedProduct->external_link != null)))
                             @else
-                            <button type="button" class="btn btn-dark buy-now fw-600 add-to-cart min-w-150px rounded-1 w-100" @if (Auth::check() || get_Setting('guest_checkout_activation')==1) onclick="buyNow()" @else onclick="showLoginModal()" @endif>
+                            <button type="button" class="btn btn-dark buy-now fw-600 add-to-cart min-w-150px rounded-1 w-100" @if (Auth::check() || get_setting('guest_checkout_activation')==1) onclick="buyNow()" @else onclick="showLoginModal()" @endif>
                                 <i class="la la-shopping-cart"></i> {{ translate('Buy Now') }}
                             </button>
+                            
                             <button type="button" class="btn btn-secondary out-of-stock fw-600 d-none" disabled>
                                 <i class="la la-cart-arrow-down"></i> {{ translate('Out of Stock') }}
                             </button>
@@ -533,6 +540,40 @@
                         </div>
                     </div>
                     <div class="col-sm-3"></div>
+                </div>
+                @if ($detailedProduct->getTranslation('short_description'))
+                    <div class="row no-gutters mt-3">
+                        <div class="col-sm-9">
+                            <div class="bg-light p-3 border rounded">
+                                {!! $detailedProduct->getTranslation('short_description') !!}
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                <div class="row no-gutters">
+                    <div class="col-sm-9">
+                        <div class="product-quantity d-flex align-items-center">
+                            @php
+                                $buyLinks = $detailedProduct->buy_another_links ?? [];
+                            @endphp
+                            @if (!empty($buyLinks))
+                                @foreach ($buyLinks as $link)
+                                    @if (!empty($link['url']))
+                                        <a type="button" class="btn bg-soft-primary fw-600 min-w-150px rounded-1 m-1 w-100 mt-2  hov-bg-primary hov-text-light"
+                                            href="{{ $link['url'] }}" target="_blank" rel="noopener">
+                                            <i class="la la-external-link-alt"></i> {{ translate($link['btn'] ?? 'Buy Another') }}
+                                        </a>
+                                    @endif
+                                @endforeach
+                            @elseif ($detailedProduct->buy_another_url)
+                                <a type="button" class="btn bg-soft-primary fw-600 min-w-150px rounded-1 w-100 mt-2 m-1  hov-bg-primary hov-text-light"
+                                    href="{{ $detailedProduct->buy_another_url }}" target="_blank" rel="noopener">
+                                    <i class="la la-external-link-alt"></i> {{ translate($detailedProduct->buy_another_btn ?? 'Buy Another') }}
+                                </a>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             @else
 
@@ -557,7 +598,7 @@
                     <div class="col-sm-9">
                         <button type="button"
                             class="btn bg-soft-primary add-to-cart fw-600 min-w-150px w-100 rounded-1 text-primary hov-bg-primary hov-text-light"
-                            @if (Auth::check() || get_Setting('guest_checkout_activation')==1) onclick="addToCart()" @else onclick="showLoginModal()" @endif>
+                            @if (Auth::check() || get_setting('guest_checkout_activation')==1) onclick="addToCart()" @else onclick="showLoginModal()" @endif>
                             <i class="las la-shopping-bag"></i> {{ translate('Add to cart') }}
                         </button>
                     </div>
@@ -566,13 +607,22 @@
                 <div class="row no-gutters mb-3">
                     <div class="col-sm-9">
                         <button type="button" class="btn btn-dark buy-now fw-600 add-to-cart min-w-150px rounded-1 w-100"
-                            @if (Auth::check() || get_Setting('guest_checkout_activation')==1) onclick="buyNow()" @else onclick="showLoginModal()" @endif>
+                            @if (Auth::check() || get_setting('guest_checkout_activation')==1) onclick="buyNow()" @else onclick="showLoginModal()" @endif>
                             
                             <i class="la la-shopping-cart"></i> {{ translate('Buy Now') }}
                         </button>
                     </div>
                     <div class="col-sm-3"></div>
                 </div>
+                @if ($detailedProduct->getTranslation('short_description'))
+                    <div class="row no-gutters mt-3">
+                        <div class="col-sm-9">
+                            <div class="bg-light p-3 border rounded">
+                                {!! $detailedProduct->getTranslation('short_description') !!}
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 @endif
             @endif
 
@@ -586,12 +636,12 @@
             $min_bid_amount = $highest_bid != null ? $highest_bid + 1 : $detailedProduct->starting_bid;
         @endphp
         @if ($detailedProduct->auction_end_date >= strtotime('now'))
-            <div class="mt-4">
+            <div class="mt-4 ">
                 @if (Auth::check() && $detailedProduct->user_id == Auth::user()->id)
                     <span
                         class="badge badge-inline badge-danger">{{ translate('Seller cannot Place Bid to His Own Product') }}</span>
                 @else
-                    <button type="button" class="btn btn-primary buy-now  fw-600 min-w-150px rounded-0"
+                    <button type="button" class="btn btn-primary buy-now fw-600 min-w-150px rounded-0"
                         onclick="bid_modal()">
                         <i class="las la-gavel"></i>
                         @if (Auth::check() &&
@@ -605,9 +655,9 @@
             </div>
         @endif
     @else
-   
-   
-
+    <div class="container">
+     
+       
         <!-- Promote Link -->
         <div class="d-table width-100 mt-3">
             <div class="d-table-cell">

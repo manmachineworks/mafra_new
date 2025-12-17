@@ -112,7 +112,7 @@ class ProductController extends Controller
         // Product Translations
         $request->merge(['lang' => env('DEFAULT_LANGUAGE')]);
         ProductTranslation::create($request->only([
-            'lang', 'name', 'unit', 'description', 'product_id'
+            'lang', 'name', 'unit', 'description', 'short_description', 'product_id'
         ]));
 
         if (get_setting('product_approve_by_admin') == 1) {
@@ -192,7 +192,7 @@ class ProductController extends Controller
                 'lang', 'product_id'
             ]),
             $request->only([
-                'name', 'unit', 'description'
+                'name', 'unit', 'description', 'short_description'
             ])
         );
 

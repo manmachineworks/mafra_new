@@ -46,7 +46,7 @@
                 </div>
             </div>
             <div class="d-flex align-items-center">
-
+                @if(get_setting('product_query_activation') == 1)
                 <button
                     class="btn btn-sm btn-soft-secondary-base btn-outline-secondary-base hov-svg-white hov-text-white rounded-4"
                     onclick="show_conversation_modal({{ $product->id }})">
@@ -72,6 +72,7 @@
 
                     {{ translate('Message Seller') }}
                 </button>
+                @endif
             </div>
         </div>
         <hr>
@@ -87,6 +88,7 @@
         <div class="d-flex align-items-center">
             <span class="px-3 fs-16">{{translate('In House Product')}}</span>
 
+            @if(get_setting('product_query_activation') == 1)
             <button
                 class="btn btn-sm btn-soft-secondary-base btn-outline-secondary-base hov-svg-white hov-text-white rounded-4"
                 onclick="show_conversation_modal({{ $product->id }})">
@@ -112,6 +114,7 @@
 
                 {{ translate('Message Seller') }}
             </button>
+            @endif
         </div>
         
         <div class="row no-gutters mt-4 px-3">

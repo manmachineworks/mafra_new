@@ -8,6 +8,8 @@
         }
     }
 </style>
+
+
 @php $lang = get_system_language()->code; @endphp
 
 <div class="pt-32px pb-26px" style="background: {{ get_setting('hero_bg_color', '#f5f5f5') }}">
@@ -189,6 +191,259 @@
 </div>
 @endif
   
+
+<style>
+
+     .tab-wrap {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+
+  max-width: 100%;
+  margin: 40px 0;
+  padding: 12px 16px; /* slight breathing space inside */
+  border-radius: 12px;
+
+  background-color: #fff;
+
+  /* Modern, smooth shadow */
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 8px 20px rgba(0, 0, 0, 0.12);
+
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+.tab-wrap:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.12),
+    0 12px 24px rgba(0, 0, 0, 0.16);
+}
+
+.tab { display: none; }
+
+.tab__content {
+  padding: 10px 25px;
+  background-color: transparent;
+  position: absolute;
+  width: 100%;
+  z-index: -1;
+  opacity: 0;
+  left: 0;
+  -webkit-transform: translateY(-3px);
+  transform: translateY(-3px);
+  border-radius: 6px;
+}
+  
+  .tab:checked:nth-of-type(1) ~ .tab__content:nth-of-type(1) {
+  opacity: 1;
+  -webkit-transition: 0.5s opacity ease-in, 0.2s transform ease;
+  transition: 0.5s opacity ease-in, 0.2s transform ease;
+  position: relative;
+  top: 0;
+  z-index: 100;
+  -webkit-transform: translateY(0px);
+  transform: translateY(0px);
+  text-shadow: 0 0 0;
+}
+
+.tab:checked:nth-of-type(2) ~ .tab__content:nth-of-type(2) {
+  opacity: 1;
+  -webkit-transition: 0.5s opacity ease-in, 0.2s transform ease;
+  transition: 0.5s opacity ease-in, 0.2s transform ease;
+  position: relative;
+  top: 0;
+  z-index: 100;
+  -webkit-transform: translateY(0px);
+  transform: translateY(0px);
+  text-shadow: 0 0 0;
+}
+
+.tab:checked:nth-of-type(3) ~ .tab__content:nth-of-type(3) {
+  opacity: 1;
+  -webkit-transition: 0.5s opacity ease-in, 0.2s transform ease;
+  transition: 0.5s opacity ease-in, 0.2s transform ease;
+  position: relative;
+  top: 0;
+  z-index: 100;
+  -webkit-transform: translateY(0px);
+  transform: translateY(0px);
+  text-shadow: 0 0 0;
+}
+
+.tab:checked:nth-of-type(4) ~ .tab__content:nth-of-type(4) {
+  opacity: 1;
+  -webkit-transition: 0.5s opacity ease-in, 0.2s transform ease;
+  transition: 0.5s opacity ease-in, 0.2s transform ease;
+  position: relative;
+  top: 0;
+  z-index: 100;
+  -webkit-transform: translateY(0px);
+  transform: translateY(0px);
+  text-shadow: 0 0 0;
+}
+
+.tab:first-of-type:not(:last-of-type) + label {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.tab:not(:first-of-type):not(:last-of-type) + label { border-radius: 0; }
+
+.tab:last-of-type:not(:first-of-type) + label {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.tab:checked + label {
+  background-color: #fff;
+  box-shadow: 0 -1px 0 #fff inset;
+  cursor: default;
+}
+
+.tab:checked + label:hover {
+  box-shadow: 0 -1px 0 #fff inset;
+  background-color: #fff;
+}
+
+.tab + label {
+  width: 100%;
+  box-shadow: 0 -1px 0 #eee inset;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  color: #333;
+  -webkit-box-flex: 3;
+  -webkit-flex-grow: 3;
+  -ms-flex-positive: 3;
+  flex-grow: 3;
+  text-align: center;
+  background-color: #f2f2f2;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  text-align: center;
+  -webkit-transition: 0.3s background-color ease, 0.3s box-shadow ease;
+  transition: 0.3s background-color ease, 0.3s box-shadow ease;
+  height: 50px;
+  box-sizing: border-box;
+  padding: 15px;
+}
+@media (min-width:768px) {
+
+.tab + label { width: auto; }
+}
+
+.tab + label:hover {
+  background-color: #f9f9f9;
+  box-shadow: 0 1px 0 #f4f4f4 inset;
+}
+    </style>
+
+    <div class="mb-4">
+    <div class="container">
+    <div class="tab-wrap">
+    <input type="radio" id="tab1" name="tabGroup1" class="tab" checked>
+    <label for="tab1">Interior</label>
+    <input type="radio" id="tab2" name="tabGroup1" class="tab">
+    <label for="tab2">Exterior</label>
+    <input type="radio" id="tab3" name="tabGroup1" class="tab">
+    <label for="tab3">Paint Care</label>
+    <input type="radio" id="tab4" name="tabGroup1" class="tab">
+    <label for="tab4">Detailing Tools</label>
+  
+    <div class="tab__content">
+   
+    <img src="{{ static_asset('uploads/all/tIYt4WZP71XzWVoiFGKAReBgi1pfcAFm4KVDt9v3.webp') }}" class="img-fluid lazyload w-100">
+
+    <div class="px-2 py-4 px-md-4 py-md-3 bg-white shadow-sm rounded">
+    <div class="aiz-carousel gutters-10 half-outside-arrow" data-items="6" data-xl-items="5" data-lg-items="4"  data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true'>
+                        @foreach (get_cached_products(2) as $key => $product)
+                            <div class="carousel-box">
+                                @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                            </div>
+                        @endforeach
+                    </div>
+    </div>
+</div>
+  
+  <div class="tab__content">
+  <img src="{{ static_asset('uploads/all/tPb2HjWNlafrdf7BngcJadqJWSUdmQmEB3YBiFhL.webp') }}" class="img-fluid lazyload w-100">
+  <div class="px-2 py-4 px-md-4 py-md-3 bg-white shadow-sm rounded">
+  <div class="aiz-carousel gutters-10 half-outside-arrow" data-items="6" data-xl-items="5" data-lg-items="4"  data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true'>
+                        @foreach (get_cached_products(3) as $key => $product)
+                            <div class="carousel-box">
+                                @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                            </div>
+                        @endforeach
+                    </div>
+    </div>
+  </div>
+  
+  <div class="tab__content">
+  <img src="{{ static_asset('uploads/all/dubKxAe41305215haXR3x8a1G5Gn8lZRuqNRO13C.webp') }}" class="img-fluid lazyload w-100">
+  <div class="px-2 py-4 px-md-4 py-md-3 bg-white shadow-sm rounded">
+  <div class="aiz-carousel gutters-10 half-outside-arrow" data-items="6" data-xl-items="5" data-lg-items="4"  data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true'>
+                        @foreach (get_cached_products(4) as $key => $product)
+                            <div class="carousel-box">
+                                @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                            </div>
+                        @endforeach
+                    </div>
+    </div>
+</div>
+
+<div class="tab__content">
+  <img src="{{ static_asset('uploads/all/AYx5MVuyoyplIL1EXTgcvquA9FM38UMBtOOxuRf0.webp') }}" class="img-fluid lazyload w-100">
+  <div class="px-2 py-4 px-md-4 py-md-3 bg-white shadow-sm rounded">
+  <div class="aiz-carousel gutters-10 half-outside-arrow" data-items="6" data-xl-items="5" data-lg-items="4"  data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true'>
+                        @foreach (get_cached_products(6) as $key => $product)
+                            <div class="carousel-box">
+                                @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                            </div>
+                        @endforeach
+                    </div>
+    </div>
+</div>
+
+
+</div>
+</div>
+</div>
+
+
+  @php $homeBanner6Images = get_setting('home_banner6_images', null, $lang);   @endphp
+    @if ($homeBanner6Images != null)
+        <div class="mb-2 mb-md-3 mt-2 mt-md-3">
+            <div class="container">
+                @php
+                    $banner_6_imags = json_decode($homeBanner6Images);
+                    $data_md = count($banner_6_imags) >= 2 ? 2 : 1;
+                    $home_banner6_links = get_setting('home_banner6_links', null, $lang);
+                @endphp
+                <div class="aiz-carousel gutters-16 overflow-hidden arrow-inactive-none arrow-dark arrow-x-15"
+                    data-items="{{ count($banner_6_imags) }}" data-xxl-items="{{ count($banner_6_imags) }}"
+                    data-xl-items="{{ count($banner_6_imags) }}" data-lg-items="{{ $data_md }}"
+                    data-md-items="{{ $data_md }}" data-sm-items="1" data-xs-items="1" data-arrows="true"
+                    data-dots="false">
+                    @foreach ($banner_6_imags as $key => $value)
+                        <div class="carousel-box overflow-hidden hov-scale-img">
+                            <a href="{{ isset(json_decode($home_banner6_links, true)[$key]) ? json_decode($home_banner6_links, true)[$key] : '' }}"
+                                class="d-block text-reset overflow-hidden">
+                                <img src="{{ static_asset('assets/img/placeholder-rect.jpg') }}"
+                                    data-src="{{ uploaded_asset($value) }}" alt="{{ env('APP_NAME') }} promo"
+                                    class="img-fluid lazyload w-100 has-transition"
+                                    onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder-rect.jpg') }}';">
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    @endif
 <!-- Best Selling And Todays Deal -->
 <section class="pt-4 pt-lg-5 pb-4">
     <div class="container">    
@@ -241,7 +496,9 @@
                             <div class="fs-14 mr-1 mt-1 text-center">
                                 <span class="d-block fw-700">{{ home_discounted_base_price($product) }}</span>
                                 @if (home_base_price($product) != home_discounted_base_price($product))
-                                    <del class="d-block text-secondary fs-12 fw-400">{{ home_base_price($product) }}</del>
+                                    <del class="d-block text-primary fs-12 fw-400">{{ home_base_price($product) }}</del>
+                                    @else
+                                      <del  class="d-block text-secondary fs-12 fw-400">{{ purchase_price($product) }}</del>
                                 @endif
                             </div>
                         </div>
@@ -310,6 +567,64 @@
         </div>
     </div>
 </section>
+
+
+<section class="mb-2 mb-md-3 mt-2 mt-md-3">
+            <div class="container">
+                <div class="bg-white">
+                    <!-- Top Section -->
+                    <div class="d-flex mt-2 mt-md-3 mb-2 mb-md-3 align-items-baseline justify-content-between">
+                        <!-- Title -->
+                        <h3 class="fs-16 fs-md-20 fw-700 mb-2 mb-sm-0">
+                            <span class="">{{ translate('Featured Categories') }}</span>
+                        </h3>
+                    </div>
+                </div>
+                <!-- Categories -->
+                <div class="bg-white px-sm-3">
+                    <div class="aiz-carousel sm-gutters-17" data-items="4" data-xxl-items="4" data-xl-items="3.5"
+                        data-lg-items="3" data-md-items="2" data-sm-items="2" data-xs-items="1" data-arrows="true"
+                        data-dots="false" data-autoplay="false" data-infinite="true">
+                       @foreach ($featured_categories as $key => $category)
+                            @php
+                                $category_name = $category->getTranslation('name');
+                            @endphp
+                            <div class="carousel-box position-relative p-0 has-transition border-right border-top border-bottom @if ($key == 0) border-left @endif">
+                                <div class="h-200px h-sm-250px h-md-340px">
+                                    <div class="h-100 w-100 w-xl-auto position-relative hov-scale-img overflow-hidden">
+                                        <div class="position-absolute h-100 w-100 overflow-hidden">
+                                            <img src="{{ isset($category->coverImage->file_name) ? my_asset($category->coverImage->file_name) : static_asset('assets/img/placeholder.jpg') }}"
+                                                alt="{{ $category_name }}"
+                                                class="img-fit h-100 has-transition"
+                                                onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
+                                        </div>
+                                        <div class="pb-4 px-4 absolute-bottom-left has-transition h-50 w-100 d-flex flex-column align-items-center justify-content-end"
+                                            style="background: linear-gradient(to top, rgba(0,0,0,0.5) 50%,rgba(0,0,0,0) 100%) !important;">
+                                            <div class="w-100">
+                                                <a class="fs-16 fw-700 text-white animate-underline-white home-category-name d-flex align-items-center hov-column-gap-1"
+                                                    href="{{ route('products.category', $category->slug) }}"
+                                                    style="width: max-content;">
+                                                    {{ $category_name }}&nbsp;
+                                                    <i class="las la-angle-right"></i>
+                                                </a>
+                                                <div class="d-flex flex-wrap h-50px overflow-hidden mt-2">
+                                                    @foreach ($category->childrenCategories->take(6) as $key => $child_category)
+                                                    <a href="{{ route('products.category', $child_category->slug) }}" class="fs-13 fw-300 text-soft-light hov-text-white pr-3 pt-1">
+                                                        {{ $child_category->getTranslation('name') }}
+                                                    </a>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </section>
 
 <!-- Banner section 1 -->
 @php $homeBanner1Images = get_setting('home_banner1_images', null, $lang); @endphp

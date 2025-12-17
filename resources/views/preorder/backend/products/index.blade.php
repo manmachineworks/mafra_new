@@ -26,8 +26,15 @@
         <form class="" id="sort_products" action="" method="GET">
             <div class="card-header">
                 <div class="row">
-                    <div class="col-12">
-                        <h5 class="mb-md-0 h6">{{ translate('All Preorder Products') }}</h5>
+
+                    <div class="col-12 d-flex align-items-center">
+                        <h5 class="mb-0 me-2 h6">{{ translate('All Preorder Products') }}</h5>
+                        <span class="ml-4 fs-16">
+                            {{ translate('Frontend Page URL ') }} :  
+                            <a href="{{ route('home')  . '/all-preorder-products' }}" target="_blank" rel="noopener noreferrer">
+                                {{ route('home')  . '/all-preorder-products' }}
+                            </a>
+                        </span>
                     </div>
 
                     <div class="col-8 mt-4">

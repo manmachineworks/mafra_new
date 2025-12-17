@@ -1,7 +1,74 @@
 @php
     $cart_added = [];
 @endphp
-<div class="aiz-card-box h-auto bg-white py-3 hov-scale-img">
+<style>
+   .product-card .proimg {
+        border-radius: 14px;
+        transition: transform 0.4s ease;
+    }
+
+    .product-card:hover .proimg {
+        transform: scale(1.05);
+    }
+
+    .round-icon-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+        transition: all 0.3s ease;
+    }
+
+    .round-icon-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+    }
+
+   /* Image hover effect */
+.proimg {
+     border-radius: 14px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.5s ease-in-out, transform 0.4s ease-in-out;
+}
+
+/* Main image visible by default */
+.main-img {
+    opacity: 1;
+}
+
+/* Second image hidden by default */
+.hover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+
+/* Hover state: swap images */
+.product-card:hover .main-img {
+    opacity: 0;
+}
+
+.product-card:hover .hover-img {
+    opacity: 1;
+}
+
+/* Optional: add slight zoom to both for a dynamic feel */
+.product-card:hover .proimg {
+    transform: scale(1.05);
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+    </style>
+<div class="aiz-card-box product-card h-auto bg-white py-3 hov-scale-img">
+
     <div class="position-relative h-140px h-md-170px img-fit overflow-hidden">
         @php
             $product_url = route('product', $product->slug);
@@ -10,57 +77,57 @@
             }
         @endphp
         <!-- Image -->
-       <a href="{{ $product_url }}" class="d-block h-100 position-relative image-hover-effect">
-            <img
-                class="lazyload mx-auto img-fit has-transition product-main-image"
-                src="{{ get_image($product->thumbnail) }}"
-                alt="{{ $product->getTranslation('name') }}"
-                title="{{ $product->getTranslation('name') }}"
-                onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
-            <img
-                class="lazyload mx-auto img-fit has-transition product-hover-image position-absolute"
-                src="{{ get_first_product_image($product->thumbnail, $product->photos) }}"
-                alt="{{ $product->getTranslation('name') }}"
-                title="{{ $product->getTranslation('name') }}"
-                onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
-        </a>
+        <!--<a href="{{ $product_url }}" class="d-block h-100">-->
+        <!--    <img class="lazyload mx-auto img-fit h-100 has-transition proimg"-->
+        <!--        src="{{ get_image($product->thumbnail) }}"-->
+        <!--        alt="{{ $product->getTranslation('name') }}" title="{{ $product->getTranslation('name') }}"-->
+        <!--        onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">-->
+        <!--</a>-->
+        
+        
+        <a href="{{ $product_url }}" class="d-block h-100 position-relative overflow-hidden">
+    <!-- First (Main) Image -->
+    <img class="lazyload mx-auto img-fit h-100 has-transition proimg main-img"
+        src="{{ get_image($product->thumbnail) }}"
+        alt="{{ $product->getTranslation('name') }}"
+        title="{{ $product->getTranslation('name') }}"
+        onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
 
-        @php
-            $badgeIndex = 0;
-        @endphp
+    <!-- Second (Hover) Image -->
+    @php
+        $second_image = null;
+        if (isset($product->photos) && count(explode(',', $product->photos)) > 1) {
+            $photo_array = explode(',', $product->photos);
+            $second_image = get_image($photo_array[1]);
+        }
+    @endphp
+
+    @if ($second_image)
+        <img class="lazyload mx-auto img-fit h-100 has-transition proimg hover-img"
+            src="{{ $second_image }}"
+            alt="{{ $product->getTranslation('name') }}"
+            title="{{ $product->getTranslation('name') }}"
+            onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
+    @endif
+</a>
+
+
         <!-- Discount percentage tag -->
         @if (discount_in_percentage($product) > 0)
-            <span class="absolute-top-left rounded rounded-4 bg-primary ml-1 mt-1 fs-11 fw-700 text-white w-35px text-center"
-                style="padding-top:2px;padding-bottom:2px; top:{{ 25 * $badgeIndex }}px;">-{{ discount_in_percentage($product) }}%</span>
-            @php $badgeIndex++; @endphp
+            <span class="absolute-top-left bg-primary ml-1 mt-1 fs-11 fw-700 text-white w-35px text-center"
+                style="padding-top:2px;padding-bottom:2px;">-{{ discount_in_percentage($product) }}%</span>
         @endif
         <!-- Wholesale tag -->
         @if ($product->wholesale_product)
-            <span class="absolute-top-left rounded rounded-4 fs-11 text-white fw-700 px-2 lh-1-8 ml-1 mt-1"
-                style="background-color: #455a64; @if (discount_in_percentage($product) > 0) top:{{ 25 * $badgeIndex }}px; @endif">
+            <span class="absolute-top-left fs-11 text-white fw-700 px-2 lh-1-8 ml-1 mt-1"
+                style="background-color: #455a64; @if (discount_in_percentage($product) > 0) top:25px; @endif">
                 {{ translate('Wholesale') }}
             </span>
-            @php $badgeIndex++; @endphp
         @endif
-        <!-- Custom Label -->
-        @php
-            $customLabels = get_custom_labels($product->custom_label_id);
-        @endphp
-        @if ($customLabels)
-            @foreach ($customLabels as $key => $customLabel)
-                <span class="absolute-top-left rounded rounded-4 fs-11 fw-700 px-2 lh-1-8 ml-1 mt-1"
-                    style="background-color:{{ $customLabel->background_color }};
-                        color:{{ $customLabel->text_color }};
-                        top:{{ 25 * $badgeIndex }}px;">
-                    {{ $customLabel->text }}
-                </span>
-                @php $badgeIndex++; @endphp
-            @endforeach
-        @endif      
         @if ($product->auction_product == 0)
             <!-- wishlisht & compare icons -->
             <div class="absolute-top-right aiz-p-hov-icon">
-                <a href="javascript:void(0)" class="hov-svg-white" onclick="addToWishList({{ $product->id }})"
+                <a href="javascript:void(0)" class="hov-svg-white round-icon-btn" onclick="addToWishList({{ $product->id }})"
                     data-toggle="tooltip" data-title="{{ translate('Add to wishlist') }}" data-placement="left">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.4" viewBox="0 0 16 14.4">
                         <g id="_51a3dbe0e593ba390ac13cba118295e4" data-name="51a3dbe0e593ba390ac13cba118295e4"
@@ -74,7 +141,7 @@
                         </g>
                     </svg>
                 </a>
-                <a href="javascript:void(0)" class="hov-svg-white" onclick="addToCompare({{ $product->id }})"
+                <a href="javascript:void(0)" class="hov-svg-white round-icon-btn" onclick="addToCompare({{ $product->id }})"
                     data-toggle="tooltip" data-title="{{ translate('Add to compare') }}" data-placement="left">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                         <path id="_9f8e765afedd47ec9e49cea83c37dfea" data-name="9f8e765afedd47ec9e49cea83c37dfea"
@@ -84,28 +151,14 @@
                 </a>
             </div>
             <!-- add to cart -->
-            @php
-                $colors = is_string($product->colors) ? json_decode($product->colors, true) : $product->colors;
-                $attributes = is_string($product->attributes) ? json_decode($product->attributes, true) : $product->attributes;
-            @endphp
-
-            @if ( (is_array($colors) && count($colors) > 0) || (is_array($attributes) && count($attributes) > 0) )
-                <a class="cart-btn absolute-bottom-left w-100 h-35px aiz-p-hov-icon text-white fs-13 fw-700 d-none d-sm-flex flex-column justify-content-center align-items-center @if (in_array($product->id, $cart_added)) active @endif"
-                    href="javascript:void(0)" onclick="showAddToCartModal({{ $product->id }})">
-                    <span class="cart-btn-text">
-                        {{ translate('Select Option') }}
-                    </span>
-                    <span><i class="las la-sliders-h" style="font-size: 1.4rem;"></i></span>
-                </a>
-            @else
-                <a class="cart-btn absolute-bottom-left w-100 h-35px aiz-p-hov-icon text-white fs-13 fw-700 d-none d-sm-flex flex-column justify-content-center align-items-center @if (in_array($product->id, $cart_added)) active @endif"
-                    href="javascript:void(0)" @if (Auth::check() || get_Setting('guest_checkout_activation') == 1) onclick="addToCartSingleProduct({{ $product->id }})" @else onclick="showLoginModal()" @endif>
-                    <span class="cart-btn-text">
-                        {{ translate('Add to Cart') }}
-                    </span>
-                    <span><i class="las la-2x la-shopping-cart"></i></span>
-                </a> 
-            @endif
+            <a class="cart-btn absolute-bottom-left w-100 h-35px aiz-p-hov-icon text-white fs-13 fw-700 d-flex flex-column justify-content-center align-items-center @if (in_array($product->id, $cart_added)) active @endif"
+                href="javascript:void(0)"
+                onclick="showAddToCartModal({{ $product->id }})">
+                <span class="cart-btn-text">
+                    {{ translate('Add to Cart') }}
+                </span>
+                <span><i class="las la-2x la-shopping-cart"></i></span>
+            </a>
         @endif
         @if (
             $product->auction_product == 1 &&
@@ -142,6 +195,10 @@
                         <del class="fw-400 text-secondary mr-1">{{ home_base_price($product) }}</del>
                     </div>
                 @endif
+                <div class="">
+                        <del class="fw-400 text-secondary mr-1">{{ purchase_price($product) }}</del>
+                    </div>
+                
                 <!-- price -->
                 <div class="">
                     <span class="fw-700 text-primary">{{ home_discounted_base_price($product) }}</span>

@@ -16,6 +16,10 @@ class Product extends Model
 
     protected $with = ['product_translations', 'taxes', 'thumbnail'];
 
+    protected $casts = [
+        'buy_another_links' => 'array',
+    ];
+
     public function getTranslation($field = '', $lang = false)
     {
         $lang = $lang == false ? App::getLocale() : $lang;

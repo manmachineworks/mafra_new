@@ -513,7 +513,7 @@
                             <label class="col-md-6 col-from-label">{{translate('Flat Rate')}}</label>
                             <div class="col-md-6">
                                 <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input type="radio" name="shipping_type" value="flat">
+                                    <input type="radio" name="shipping_type" value="flat" checked>
                                     <span></span>
                                 </label>
                             </div>
@@ -808,8 +808,7 @@
         }
 
         if(main_id){
-            $('#treeview input:radio[value='+main_id+']').prop('checked',true).trigger('change');
-        $('#treeview input:radio[value=' + main_id + ']').next('ul').css("display", "block");
+            $('#treeview input:radio[value='+main_id+']').prop('checked',true);
         }
 
         $('#treeview input:checkbox').on("click", function (){

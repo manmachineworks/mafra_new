@@ -14,14 +14,15 @@
                 for this product')}}</span></p>
         </div>
         <div class="mt-2">
-
             @if($product->preorder_refund?->note?->description != null && $product->preorder_refund->show_refund_note)
             <p id="text-{{ $product->preorder_refund?->note?->id }}" class="preorder-text-light-grey fs-14">
                 <span id="short-text-{{ $product->preorder_refund?->note?->id }}">
                     {{ Str::limit($product->preorder_refund?->note?->description, 100) }} 
                 </span>
                 <span class="d-none preorder-text-light-grey fs-14" id="full-text-{{ $product->preorder_refund?->note?->id }}">{{ $product->preorder_refund?->note?->description }}</span>
-                <a href="javascript:void(0);" onclick="toggleText({{ $product->preorder_refund?->note?->id }})" id="toggle-link-{{ $product->preorder_refund?->note?->id }}">See More</a>
+                @if (strlen($product->preorder_refund?->note?->description) > 100)
+                <a href="javascript:void(0);" onclick="toggleText({{ $product->preorder_refund?->note?->id }})" id="toggle-link-{{ $product->preorder_refund?->note?->id }}">{{translate('See More')}}</a>
+                @endif
             </p>
             @endif
         </div>

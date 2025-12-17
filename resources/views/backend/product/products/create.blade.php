@@ -207,6 +207,12 @@
 
                                 <!-- Description -->
                                 <div class="form-group">
+                                    <label class="fs-13">{{translate('Short Description')}}</label>
+                                    <div class="">
+                                        <textarea class="form-control aiz-text-editor" name="short_description" rows="3" placeholder="{{ translate('A brief highlight shown near the Buy Now button') }}">{{ old('short_description') }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label class="fs-13">{{translate('Description')}}</label>
                                     <div class="">
                                         <textarea class="aiz-text-editor" name="description">{{ old('description') }}</textarea>
@@ -551,6 +557,12 @@
 
                                 </div>
 
+                                 <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">{{translate('Purchase price')}} <span class="text-danger">*</span></label>
+                                    <div class="col-md-6">
+                                        <input type="number" lang="en" min="0" value="0" step="0.01" placeholder="{{ translate('Purchase price') }}" name="purchase_price" class="form-control @error('purchase_price') is-invalid @enderror">
+                                    </div>
+                                </div>
                                 <!-- Unit price -->
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Unit price')}} <span class="text-danger">*</span></label>
@@ -627,6 +639,46 @@
                                     <div class="col-md-9">
                                         <input type="text" placeholder="{{ translate('External link button text') }}" name="external_link_btn" value="{{ old('external_link_btn') }}" class="form-control">
                                         <small class="text-muted">{{translate('Leave it blank if you do not use external site link')}}</small>
+                                    </div>
+                                </div>
+                                <!-- Buy another links -->
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">
+                                        {{translate('Buy another links')}}
+                                    </label>
+                                    <div class="col-md-9">
+                                        <div id="buyAnotherLinksWrapper">
+                                            @php
+                                                $buyAnother = old('buy_another_links', []);
+                                            @endphp
+                                            @forelse ($buyAnother as $idx => $item)
+                                                <div class="row gutter-10 mb-2 buy-another-row">
+                                                    <div class="col-md-7">
+                                                        <input type="text" class="form-control" name="buy_another_links[{{ $idx }}][url]" value="{{ $item['url'] ?? '' }}" placeholder="{{ translate('Buy another URL') }}">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input type="text" class="form-control" name="buy_another_links[{{ $idx }}][btn]" value="{{ $item['btn'] ?? '' }}" placeholder="{{ translate('Button text') }}">
+                                                    </div>
+                                                    <div class="col-md-1 d-flex align-items-center">
+                                                        <button type="button" class="btn btn-icon btn-sm btn-soft-danger remove-buy-row"><i class="las la-times"></i></button>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <div class="row gutter-10 mb-2 buy-another-row">
+                                                    <div class="col-md-7">
+                                                        <input type="text" class="form-control" name="buy_another_links[0][url]" value="" placeholder="{{ translate('Buy another URL') }}">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input type="text" class="form-control" name="buy_another_links[0][btn]" value="" placeholder="{{ translate('Button text') }}">
+                                                    </div>
+                                                    <div class="col-md-1 d-flex align-items-center">
+                                                        <button type="button" class="btn btn-icon btn-sm btn-soft-danger remove-buy-row"><i class="las la-times"></i></button>
+                                                    </div>
+                                                </div>
+                                            @endforelse
+                                        </div>
+                                        <button type="button" id="addBuyAnotherLink" class="btn btn-sm btn-soft-primary mt-2"><i class="las la-plus"></i> {{ translate('Add link') }}</button>
+                                        <small class="text-muted d-block mt-1">{{translate('Optional: add multiple alternative buy links with button text')}}</small>
                                     </div>
                                 </div>
                                 <br>
@@ -1158,6 +1210,32 @@
             $('#warranty_id').removeAttr('required');
         }
     }
+
+    // Buy another links repeater
+    (function() {
+        const wrapper = $('#buyAnotherLinksWrapper');
+        let index = wrapper.find('.buy-another-row').length;
+        $('#addBuyAnotherLink').on('click', function() {
+            const row = `
+                <div class="row gutter-10 mb-2 buy-another-row">
+                    <div class="col-md-7">
+                        <input type="text" class="form-control" name="buy_another_links[${index}][url]" value="" placeholder="{{ translate('Buy another URL') }}">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="buy_another_links[${index}][btn]" value="" placeholder="{{ translate('Button text') }}">
+                    </div>
+                    <div class="col-md-1 d-flex align-items-center">
+                        <button type="button" class="btn btn-icon btn-sm btn-soft-danger remove-buy-row"><i class="las la-times"></i></button>
+                    </div>
+                </div>`;
+            wrapper.append(row);
+            index++;
+        });
+
+        wrapper.on('click', '.remove-buy-row', function() {
+            $(this).closest('.buy-another-row').remove();
+        });
+    })();
 
     // Refundable
     function isRefundable() {

@@ -960,24 +960,11 @@
             for (let i = 0; i < myArray.length; i++) {
                 const element = myArray[i];
                 $('#treeview input:checkbox#'+element).prop('checked',true);
-                 if(i < myArray.length - 1){
-                    const $checkbox = $('#treeview input:checkbox#'+element);
-
-                    $checkbox.attr('onclick', 'cursor_not_allowed(event)');
-                    $checkbox.css('cursor', 'not-allowed');
-                    $checkbox.closest('label').css('cursor', 'not-allowed');
-                } else {
-                    const $checkbox = $('#treeview input:checkbox#'+element);
-                    $checkbox.closest('ul').find('input[type="checkbox"]').removeAttr('onclick');
-                    $checkbox.closest('ul').find('input[type="checkbox"]').css('cursor', '');
-                    $checkbox.closest('ul').find('label').css('cursor', '');
-                }
                 $('#treeview input:checkbox#'+element).parents( "ul" ).css( "display", "block" );
                 $('#treeview input:checkbox#'+element).parents( "li" ).children('.las').removeClass( "la-plus" ).addClass('la-minus');
             }
         }
-        $('#treeview input:radio[value='+main_id+']').prop('checked',true).trigger('change');
-        $('#treeview input:radio[value=' + main_id + ']').next('ul').css("display", "block");
+        $('#treeview input:radio[value='+main_id+']').prop('checked',true);
 
         fq_bought_product_selection_type();
         AIZ.plugins.tagify();

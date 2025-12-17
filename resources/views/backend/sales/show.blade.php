@@ -125,12 +125,7 @@
                     </div>
                 @endif
             </div>
-            <div class="mb-3">
-                @php
-                    $removedXML = '<?xml version="1.0" encoding="UTF-8"?>';
-                @endphp
-                {!! str_replace($removedXML, '', QrCode::size(100)->generate($order->code)) !!}
-            </div>
+            
             <div class="row gutters-5">
                 <div class="col text-md-left text-center">
                     @if(json_decode($order->shipping_address))

@@ -1285,8 +1285,7 @@ $(document).ready(function() {
         }
 
         if(main_id){
-            $('#treeview input:radio[value='+main_id+']').prop('checked',true).trigger('change');
-        $('#treeview input:radio[value=' + main_id + ']').next('ul').css("display", "block");
+            $('#treeview input:radio[value='+main_id+']').prop('checked',true);
         }
 
         $('#treeview input:checkbox').on("click", function (){
