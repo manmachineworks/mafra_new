@@ -50,46 +50,15 @@
         box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
     }
 
-    /* ===== New bottom section (like screenshot) ===== */
-    /* .ph-meta {
-        font-size: 10px;
-        letter-spacing: .4px;
-        text-transform: uppercase;
-        color: #8a8f98;
-        font-weight: 700;
-    } */
-    .ph-title {
+     .ph-title {
         font-size: 14px;
         font-weight: 600;
         line-height: 1.25;
         color: #0f172a;
         margin: 4px 0 0;
         min-height: 34px;
-    }
-    /* .ph-price-row {
-        display: flex;
-        align-items: baseline;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 10px;
-    }
-    .ph-price {
-        font-size: 16px;
-        font-weight: 900;
-        color: #0f172a;
-    }
-    .ph-mrp {
-        font-size: 12px;
-        color: #94a3b8;
-        font-weight: 700;
-    }
-    .ph-mrp del { color: #94a3b8; }
-    .ph-save {
-        font-size: 12px;
-        color: #64748b;
-        margin-top: 2px;
-        font-weight: 700;
-    } */
+    } 
+    
     .ph-cart-btn {
         width: 100%;
         border: 0;
@@ -128,21 +97,33 @@
                 onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
         </a>
 
-        <!-- Discount percentage tag -->
+       
+
+         @if(!empty($brand_name))
+            
+
+            <span class="absolute-top-left fs-11 text-white fw-700 px-2 lh-1-8 ml-1 mt-1"
+                style="background-color:#c70a04;padding-top:2px;padding-bottom:2px;">
+                {{ $brand_name }}
+            </span>
+        @endif
+
+         <!-- Discount percentage tag -->
         @if ($discount > 0)
-            <span class="absolute-top-left bg-primary ml-1 mt-1 fs-11 fw-700 text-white w-35px text-center"
-                style="padding-top:2px;padding-bottom:2px;">
+         
+             <span class="absolute-top-left ml-1 mt-1 fs-11 fw-700 text-white w-35px text-center"
+                style="background-color:#34a853; @if ($discount > 0) top:25px; @endif">
                 -{{ $discount }}%
             </span>
         @endif
 
         <!-- Wholesale tag -->
-        @if ($product->wholesale_product)
+        <!-- @if ($product->wholesale_product)
             <span class="absolute-top-left fs-11 text-white fw-700 px-2 lh-1-8 ml-1 mt-1"
                 style="background-color:#455a64; @if ($discount > 0) top:25px; @endif">
                 {{ translate('Wholesale') }}
             </span>
-        @endif
+        @endif -->
 
         @if ($product->auction_product == 0)
             <!-- Wishlist & compare -->
@@ -182,46 +163,37 @@
     </div>
 
     {{-- ===== Updated bottom part (like screenshot) ===== --}}
-    <div class="p-3 text-left">
-        @if(!empty($brand_name))
-            <div class="ph-meta">{{ $brand_name }}</div>
-        @endif
+    <div class="px-2 px-md-3  text-left">
+       
 
         <a href="{{ $product_url }}" class="text-reset d-block" title="{{ $product->getTranslation('name') }}">
             <div class="ph-title text-truncate-2">{{ $product->getTranslation('name') }}</div>
         </a>
-
+       
         @if ($product->auction_product == 0)
-            <div class="ph-price-row">
-                <div class="ph-price">{{ home_discounted_base_price($product) }}</div>
-
-                @if (home_base_price($product) != home_discounted_base_price($product))
-                    <div class="ph-mrp">MRP <del>{{ home_base_price($product) }}</del></div>
-                @else
-                    <div class="ph-mrp">MRP <del>{{ purchase_price($product) }}</del></div>
-                @endif
+         <div class="fs-14 d-flex mt-1">
+           
+            <!-- price -->
+            <div class="">
+                <span class="fw-700 text-primary">{{ home_discounted_base_price($product) }}/-</span>
             </div>
-
+             @if (home_base_price($product) != home_discounted_base_price($product))
+          
+                  <div class="">
+                        <del class="fw-400 text-secondary ml-1">{{ purchase_price($product) }}/-</del>
+                    </div>
+            @endif
+         </div>
             @if ($discount > 0)
-                <div class="ph-save">(Save {{ $discount }}%)</div>
+                <div class="ph-save" style="color:#34a853;">(Save {{ $discount }}%)</div>
             @endif
 
-            <button class="ph-cart-btn mt-3" type="button"
+            <button class="ph-cart-btn m-1" type="button"
                     onclick="showAddToCartModal({{ $product->id }})">
                 {{ translate('Add To Cart') }}
             </button>
-        @else
-            <div class="ph-price-row">
-                <div class="ph-price">{{ single_price($product->starting_bid) }}</div>
-                <div class="ph-mrp">{{ translate('Starting Bid') }}</div>
-            </div>
-
-            @if ($is_auction_live)
-                <button class="ph-cart-btn mt-3" type="button"
-                        onclick="bid_single_modal({{ $product->id }}, {{ $min_bid_amount }})">
-                    {{ translate('Place Bid') }}
-                </button>
-            @endif
+        
         @endif
+        
     </div>
 </div>

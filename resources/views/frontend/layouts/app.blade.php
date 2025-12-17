@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<!-- 
 @php
     $rtl = get_session_language()->rtl;
 @endphp
@@ -8,8 +8,8 @@
     <html dir="rtl" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 @else
     <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-@endif
-
+@endif -->
+  <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -61,15 +61,15 @@
     <link rel="apple-touch-icon" href="{{ $site_icon }}">
 
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"> -->
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="{{ static_asset('assets/css/vendors.css') }}">
-    @if ($rtl == 1)
+    <!-- @if ($rtl == 1)
         <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-rtl.min.css') }}">
-    @endif
+    @endif -->
     <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css?v=') }}{{ rand(1000, 9999) }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/custom-style.css') }}">
     @if(get_setting('homepage_select') == 'thecore')
@@ -123,9 +123,9 @@
             --soft-white: #b5b5bf;
             --dark: #292933;
             --soft-dark: #1b1b28;
-            --primary: {{ get_setting('base_color', '#d43533') }};
+            --primary: {{ get_setting('base_color', '#c70a04') }};
             --hov-primary: {{ get_setting('base_hov_color', '#9d1b1a') }};
-            --soft-primary: {{ hex2rgba(get_setting('base_color', '#d43533'), 0.15) }};
+            --soft-primary: {{ hex2rgba(get_setting('base_color', '#c70a04'), 0.15) }};
         }
         body{
             font-family: {!! !empty(get_setting('system_font_family')) ? get_setting('system_font_family') : "'Public Sans', sans-serif" !!}, sans-serif;
@@ -241,15 +241,11 @@
         @include('frontend.inc.floating_buttons')
     @endif
 
-    <div class="aiz-refresh">
+    <!-- <div class="aiz-refresh">
         <div class="aiz-refresh-content"><div></div><div></div><div></div></div>
-    </div>
+    </div> -->
 
 
-    @if (env("DEMO_MODE") == "On")
-        <!-- demo nav -->
-        @include('frontend.inc.demo_nav')
-    @endif
 
     <!-- cookies agreement -->
     @php
@@ -1014,14 +1010,14 @@
             });
         }
     </script>
-
+<!-- 
     <script>
         function showFloatingButtons() {
             document.querySelector('.floating-buttons-section').classList.toggle('show');;
         }
-    </script>
+    </script> -->
 
-    @if (env("DEMO_MODE") == "On")
+    <!-- @if (env("DEMO_MODE") == "On")
         <script>
             var demoNav = document.querySelector('.aiz-demo-nav');
             var menuBtn = document.querySelector('.aiz-demo-nav-toggler');
@@ -1070,7 +1066,7 @@
             }
         </script>
         
-    @endif
+    @endif -->
 
     @if (get_setting('header_element') == 5 || get_setting('header_element') == 6)
         <script>
