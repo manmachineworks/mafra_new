@@ -51,22 +51,22 @@
     }
 
     /* ===== New bottom section (like screenshot) ===== */
-    .ph-meta {
+    /* .ph-meta {
         font-size: 10px;
         letter-spacing: .4px;
         text-transform: uppercase;
         color: #8a8f98;
         font-weight: 700;
-    }
+    } */
     .ph-title {
         font-size: 14px;
-        font-weight: 900;
+        font-weight: 600;
         line-height: 1.25;
         color: #0f172a;
         margin: 4px 0 0;
         min-height: 34px;
     }
-    .ph-price-row {
+    /* .ph-price-row {
         display: flex;
         align-items: baseline;
         gap: 10px;
@@ -89,7 +89,7 @@
         color: #64748b;
         margin-top: 2px;
         font-weight: 700;
-    }
+    } */
     .ph-cart-btn {
         width: 100%;
         border: 0;
