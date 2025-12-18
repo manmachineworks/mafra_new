@@ -516,7 +516,7 @@
                                 <i class="la la-share"></i> {{ translate($detailedProduct->external_link_btn) }}
                             </a>
                             @else
-                            <button type="button" class="btn bg-soft-primary add-to-cart fw-600 min-w-150px w-75 rounded-1  text-primary hov-bg-primary hov-text-light" @if (Auth::check() || get_setting('guest_checkout_activation')==1) onclick="addToCart()" @else onclick="showLoginModal()" @endif>
+                            <button type="button" class="btn bg-dark add-to-cart fw-600 min-w-150px w-75 rounded-1 text-white hov-bg-primary hov-text-light" @if (Auth::check() || get_setting('guest_checkout_activation')==1) onclick="addToCart()" @else onclick="showLoginModal()" @endif>
                                 <i class="las la-shopping-bag"></i> {{ translate('Add to cart') }}
                             </button>
                             @endif
@@ -597,7 +597,7 @@
                 <div class="row no-gutters mb-3">
                     <div class="col-sm-9">
                         <button type="button"
-                            class="btn bg-soft-primary add-to-cart fw-600 min-w-150px w-100 rounded-1 text-primary hov-bg-primary hov-text-light"
+                            class="btn bg-dark add-to-cart fw-600 min-w-150px w-100 rounded-1 text-white hov-bg-primary hov-text-light"
                             @if (Auth::check() || get_setting('guest_checkout_activation')==1) onclick="addToCart()" @else onclick="showLoginModal()" @endif>
                             <i class="las la-shopping-bag"></i> {{ translate('Add to cart') }}
                         </button>

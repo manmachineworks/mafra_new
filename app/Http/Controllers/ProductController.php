@@ -56,6 +56,7 @@ class ProductController extends Controller
         $this->middleware(['permission:show_in_house_products'])->only('admin_products');
         $this->middleware(['permission:show_seller_products'])->only('seller_products');
         $this->middleware(['permission:product_edit'])->only('admin_product_edit', 'seller_product_edit');
+        $this->middleware(['permission:product_edit'])->only('updateStock');
         $this->middleware(['permission:product_duplicate'])->only('duplicate');
         $this->middleware(['permission:product_delete'])->only('destroy');
         $this->middleware(['permission:set_category_wise_discount'])->only('categoriesWiseProductDiscount');
@@ -605,6 +606,62 @@ class ProductController extends Controller
         return 0;
     }
 
+
+
+    public function updateStock(Request $request)
+    {
+        if (env('DEMO_MODE') == 'On') {
+            return response()->json([
+                'success' => false,
+                'message' => translate('Data can not change in demo mode.')
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'id' => ['required', 'integer', 'exists:products,id'],
+            'stock' => ['required', 'integer', 'min:0'],
+        ]);
+
+        $product = Product::with('stocks')->findOrFail($validated['id']);
+
+        if ((int) $product->digital === 1) {
+            return response()->json([
+                'success' => false,
+                'message' => translate('Stock is not applicable for digital products.')
+            ], 422);
+        }
+
+        if ((int) $product->variant_product === 1) {
+            return response()->json([
+                'success' => false,
+                'message' => translate('This product has variants. Please update stock from the edit page.')
+            ], 422);
+        }
+
+        $productStock = $product->stocks->firstWhere('variant', '') ?? $product->stocks->first();
+
+        if (!$productStock || $productStock->variant !== '') {
+            $productStock = $product->stocks()->create([
+                'variant' => '',
+                'qty' => 0,
+                'price' => $product->unit_price ?? 0,
+                'sku' => null,
+            ]);
+        }
+
+        $productStock->qty = (int) $validated['stock'];
+        $productStock->save();
+
+        $product->current_stock = (int) $validated['stock'];
+        $product->save();
+
+        return response()->json([
+            'success' => true,
+            'product_id' => (int) $product->id,
+            'stock' => (int) $productStock->qty,
+            'message' => translate('Stock updated successfully'),
+        ]);
+    }
     public function sku_combination(Request $request)
     {
         $options = array();

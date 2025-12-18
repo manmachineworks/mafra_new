@@ -11,7 +11,36 @@
 
 
 @php $lang = get_system_language()->code; @endphp
-
+  <!-- Sliders -->
+    <div class="home-banner-area mb-3" style="background-color: {{ get_setting('slider_section_bg_color', '#dedede') }}">
+        <div class="@if(get_setting('slider_section_full_width') == 1) p-0 @else container @endif">
+            <!-- Sliders -->
+            <div class="home-slider slider-full">
+                @if (get_setting('home_slider_images', null, $lang) != null)
+                    <div class="aiz-carousel dots-inside-bottom mobile-img-auto-height" data-autoplay="true" data-infinite="true">
+                        @php
+                            $decoded_slider_images = json_decode(get_setting('home_slider_images', null, $lang), true);
+                            $sliders = get_slider_images($decoded_slider_images);
+                            $home_slider_links = get_setting('home_slider_links', null, $lang);
+                        @endphp
+                        @foreach ($sliders as $key => $slider)
+                            <div class="carousel-box">
+                                <a href="{{ isset(json_decode($home_slider_links, true)[$key]) ? json_decode($home_slider_links, true)[$key] : '' }}">
+                                    <!-- Image -->
+                                    <div class="d-block mw-100 img-fit overflow-hidden h-180px h-sm-200px h-md-250px h-lg-300px h-xl-370px overflow-hidden">
+                                        <img class="img-fit h-100 m-auto has-transition ls-is-cached lazyloaded"
+                                        src="{{ $slider ? my_asset($slider->file_name) : static_asset('assets/img/placeholder.jpg') }}"
+                                        alt="{{ env('APP_NAME') }} promo"
+                                        onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder-rect.jpg') }}';">
+                                    </div>
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
 <div class="pt-32px pb-26px" style="background: {{ get_setting('hero_bg_color', '#f5f5f5') }}">
     <div class="container">
         <div class="row">
@@ -151,7 +180,7 @@
                     <div class="px-3">
                         <p class="fs-16 fw-700  font-weight-bold">{{translate('Featured Categories')}}</p>
                         <p class="fs-13 fs-lg-14 fw-300 text-truncate-2" title="{{translate('Categories catching eyes & winning hearts across our marketplace')}}">{{translate('Categories catching eyes & winning hearts across our marketplace')}}</p>
-                        <a class="btn custom-hov-btn py-2" href="{{route('categories.all')}}" style="background: {{ get_setting('featured_category_btn_color', '#F94C10') }}; color: {{ get_setting('featured_category_section_btn_text_color', '#f5f5f5') }};">
+                        <a class="btn custom-hov-btn py-2" href="{{route('categories.all')}}" style="background: {{ get_setting('featured_category_btn_color', '#c70a04') }}; color: {{ get_setting('featured_category_section_btn_text_color', '#f5f5f5') }};">
                             <span class="d-inline">{{ translate('All Categories') }}</span>
                         </a>
                     </div>
@@ -191,6 +220,9 @@
 </div>
 @endif
   
+
+
+
 
 <style>
 
@@ -359,7 +391,7 @@
    
     <img src="{{ static_asset('uploads/all/tIYt4WZP71XzWVoiFGKAReBgi1pfcAFm4KVDt9v3.webp') }}" class="img-fluid lazyload w-100">
 
-    <div class="px-2 py-4 px-md-4 py-md-3 bg-white shadow-sm rounded">
+    <div class="bg-white">
     <div class="aiz-carousel gutters-10 half-outside-arrow" data-items="6" data-xl-items="5" data-lg-items="4"  data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true'>
                         @foreach (get_cached_products(2) as $key => $product)
                             <div class="carousel-box">
@@ -372,7 +404,7 @@
   
   <div class="tab__content">
   <img src="{{ static_asset('uploads/all/tPb2HjWNlafrdf7BngcJadqJWSUdmQmEB3YBiFhL.webp') }}" class="img-fluid lazyload w-100">
-  <div class="px-2 py-4 px-md-4 py-md-3 bg-white shadow-sm rounded">
+  <div class="bg-white">
   <div class="aiz-carousel gutters-10 half-outside-arrow" data-items="6" data-xl-items="5" data-lg-items="4"  data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true'>
                         @foreach (get_cached_products(3) as $key => $product)
                             <div class="carousel-box">
@@ -385,7 +417,7 @@
   
   <div class="tab__content">
   <img src="{{ static_asset('uploads/all/dubKxAe41305215haXR3x8a1G5Gn8lZRuqNRO13C.webp') }}" class="img-fluid lazyload w-100">
-  <div class="px-2 py-4 px-md-4 py-md-3 bg-white shadow-sm rounded">
+  <div class="bg-white">
   <div class="aiz-carousel gutters-10 half-outside-arrow" data-items="6" data-xl-items="5" data-lg-items="4"  data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true'>
                         @foreach (get_cached_products(4) as $key => $product)
                             <div class="carousel-box">
@@ -398,7 +430,7 @@
 
 <div class="tab__content">
   <img src="{{ static_asset('uploads/all/AYx5MVuyoyplIL1EXTgcvquA9FM38UMBtOOxuRf0.webp') }}" class="img-fluid lazyload w-100">
-  <div class="px-2 py-4 px-md-4 py-md-3 bg-white shadow-sm rounded">
+  <div class="bg-white">
   <div class="aiz-carousel gutters-10 half-outside-arrow" data-items="6" data-xl-items="5" data-lg-items="4"  data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true'>
                         @foreach (get_cached_products(6) as $key => $product)
                             <div class="carousel-box">
@@ -489,16 +521,16 @@
 
                             <!-- Name -->
                             <div class="fs-13 mr-1 mt-3 text-center mt-2 px-4" title="{{ $product->getTranslation('name') }}">
-                                <a class="fw-300 text-truncate-2 hov-text-primary text-reset" href="{{ route('product', $product->slug) }}">{{ $product->getTranslation('name') }}</a>
+                                <a class="fw-300 text-truncate-2 hov-text-primary text-reset mt-1" href="{{ route('product', $product->slug) }}">{{ $product->getTranslation('name') }}</a>
                             </div>
 
                             <!-- Price -->
                             <div class="fs-14 mr-1 mt-1 text-center">
-                                <span class="d-block fw-700">{{ home_discounted_base_price($product) }}</span>
+                                <span class="d-block fw-700">{{ home_discounted_base_price($product) }} </span>
                                 @if (home_base_price($product) != home_discounted_base_price($product))
-                                    <del class="d-block text-primary fs-12 fw-400">{{ home_base_price($product) }}</del>
+                                    <del class="d-block text-secondary fs-12 fw-400">{{ home_base_price($product) }} </del>
                                     @else
-                                      <del  class="d-block text-secondary fs-12 fw-400">{{ purchase_price($product) }}</del>
+                                      <del  class="d-block text-secondary fs-12 fw-400">{{ purchase_price($product) }} </del>
                                 @endif
                             </div>
                         </div>

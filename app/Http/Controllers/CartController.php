@@ -46,7 +46,11 @@ class CartController extends Controller
 
     public function showCartModal(Request $request)
     {
-        $product = Product::find($request->id);
+        $product = Product::with(['brand', 'stocks'])
+            ->withCount(['reviews as approved_reviews_count' => function ($q) {
+                $q->where('status', 1);
+            }])
+            ->findOrFail($request->id);
         return view('frontend.partials.cart.addToCart', compact('product'));
     }
 

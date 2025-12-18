@@ -105,6 +105,7 @@
                         @endif
                         <th data-breakpoints="sm">{{translate('Info')}}</th>
                         <th data-breakpoints="md">{{translate('Total Stock')}}</th>
+                        <th data-breakpoints="sm">{{translate('Stock Update')}}</th>
                         <th data-breakpoints="lg">{{translate('Todays Deal')}}</th>
                         <th data-breakpoints="lg">{{translate('Published')}}</th>
                         @if(get_setting('product_approve_by_admin') == 1 && $type == 'Seller')
@@ -148,31 +149,69 @@
                             <strong>{{translate('Rating')}}:</strong> {{ $product->rating }} </br>
                         </td>
                         <td>
-                            @if($product->digital == 1)
-                            <span class="badge badge-inline badge-info">{{ translate('Digital Product') }}</span>
-                            @else
-                                @php
-                                    $qty = 0;
-                                    if($product->variant_product) {
-                                        foreach ($product->stocks as $key => $stock) {
-                                            $qty += $stock->qty;
-                                            echo $stock->variant.' - '.$stock->qty.'<br>';
-                                        }
-                                    }
-                                    else {
-                                        //$qty = $product->current_stock;
-                                        $qty = optional($product->stocks->first())->qty;
-                                        echo $qty;
-                                    }
-                                @endphp
-                                @if($qty <= $product->low_stock_quantity)
-                                    <span class="badge badge-inline badge-danger">{{ translate('Low') }}</span>
-                                @endif
-                            @endif
+                            @php
+                                $totalQty = 0;
+                            @endphp
 
+                            @if($product->digital == 1)
+                                <span class="badge badge-inline badge-info">{{ translate('Digital Product') }}</span>
+                            @else
+                                @if($product->variant_product)
+                                    @foreach ($product->stocks as $stock)
+                                        @php
+                                            $totalQty += (int) $stock->qty;
+                                        @endphp
+                                        {{ $stock->variant }} - {{ $stock->qty }}<br>
+                                    @endforeach
+                                    <div class="text-muted mt-1">
+                                        {{ translate('Total') }}:
+                                        <span class="js-current-stock" data-product-id="{{ $product->id }}">{{ $totalQty }}</span>
+                                    </div>
+                                @else
+                                    @php
+                                        $totalQty = (int) optional($product->stocks->first())->qty;
+                                    @endphp
+                                    <span class="js-current-stock" data-product-id="{{ $product->id }}">{{ $totalQty }}</span>
+                                @endif
+
+                                <span class="badge badge-inline badge-danger js-low-stock-badge @if($totalQty > $product->low_stock_quantity) d-none @endif" data-product-id="{{ $product->id }}">
+                                    {{ translate('Low') }}
+                                </span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($product->digital == 1)
+                                <span class="text-muted">&mdash;</span>
+                            @elseif($product->variant_product)
+                                @can('product_edit')
+                                    @if ($type == 'Seller')
+                                        <a class="btn btn-soft-primary btn-sm" href="{{ route('products.seller.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')] ) }}">
+                                            {{ translate('Edit Variants') }}
+                                        </a>
+                                    @else
+                                        <a class="btn btn-soft-primary btn-sm" href="{{ route('products.admin.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')] ) }}">
+                                            {{ translate('Edit Variants') }}
+                                        </a>
+                                    @endif
+                                @else
+                                    <span class="text-muted">&mdash;</span>
+                                @endcan
+                            @else
+                                <input
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    class="form-control form-control-sm js-stock-update"
+                                    value="{{ $totalQty }}"
+                                    data-product-id="{{ $product->id }}"
+                                    data-original="{{ $totalQty }}"
+                                    data-low-stock="{{ $product->low_stock_quantity }}"
+                                >
+                            @endif
                         </td>
                         <td>
                             <label class="aiz-switch aiz-switch-success mb-0">
+
                                 <input onchange="update_todays_deal(this)" value="{{ $product->id }}" type="checkbox" <?php if ($product->todays_deal == 1) echo "checked"; ?> >
                                 <span class="slider round"></span>
                             </label>
@@ -359,6 +398,80 @@
                 }
             });
         }
+
+
+
+        $(document).on('change', '.js-stock-update', function () {
+            if ('{{env('DEMO_MODE')}}' == 'On') {
+                AIZ.plugins.notify('info', '{{ translate('Data can not change in demo mode.') }}');
+                return;
+            }
+
+            var $input = $(this);
+            var productId = parseInt($input.data('product-id'));
+            var original = parseInt($input.data('original'));
+            var lowStockLimit = parseInt($input.data('low-stock'));
+
+            var rawValue = ($input.val() || '').toString().trim();
+            var newStock = parseInt(rawValue);
+
+            if (rawValue === '' || isNaN(newStock) || newStock < 0) {
+                AIZ.plugins.notify('danger', '{{ translate('Please enter a valid non-negative number') }}');
+                $input.val(isNaN(original) ? 0 : original);
+                return;
+            }
+
+            $input.prop('disabled', true);
+
+            $.ajax({
+                url: '{{ route('products.update_stock') }}',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: productId,
+                    stock: newStock
+                },
+                success: function (res) {
+                    if (res && res.success) {
+                        var updated = parseInt(res.stock);
+                        if (isNaN(updated)) {
+                            updated = newStock;
+                        }
+
+                        $input.val(updated);
+                        $input.data('original', updated);
+
+                        $('.js-current-stock[data-product-id="' + productId + '"]').text(updated);
+
+                        var $badge = $('.js-low-stock-badge[data-product-id="' + productId + '"]');
+                        if ($badge.length && !isNaN(lowStockLimit)) {
+                            if (updated <= lowStockLimit) {
+                                $badge.removeClass('d-none');
+                            } else {
+                                $badge.addClass('d-none');
+                            }
+                        }
+
+                        AIZ.plugins.notify('success', res.message || '{{ translate('Stock updated successfully') }}');
+                    } else {
+                        $input.val(isNaN(original) ? 0 : original);
+                        AIZ.plugins.notify('danger', (res && res.message) ? res.message : '{{ translate('Something went wrong') }}');
+                    }
+                },
+                error: function (xhr) {
+                    $input.val(isNaN(original) ? 0 : original);
+                    var message = '{{ translate('Something went wrong') }}';
+                    if (xhr && xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    AIZ.plugins.notify('danger', message);
+                },
+                complete: function () {
+                    $input.prop('disabled', false);
+                }
+            });
+        });
 
         function sort_products(el){
             $('#sort_products').submit();

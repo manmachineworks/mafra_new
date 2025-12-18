@@ -1,14 +1,29 @@
 <!DOCTYPE html>
-<!-- 
 @php
-    $rtl = get_session_language()->rtl;
+    $rtl = get_session_language()->rtl ?? 0;
+    $locale = str_replace('_', '-', app()->getLocale());
+
+    // Stable cache-busting for local assets (avoids per-request rand() which breaks caching).
+    $assetVersion = config('app.asset_version');
+    if (empty($assetVersion)) {
+        $candidateFiles = [
+            public_path('assets/css/vendors.css'),
+            public_path('assets/css/aiz-core.css'),
+            public_path('assets/css/custom-style.css'),
+            public_path('assets/css/thecore.css'),
+            public_path('assets/js/vendors.js'),
+            public_path('assets/js/aiz-core.js'),
+        ];
+        $mtimes = [];
+        foreach ($candidateFiles as $candidate) {
+            if (file_exists($candidate)) {
+                $mtimes[] = filemtime($candidate);
+            }
+        }
+        $assetVersion = !empty($mtimes) ? max($mtimes) : 1;
+    }
 @endphp
-@if ($rtl == 1)
-    <html dir="rtl" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-@else
-    <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-@endif  -->
- <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ $locale }}" @if ($rtl == 1) dir="rtl" @endif>
 <head>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -19,6 +34,7 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="{{ get_setting('base_color', '#C70A04') }}">
     <meta name="robots" content="index, follow">
     <meta name="description" content="@yield('meta_description', get_setting('meta_description'))" />
     <meta name="keywords" content="@yield('meta_keywords', get_setting('meta_keywords'))">
@@ -65,14 +81,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"> -->
 
     <!-- CSS Files -->
-    <link rel="stylesheet" href="{{ static_asset('assets/css/vendors.css') }}">
-    <!-- @if ($rtl == 1)
-        <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-rtl.min.css') }}">
-    @endif -->
-    <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css?v=') }}{{ rand(1000, 9999) }}">
-    <link rel="stylesheet" href="{{ static_asset('assets/css/custom-style.css') }}">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/vendors.css') }}?v={{ $assetVersion }}">
+    @if ($rtl == 1)
+        <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-rtl.min.css') }}?v={{ $assetVersion }}">
+    @endif
+    <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css') }}?v={{ $assetVersion }}">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/custom-style.css') }}?v={{ $assetVersion }}">
     @if(get_setting('homepage_select') == 'thecore')
-    <link rel="stylesheet" href="{{ static_asset('assets/css/thecore.css') }}">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/thecore.css') }}?v={{ $assetVersion }}">
     @endif
 
     <script>
@@ -120,15 +136,65 @@
             --light: #f5f5f5;
             --soft-light: #dfdfe6;
             --soft-white: #b5b5bf;
-            --dark: #292933;
-            --soft-dark: #1b1b28;
+            --dark: #212121;
+            --soft-dark: rgba(33, 33, 33, 0.12);
             --primary: {{ get_setting('base_color', '#C70A04') }};
             --hov-primary: {{ get_setting('base_hov_color', '#9d1b1a') }};
             --soft-primary: {{ hex2rgba(get_setting('base_color', '#C70A04'), 0.15) }};
+
+            --app-bg: #ffffff;
+            --app-text: #212121;
         }
         body{
             font-family: {!! !empty(get_setting('system_font_family')) ? get_setting('system_font_family') : "'Public Sans', sans-serif" !!}, sans-serif;
             font-weight: 400;
+            background: var(--app-bg);
+            color: var(--app-text);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        a { color: var(--primary); }
+        a:hover { color: var(--hov-primary); }
+
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--hov-primary);
+            border-color: var(--hov-primary);
+        }
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .form-control:focus {
+            border-width: 2px !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 0.15rem var(--soft-primary);
+        }
+
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
         }
 
         .pagination .page-link,
@@ -147,15 +213,13 @@
             margin: 0 5px;
         }
 
-        .form-control:focus {
-            border-width: 2px !important;
-        }
         .iti__flag-container {
             padding: 2px;
         }
         .modal-content {
             border: 0 !important;
             border-radius: 0 !important;
+            box-shadow: 0 18px 60px rgba(33, 33, 33, 0.22);
         }
 
         .tagify.tagify--focus{
@@ -173,6 +237,71 @@
         }
 
         .pac-container { z-index: 100000; }
+
+        .product-card .product-card-img {
+    /* border-radius: 14px; */
+    transition: opacity 0.25s ease, transform 0.4s ease;
+    will-change: opacity, transform;
+}
+.product-card:hover .product-card-img { transform: scale(1.05); }
+
+.product-card.has-hover-img .product-card-img--main { opacity: 1; }
+.product-card.has-hover-img .product-card-img--hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: transform 0.4s ease;
+}
+.product-card.has-hover-img:hover .product-card-img--main { opacity: 0; }
+.product-card.has-hover-img:hover .product-card-img--hover { opacity: 1; }
+
+.product-card {
+    --product-radius: 14px;
+}
+    .round-icon-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+        transition: all 0.3s ease;
+    }
+    .round-icon-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+    }
+
+     .ph-title {
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.25;
+        color: #0f172a;
+        margin: 4px 0 0;
+        min-height: 34px;
+    } 
+    
+    .ph-cart-btn {
+        width: 100%;
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 12px;
+        transform: translateY(0) !important;
+        opacity: 100%;
+        background: linear-gradient(180deg, #ff3b30 0%, #d91c1c 100%);
+        box-shadow: 0 14px 28px rgba(217, 28, 28, .28);
+        transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+    }
+    .ph-cart-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 18px 34px rgba(217, 28, 28, .34);
+        filter: brightness(1.02);
+    }
+    .ph-cart-btn:active { transform: translateY(0); }
     </style>
 
 @if (get_setting('google_analytics') == 1)
@@ -418,8 +547,8 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script src="{{ static_asset('assets/js/vendors.js') }}"></script>
-    <script src="{{ static_asset('assets/js/aiz-core.js?v=') }}{{ rand(1000, 9999) }}"></script>
+    <script src="{{ static_asset('assets/js/vendors.js') }}?v={{ $assetVersion }}"></script>
+    <script src="{{ static_asset('assets/js/aiz-core.js') }}?v={{ $assetVersion }}"></script>
 
     {{-- WhatsaApp Chat --}}
     @if (get_setting('whatsapp_chat') == 1)
@@ -1166,18 +1295,29 @@
         }
     </script>
     @endif
-
    <script>
-    $(document).ready(function() {
-        // Smooth close button
-        $('.set-session').on('click', function(e) {
+    // Don't globally prevent default on `.set-session` (it can be used on real links).
+    // Only intercept when it's used as a dismiss/close trigger.
+    $(document).on('click', '.set-session', function (e) {
+        const $el = $(this);
+        const parentSelector = $el.data('parent');
+
+        if (parentSelector) {
+            const $parent = $el.closest(parentSelector);
+            if ($parent.length) {
+                $parent.fadeOut(600);
+            }
+        }
+
+        const isAnchor = this.tagName && this.tagName.toLowerCase() === 'a';
+        const href = isAnchor ? ($el.attr('href') || '').trim() : '';
+        const shouldNavigate = isAnchor && href && href !== '#' && href.toLowerCase() !== 'javascript:void(0)';
+
+        if (!shouldNavigate && parentSelector) {
             e.preventDefault();
-            const parent = $(this).data('parent');
-            $(this).closest(parent).fadeOut(600);
-        });
+        }
     });
     </script>
-
     @yield('script')
 
     @php
