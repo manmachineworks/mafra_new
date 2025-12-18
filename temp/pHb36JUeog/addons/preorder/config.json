@@ -1,0 +1,42 @@
+{
+   "name":"Preorder",
+   "unique_identifier":"preorder",
+   "version":"1.0",
+   "minimum_item_version":"9.7",
+   "addon_banner":"preorder.png",
+   "directory":[
+      {
+         "name":[
+            "resources/views/preorder",
+            "app/Http/Controllers/Preorder",
+            "app/Services",
+            "app/Utility"
+         ]
+      }
+   ],
+   "sql_file":"",
+   "files":[
+      {
+          "root_directory":"addons/preorder/services/PreorderService.php",
+          "update_directory":"app/Services/PreorderService.php"
+      },
+      {
+          "root_directory":"addons/preorder/Utility/PreorderNotificationUtility.php",
+          "update_directory":"app/Utility/PreorderNotificationUtility.php"
+      },
+      {
+         "root_directory"    : "addons/preorder/assets/preorder.png",
+         "update_directory"  : "public/preorder.png"
+     }
+  ],
+   "folders":[
+      {
+           "root_directory":"addons/preorder/views/preorder",
+           "update_directory":"resources/views/preorder"
+      },
+	  {
+           "root_directory":"addons/preorder/controllers/Preorder",
+           "update_directory":"app/Http/Controllers/Preorder"
+      }
+   ]
+}

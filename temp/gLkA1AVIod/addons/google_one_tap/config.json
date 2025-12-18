@@ -1,0 +1,30 @@
+{
+  "name": "Google One Tap",
+  "unique_identifier": "google_one_tap",
+  "version": "1.0",
+  "minimum_item_version": "10.0.0",
+  "addon_banner": "google_one_tap.png",
+
+  "directory": [
+    {
+      "name": [
+        "resources/views/frontend/partials"
+      ]
+    }
+  ],
+
+  "files": [
+    {
+      "root_directory": "addons/google_one_tap/controllers/GoogleOneTapController.php",
+      "update_directory": "app/Http/Controllers/GoogleOneTapController.php"
+    },
+    {
+      "root_directory": "addons/google_one_tap/views/frontend/partials/google_onetap.blade.php",
+      "update_directory": "resources/views/frontend/partials/google_onetap.blade.php"
+    },
+    {
+        "root_directory"    : "addons/google_one_tap/assets/google_one_tap.png",
+        "update_directory"  : "public/google_one_tap.png"
+    }
+  ]
+}
