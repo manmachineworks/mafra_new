@@ -178,9 +178,21 @@
                 <span class="fw-700 text-primary">{{ home_discounted_base_price($product) }}/-</span>
             </div>
              @if (home_base_price($product) != home_discounted_base_price($product))
-          
+            <div class="">
+                <del class="fw-400 text-secondary mr-1">{{ home_base_price($product) }}</del>
+            </div>
+            @else
                   <div class="">
                         <del class="fw-400 text-secondary ml-1">{{ purchase_price($product) }}/-</del>
+                    </div>
+            @endif
+
+            <div class="disc-amount has-transition">
+                <del class="fw-400 text-primary mr-1">{{ home_base_price($product) }}</del>
+            </div>
+            @else
+                  <div class="">
+                        <del class="fw-400 text-secondary mr-1">{{ purchase_price($product) }}</del>
                     </div>
             @endif
          </div>
