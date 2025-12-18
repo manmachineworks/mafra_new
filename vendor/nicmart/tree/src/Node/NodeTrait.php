@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2013-2025 Nicolò Martini
+ * Copyright (c) 2013-2024 Nicolò Martini
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -13,15 +13,9 @@ namespace Tree\Node;
 
 use Tree\Visitor\Visitor;
 
-/**
- * @template TValue
- */
 trait NodeTrait
 {
-    /**
-     * @var TValue
-     */
-    private $value;
+    private mixed $value = null;
     private ?NodeInterface $parent = null;
 
     /**
@@ -29,20 +23,14 @@ trait NodeTrait
      */
     private array $children = [];
 
-    /**
-     * @param TValue $value
-     */
-    public function setValue($value): static
+    public function setValue(mixed $value): static
     {
         $this->value = $value;
 
         return $this;
     }
 
-    /**
-     * @return TValue
-     */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
@@ -102,7 +90,7 @@ trait NodeTrait
         $this->parent = $parent;
     }
 
-    public function getParent(): ?NodeInterface
+    public function getParent(): ?static
     {
         return $this->parent;
     }
@@ -165,7 +153,7 @@ trait NodeTrait
         return [] === $this->children;
     }
 
-    public function root(): NodeInterface
+    public function root(): static
     {
         $node = $this;
 

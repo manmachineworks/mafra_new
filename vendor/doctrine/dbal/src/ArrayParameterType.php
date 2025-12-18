@@ -27,9 +27,9 @@ final class ArrayParameterType
     /**
      * @internal
      *
-     * @phpstan-param self::* $type
+     * @psalm-param self::* $type
      *
-     * @phpstan-return ParameterType::INTEGER|ParameterType::STRING|ParameterType::ASCII|ParameterType::BINARY
+     * @psalm-return ParameterType::INTEGER|ParameterType::STRING|ParameterType::ASCII|ParameterType::BINARY
      */
     public static function toElementParameterType(int $type): int
     {

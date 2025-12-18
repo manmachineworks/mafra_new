@@ -32,7 +32,6 @@ class Thanks implements EventSubscriberInterface, PluginInterface
     public function activate(Composer $composer, IOInterface $io): void
     {
         $this->io = $io;
-        $addCommand = 'add'.(method_exists(Application::class, 'addCommand') ? 'Command' : '');
 
         foreach (debug_backtrace() as $trace) {
             if (!isset($trace['object']) || !isset($trace['args'][0])) {
@@ -56,10 +55,10 @@ class Thanks implements EventSubscriberInterface, PluginInterface
                 $this->displayReminder = 1;
             }
 
-            $app->$addCommand(new Command\ThanksCommand());
+            $app->add(new Command\ThanksCommand());
 
             if (!$app->has('fund')) {
-                $app->$addCommand(new Command\FundCommand());
+                $app->add(new Command\FundCommand());
             }
 
             break;

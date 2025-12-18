@@ -6,10 +6,14 @@ namespace Doctrine\DBAL\Driver\IBMDB2\Exception;
 
 use Doctrine\DBAL\Driver\AbstractException;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @psalm-immutable
+ */
 final class CannotCreateTemporaryFile extends AbstractException
 {
-    /** @param array{message: string}|null $error */
+    /** @psalm-param array{message: string}|null $error */
     public static function new(?array $error): self
     {
         $message = 'Could not create temporary file';

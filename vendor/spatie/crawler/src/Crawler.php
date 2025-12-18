@@ -294,7 +294,7 @@ class Crawler
         return $this->rejectNofollowLinks;
     }
 
-    public function getRobotsTxt(): ?RobotsTxt
+    public function getRobotsTxt(): RobotsTxt
     {
         return $this->robotsTxt;
     }
@@ -478,11 +478,11 @@ class Crawler
 
         $crawlUrl = CrawlUrl::create($this->baseUrl);
 
-        if ($this->respectRobots) {
-            $this->robotsTxt = $this->createRobotsTxt($crawlUrl->url);
-        }
+        $this->robotsTxt = $this->createRobotsTxt($crawlUrl->url);
 
-        if ($this->shouldAddToCrawlQueue($crawlUrl)) {
+        if ($this->robotsTxt->allows((string) $crawlUrl->url, $this->getUserAgent()) ||
+            ! $this->respectRobots
+        ) {
             $this->addToCrawlQueue($crawlUrl);
         }
 
@@ -527,23 +527,6 @@ class Crawler
         return $returnNode;
     }
 
-    protected function shouldAddToCrawlQueue($crawlUrl): bool
-    {
-        if (! $this->respectRobots) {
-            return true;
-        }
-
-        if ($this->robotsTxt === null) {
-            return false;
-        }
-
-        if ($this->robotsTxt->allows((string) $crawlUrl->url, $this->getUserAgent())) {
-            return true;
-        }
-
-        return false;
-    }
-
     protected function startCrawlingQueue(): void
     {
         while (
@@ -566,15 +549,7 @@ class Crawler
 
     protected function createRobotsTxt(UriInterface $uri): RobotsTxt
     {
-        try {
-            $robotsUrl = (string) $uri->withPath('/robots.txt');
-            $response = $this->client->get($robotsUrl);
-            $content = (string) $response->getBody();
-
-            return new RobotsTxt($content);
-        } catch (\Exception $exception) {
-            return new RobotsTxt('');
-        }
+        return RobotsTxt::create($uri->withPath('/robots.txt'));
     }
 
     protected function getCrawlRequests(): Generator

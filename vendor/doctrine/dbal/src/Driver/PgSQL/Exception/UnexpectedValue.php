@@ -9,6 +9,7 @@ use UnexpectedValueException;
 
 use function sprintf;
 
+/** @psalm-immutable */
 final class UnexpectedValue extends UnexpectedValueException implements Exception
 {
     public static function new(string $value, string $type): self

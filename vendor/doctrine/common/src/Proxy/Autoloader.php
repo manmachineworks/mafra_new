@@ -21,7 +21,6 @@ use const DIRECTORY_SEPARATOR;
  * Special Autoloader for Proxy classes, which are not PSR-0 compliant.
  *
  * @internal
- * @deprecated The Autoloader class is deprecated since doctrine/common 3.5.
  */
 class Autoloader
 {

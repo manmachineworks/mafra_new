@@ -94,17 +94,13 @@ class RouteCollector extends DataCollector implements Renderable
 
             if ($link = $this->getXdebugLink($reflector->getFileName(), $reflector->getStartLine())) {
                 $result['file'] = sprintf(
-                    '<a href="%s" onclick="%s" class="phpdebugbar-widgets-editor-link">%s:%s-%s</a>',
+                    '<a href="%s" onclick="%s">%s:%s-%s</a>',
                     $link['url'],
                     $link['ajax'] ? 'event.preventDefault();$.ajax(this.href);' : '',
                     $filename,
                     $reflector->getStartLine(),
                     $reflector->getEndLine()
                 );
-
-                if (isset($result['controller'])) {
-                    $result['controller'] .= '<a href="'.$link['url'].'" class="phpdebugbar-widgets-editor-link"></a>';
-                }
             } else {
                 $result['file'] = sprintf('%s:%s-%s', $filename, $reflector->getStartLine(), $reflector->getEndLine());
             }
@@ -114,7 +110,9 @@ class RouteCollector extends DataCollector implements Renderable
             $result['middleware'] = $middleware;
         }
 
-        return array_filter($result);
+
+
+        return $result;
     }
 
     /**
@@ -151,6 +149,14 @@ class RouteCollector extends DataCollector implements Renderable
                 "default" => "{}"
             ]
         ];
+        if (Config::get('debugbar.options.route.label', true)) {
+            $widgets['currentroute'] = [
+                "icon" => "share",
+                "tooltip" => "Route",
+                "map" => "route.uri",
+                "default" => ""
+            ];
+        }
         return $widgets;
     }
 

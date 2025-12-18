@@ -12,7 +12,7 @@ class CrawlUrl
 
     public ?string $linkText = null;
 
-    protected mixed $id = null;
+    protected mixed $id;
 
     public static function create(
         UriInterface $url,
@@ -36,8 +36,6 @@ class CrawlUrl
         $this->foundOnUrl = $foundOnUrl;
 
         $this->linkText = $linkText;
-
-        $this->id = null;
     }
 
     public function getId(): mixed

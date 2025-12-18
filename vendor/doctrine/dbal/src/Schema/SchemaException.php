@@ -19,6 +19,7 @@ use Doctrine\DBAL\Schema\Exception\UniqueConstraintDoesNotExist;
 
 use function sprintf;
 
+/** @psalm-immutable */
 class SchemaException extends Exception
 {
     /** @deprecated Use {@see TableDoesNotExist} instead. */

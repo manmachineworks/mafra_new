@@ -6,8 +6,6 @@ use ReflectionProperty;
 
 /**
  * Definition structure how to create a proxy.
- *
- * @deprecated The ProxyDefinition class is deprecated since doctrine/common 3.5.
  */
 class ProxyDefinition
 {

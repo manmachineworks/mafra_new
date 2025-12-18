@@ -9,7 +9,11 @@ use Doctrine\DBAL\Driver\AbstractException;
 use function assert;
 use function oci_error;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @psalm-immutable
+ */
 final class ConnectionFailed extends AbstractException
 {
     public static function new(): self

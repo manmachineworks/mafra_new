@@ -9,7 +9,7 @@ use function strtoupper;
 /**
  * Abstract interface for a SQL reserved keyword dictionary.
  *
- * @phpstan-consistent-constructor
+ * @psalm-consistent-constructor
  */
 abstract class KeywordList
 {

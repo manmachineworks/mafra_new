@@ -116,17 +116,7 @@ class PhpDocParser
 
 			$tokens->forwardToTheEnd();
 
-			$comments = $tokens->flushComments();
-			if ($comments !== []) {
-				throw new LogicException('Comments should already be flushed');
-			}
-
 			return $this->enrichWithAttributes($tokens, new Ast\PhpDoc\PhpDocNode([$this->enrichWithAttributes($tokens, $tag, $startLine, $startIndex)]), 1, 0);
-		}
-
-		$comments = $tokens->flushComments();
-		if ($comments !== []) {
-			throw new LogicException('Comments should already be flushed');
 		}
 
 		return $this->enrichWithAttributes($tokens, new Ast\PhpDoc\PhpDocNode($children), 1, 0);
@@ -401,11 +391,6 @@ class PhpDocParser
 				case '@psalm-require-implements':
 				case '@phpstan-require-implements':
 					$tagValue = $this->parseRequireImplementsTagValue($tokens);
-					break;
-
-				case '@psalm-inheritors':
-				case '@phpstan-sealed':
-					$tagValue = $this->parseSealedTagValue($tokens);
 					break;
 
 				case '@deprecated':
@@ -936,13 +921,6 @@ class PhpDocParser
 		$type = $this->typeParser->parse($tokens);
 		$description = $this->parseOptionalDescription($tokens, true);
 		return new Ast\PhpDoc\RequireImplementsTagValueNode($type, $description);
-	}
-
-	private function parseSealedTagValue(TokenIterator $tokens): Ast\PhpDoc\SealedTagValueNode
-	{
-		$type = $this->typeParser->parse($tokens);
-		$description = $this->parseOptionalDescription($tokens, true);
-		return new Ast\PhpDoc\SealedTagValueNode($type, $description);
 	}
 
 	private function parseDeprecatedTagValue(TokenIterator $tokens): Ast\PhpDoc\DeprecatedTagValueNode

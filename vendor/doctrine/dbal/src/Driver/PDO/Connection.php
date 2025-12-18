@@ -82,7 +82,7 @@ final class Connection implements ServerInfoAwareConnection
      *
      * @throws UnknownParameterType
      *
-     * @phpstan-assert ParameterType::* $type
+     * @psalm-assert ParameterType::* $type
      */
     public function quote($value, $type = ParameterType::STRING)
     {

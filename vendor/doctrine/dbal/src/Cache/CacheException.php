@@ -4,6 +4,7 @@ namespace Doctrine\DBAL\Cache;
 
 use Doctrine\DBAL\Exception;
 
+/** @psalm-immutable */
 class CacheException extends Exception
 {
     /** @return CacheException */

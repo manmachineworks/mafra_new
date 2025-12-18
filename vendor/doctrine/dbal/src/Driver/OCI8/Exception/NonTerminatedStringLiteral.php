@@ -8,7 +8,11 @@ use Doctrine\DBAL\Driver\AbstractException;
 
 use function sprintf;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @psalm-immutable
+ */
 final class NonTerminatedStringLiteral extends AbstractException
 {
     public static function new(int $offset): self

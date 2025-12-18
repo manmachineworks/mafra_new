@@ -23,7 +23,7 @@ use phpDocumentor\Reflection\Type;
  *
  * @psalm-immutable
  */
-class ArrayKey extends AggregatedType implements PseudoType
+final class ArrayKey extends AggregatedType implements PseudoType
 {
     public function __construct()
     {

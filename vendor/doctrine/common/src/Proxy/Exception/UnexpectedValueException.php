@@ -10,7 +10,7 @@ use function sprintf;
 /**
  * Proxy Unexpected Value Exception.
  *
- * @deprecated The UnexpectedValueException class is deprecated since doctrine/common 3.5.
+ * @link   www.doctrine-project.org
  */
 class UnexpectedValueException extends BaseUnexpectedValueException implements ProxyException
 {

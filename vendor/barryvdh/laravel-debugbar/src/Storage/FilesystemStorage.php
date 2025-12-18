@@ -81,12 +81,7 @@ class FilesystemStorage implements StorageInterface
      */
     public function get($id)
     {
-        $fileName = $this->makeFilename($id);
-        if (!$this->files->exists($fileName)) {
-            return [];
-        }
-
-        return json_decode($this->files->get($fileName), true);
+        return json_decode($this->files->get($this->makeFilename($id)), true);
     }
 
     /**

@@ -196,14 +196,14 @@ class QueryCollector extends PDOCollector
             'time' => $time,
             'memory' => $this->lastMemoryUsage ? memory_get_usage(false) - $this->lastMemoryUsage : 0,
             'source' => $source,
-            'connection' => $query->connection,
+            'connection' => $query->connection->getName(),
             'driver' => $query->connection->getConfig('driver'),
             'hints' => ($this->showHints && !$limited) ? $hints : null,
             'show_copy' => $this->showCopyButton,
         ];
 
         if ($this->timeCollector !== null) {
-            $this->timeCollector->addMeasure(Str::limit($sql, 100), $startTime, $endTime, [], 'db', 'Database Query');
+            $this->timeCollector->addMeasure(Str::limit($sql, 100), $startTime, $endTime, [], 'db');
         }
     }
 
@@ -378,7 +378,7 @@ class QueryCollector extends PDOCollector
         $filename = pathinfo($file, PATHINFO_FILENAME);
 
         foreach ($this->middleware as $alias => $class) {
-            if (!is_null($class) && !is_null($filename) && strpos($class, $filename) !== false) {
+            if (strpos($class, $filename) !== false) {
                 return $alias;
             }
         }
@@ -399,6 +399,7 @@ class QueryCollector extends PDOCollector
         } else {
             $reflection = new \ReflectionClass($finder);
             $property = $reflection->getProperty('views');
+            $property->setAccessible(true);
             $this->reflection['viewfinderViews'] = $property;
         }
 
@@ -458,7 +459,7 @@ class QueryCollector extends PDOCollector
             'time' => 0,
             'memory' => 0,
             'source' => $source,
-            'connection' => $connection,
+            'connection' => $connection->getName(),
             'driver' => $connection->getConfig('driver'),
             'hints' => null,
             'show_copy' => false,
@@ -495,7 +496,7 @@ class QueryCollector extends PDOCollector
             $totalTime += $query['time'];
             $totalMemory += $query['memory'];
 
-            $connectionName = $query['connection']->getDatabaseName();
+            $connectionName = DB::connection($query['connection'])->getDatabaseName();
             if (str_ends_with($connectionName, '.sqlite')) {
                 $connectionName = $this->normalizeFilePath($connectionName);
             }
@@ -516,7 +517,6 @@ class QueryCollector extends PDOCollector
                 'start' => $query['start'] ?? null,
                 'duration' => $query['time'],
                 'duration_str' => ($query['type'] == 'transaction') ? '' : $this->formatDuration($query['time']),
-                'slow' => $this->slowThreshold && $this->slowThreshold <= $query['time'],
                 'memory' => $query['memory'],
                 'memory_str' => $query['memory'] ? $this->getDataFormatter()->formatBytes($query['memory']) : null,
                 'filename' => $this->getDataFormatter()->formatSource($source, true),
@@ -526,9 +526,9 @@ class QueryCollector extends PDOCollector
                 'explain' => $this->explainQuery && $canExplainQuery ? [
                     'url' => route('debugbar.queries.explain'),
                     'driver' => $query['driver'],
-                    'connection' => $query['connection']->getName(),
+                    'connection' => $query['connection'],
                     'query' => $query['query'],
-                    'hash' => (new Explain())->hash($query['connection']->getName(), $query['query'], $query['bindings']),
+                    'hash' => (new Explain())->hash($query['connection'], $query['query'], $query['bindings']),
                 ] : null,
             ];
         }
@@ -577,16 +577,14 @@ class QueryCollector extends PDOCollector
             $this->infoStatements+= 2;
         } elseif ($this->softLimit && $this->queryCount > $this->softLimit) {
             array_unshift($statements, [
-                'sql' => '# Query soft limit for Debugbar is reached after ' . $this->softLimit . ' queries, additional ' . ($this->queryCount - $this->softLimit) . ' queries only show the query. Limits can be raised in the config (debugbar.options.db.soft_limit)',
+                'sql' => '# Query soft limit for Debugbar is reached after ' . $this->softLimit . ' queries, additional ' . ($this->queryCount - $this->softLimit) . ' queries only show the query. Limit can be raised in the config. Limits can be raised in the config (debugbar.options.db.soft_limit)',
                 'type' => 'info',
             ]);
             $this->infoStatements++;
         }
 
         $visibleStatements = count($statements) - $this->infoStatements;
-
         $data = [
-            'count' => $visibleStatements,
             'nb_statements' => $this->queryCount,
             'nb_visible_statements' => $visibleStatements,
             'nb_excluded_statements' => $this->queryCount + $this->transactionEventsCount - $visibleStatements,
@@ -630,9 +628,9 @@ class QueryCollector extends PDOCollector
     private function getSqlQueryToDisplay(array $query): string
     {
         $sql = $query['query'];
-        if ($query['type'] === 'query' && $this->renderSqlWithParams && $query['connection']->getQueryGrammar() instanceof \Illuminate\Database\Query\Grammars\Grammar && method_exists($query['connection']->getQueryGrammar(), 'substituteBindingsIntoRawSql')) {
+        if ($query['type'] === 'query' && $this->renderSqlWithParams && method_exists(DB::connection($query['connection'])->getQueryGrammar(), 'substituteBindingsIntoRawSql')) {
             try {
-                $sql = $query['connection']->getQueryGrammar()->substituteBindingsIntoRawSql($sql, $query['bindings'] ?? []);
+                $sql = DB::connection($query['connection'])->getQueryGrammar()->substituteBindingsIntoRawSql($sql, $query['bindings'] ?? []);
                 return $this->getDataFormatter()->formatSql($sql);
             } catch (\Throwable $e) {
                 // Continue using the old substitute

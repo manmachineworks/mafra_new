@@ -6,7 +6,11 @@ use Doctrine\DBAL\Exception;
 
 use function sprintf;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @psalm-immutable
+ */
 final class NoKeyValue extends Exception
 {
     public static function fromColumnCount(int $columnCount): self

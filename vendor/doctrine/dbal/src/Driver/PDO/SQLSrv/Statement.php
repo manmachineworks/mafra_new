@@ -36,7 +36,7 @@ final class Statement extends AbstractStatementMiddleware
      *
      * @throws UnknownParameterType
      *
-     * @phpstan-assert ParameterType::* $type
+     * @psalm-assert ParameterType::* $type
      */
     public function bindParam(
         $param,
@@ -91,7 +91,7 @@ final class Statement extends AbstractStatementMiddleware
      *
      * {@inheritDoc}
      *
-     * @phpstan-assert ParameterType::* $type
+     * @psalm-assert ParameterType::* $type
      */
     public function bindValue($param, $value, $type = ParameterType::STRING): bool
     {

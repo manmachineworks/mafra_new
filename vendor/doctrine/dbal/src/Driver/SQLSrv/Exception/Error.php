@@ -11,7 +11,11 @@ use function sqlsrv_errors;
 
 use const SQLSRV_ERR_ERRORS;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @psalm-immutable
+ */
 final class Error extends AbstractException
 {
     public static function new(): self

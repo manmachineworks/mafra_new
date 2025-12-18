@@ -45,7 +45,7 @@ final class Statement implements StatementInterface
      *
      * {@inheritDoc}
      *
-     * @phpstan-assert ParameterType::* $type
+     * @psalm-assert ParameterType::* $type
      */
     public function bindValue($param, $value, $type = ParameterType::STRING): bool
     {
@@ -66,7 +66,7 @@ final class Statement implements StatementInterface
      *
      * {@inheritDoc}
      *
-     * @phpstan-assert ParameterType::* $type
+     * @psalm-assert ParameterType::* $type
      */
     public function bindParam($param, &$variable, $type = ParameterType::STRING, $length = null): bool
     {
@@ -121,9 +121,9 @@ final class Statement implements StatementInterface
     }
 
     /**
-     * @phpstan-return value-of<self::PARAM_TYPE_MAP>
+     * @psalm-return value-of<self::PARAM_TYPE_MAP>
      *
-     * @phpstan-assert ParameterType::* $type
+     * @psalm-assert ParameterType::* $type
      */
     private function convertParamType(int $type): int
     {

@@ -54,15 +54,16 @@ class ParamTag extends ReturnTag
         for($pos = 0, $stacks = []; $pos < strlen($rest); $pos++) {
             $char = $rest[$pos];
 
-            if(in_array($char, ['<', '(', '[', '{'])) {
+            if($char === '<') {
                 array_unshift($stacks, $char);
             }
-            if(
-                ($char === '>' && isset($stacks[0]) && $stacks[0] === '<')
-                || ($char === ')' && isset($stacks[0]) && $stacks[0] === '(')
-                || ($char === ']' && isset($stacks[0]) && $stacks[0] === '[')
-                || ($char === '}' && isset($stacks[0]) && $stacks[0] === '{')
-            ) {
+            if($char === '(') {
+                array_unshift($stacks, $char);
+            }
+            if($char === '>' && isset($stacks[0]) && $stacks[0] === '<') {
+                array_shift($stacks);
+            }
+            if($char === ')' && isset($stacks[0]) && $stacks[0] === '(') {
                 array_shift($stacks);
             }
 

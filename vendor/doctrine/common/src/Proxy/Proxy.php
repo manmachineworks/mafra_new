@@ -8,8 +8,6 @@ use Doctrine\Persistence\Proxy as BaseProxy;
 /**
  * Interface for proxy classes.
  *
- * @deprecated The Proxy interface is deprecated since doctrine/common 3.5.
- *
  * @template T of object
  * @template-extends BaseProxy<T>
  */

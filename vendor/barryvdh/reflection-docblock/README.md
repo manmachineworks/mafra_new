@@ -1,8 +1,5 @@
-The ReflectionDocBlock Component 
+The ReflectionDocBlock Component [![Build Status](https://secure.travis-ci.org/phpDocumentor/ReflectionDocBlock.png)](https://travis-ci.org/phpDocumentor/ReflectionDocBlock)
 ================================
-
-> This is a fork of [phpDocumentor/ReflectionDocBlock 2.x](https://github.com/phpDocumentor/ReflectionDocBlock/tree/release/2.x) combined with bits of [phpDocumentor/TypeResolver](https://github.com/phpDocumentor/TypeResolver) and various tweaks. The main reason for this fork is to add functionality for https://github.com/barryvdh/laravel-ide-helper
-> Any other use of this library is discouraged. You are probably better of using https://github.com/phpDocumentor/ReflectionDocBlock directly.
 
 Introduction
 ------------

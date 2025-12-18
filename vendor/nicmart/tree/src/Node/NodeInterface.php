@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2013-2025 Nicolò Martini
+ * Copyright (c) 2013-2024 Nicolò Martini
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -17,27 +17,23 @@ use Tree\Visitor\Visitor;
  * Interface for tree nodes.
  *
  * @author Nicolò Martini <nicmartnic@gmail.com>
- *
- * @template TValue
  */
 interface NodeInterface
 {
     /**
      * Set the value of the current node.
-     *
-     * @param TValue $value
      */
-    public function setValue($value): static;
+    public function setValue(mixed $value): static;
 
     /**
      * Get the current node value.
-     *
-     * @return TValue
      */
-    public function getValue();
+    public function getValue(): mixed;
 
     /**
      * Add a child.
+     *
+     * @return mixed
      */
     public function addChild(self $child): static;
 
@@ -62,6 +58,8 @@ interface NodeInterface
      * Replace the children set with the given one.
      *
      * @param array<int, NodeInterface> $children
+     *
+     * @return mixed
      */
     public function setChildren(array $children): static;
 
@@ -73,7 +71,7 @@ interface NodeInterface
     /**
      * Return the parent node.
      */
-    public function getParent(): ?self;
+    public function getParent(): ?static;
 
     /**
      * Retrieves all ancestors of node excluding current node.
@@ -117,7 +115,7 @@ interface NodeInterface
     /**
      * Find the root of the node.
      */
-    public function root(): self;
+    public function root(): static;
 
     /**
      * Return the distance from the current node to the root.

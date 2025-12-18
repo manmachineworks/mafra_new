@@ -8,7 +8,11 @@ use Doctrine\DBAL\Driver\AbstractException;
 
 use function preg_match;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @psalm-immutable
+ */
 final class Factory
 {
     /**

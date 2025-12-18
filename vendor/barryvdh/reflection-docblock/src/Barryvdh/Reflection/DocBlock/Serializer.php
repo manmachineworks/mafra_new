@@ -207,7 +207,7 @@ class Serializer
         }
         $text = str_replace("\n", "\n{$indent} * ", $text);
 
-        $comment = !empty($text)? "{$firstIndent}/**\n{$indent} * {$text}\n{$indent} *\n" : "{$firstIndent}/**\n";
+        $comment = "{$firstIndent}/**\n{$indent} * {$text}\n{$indent} *\n";
 
         $tags = array_values($docblock->getTags());
 

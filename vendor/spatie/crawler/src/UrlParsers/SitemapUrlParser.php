@@ -74,14 +74,8 @@ class SitemapUrlParser implements UrlParser
 
     protected function shouldCrawl(Node $node): bool
     {
-        $mustRespectRobots = $this->crawler->mustRespectRobots();
-        $robotsTxt = $this->crawler->getRobotsTxt();
-
-        if ($mustRespectRobots && $robotsTxt !== null) {
-            $isAllowed = $robotsTxt->allows($node->getValue(), $this->crawler->getUserAgent());
-            if (! $isAllowed) {
-                return false;
-            }
+        if ($this->crawler->mustRespectRobots() && ! $this->crawler->getRobotsTxt()->allows($node->getValue(), $this->crawler->getUserAgent())) {
+            return false;
         }
 
         $maximumDepth = $this->crawler->getMaximumDepth();

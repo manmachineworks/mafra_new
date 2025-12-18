@@ -3,13 +3,12 @@
 @php
     $rtl = get_session_language()->rtl;
 @endphp
-
 @if ($rtl == 1)
     <html dir="rtl" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 @else
     <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-@endif -->
-  <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@endif  -->
+ <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -123,9 +122,9 @@
             --soft-white: #b5b5bf;
             --dark: #292933;
             --soft-dark: #1b1b28;
-            --primary: {{ get_setting('base_color', '#c70a04') }};
+            --primary: {{ get_setting('base_color', '#C70A04') }};
             --hov-primary: {{ get_setting('base_hov_color', '#9d1b1a') }};
-            --soft-primary: {{ hex2rgba(get_setting('base_color', '#c70a04'), 0.15) }};
+            --soft-primary: {{ hex2rgba(get_setting('base_color', '#C70A04'), 0.15) }};
         }
         body{
             font-family: {!! !empty(get_setting('system_font_family')) ? get_setting('system_font_family') : "'Public Sans', sans-serif" !!}, sans-serif;
@@ -241,11 +240,15 @@
         @include('frontend.inc.floating_buttons')
     @endif
 
-    <!-- <div class="aiz-refresh">
+    <div class="aiz-refresh">
         <div class="aiz-refresh-content"><div></div><div></div><div></div></div>
-    </div> -->
+    </div>
 
 
+    @if (env("DEMO_MODE") == "On")
+        <!-- demo nav -->
+        @include('frontend.inc.demo_nav')
+    @endif
 
     <!-- cookies agreement -->
     @php
@@ -268,7 +271,7 @@
                     </div>
                 </div>
             @elseif($custom_alert->id == 200)
-                @if(addon_is_activated('club_point') && get_setting('set_point_for_product_review') != 0 )
+                <!-- @if(addon_is_activated('club_point') && get_setting('set_point_for_product_review') != 0 )
                     <div class="aiz-cookie-alert mb-3 club-point-alert" style="box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.24);">
                         <div class="p-3 px-lg-2rem rounded-0" style="background: {{ $custom_alert->background_color }};">
                             <div class="text-{{ $custom_alert->text_color }} mb-3 custom-alert-for-product-club-point">
@@ -282,7 +285,7 @@
                             </button>
                         </div>
                     </div>
-                @endif                  
+                @endif                   -->
             @else
                 <div class="mb-3 custom-alert-box removable-session d-none" data-key="custom-alert-box-{{ $custom_alert->id }}" data-value="removed" style="box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.24);">
                     <div class="rounded-0 position-relative" style="background: {{ $custom_alert->background_color }};">
@@ -1010,14 +1013,14 @@
             });
         }
     </script>
-<!-- 
+
     <script>
         function showFloatingButtons() {
             document.querySelector('.floating-buttons-section').classList.toggle('show');;
         }
-    </script> -->
-
-    <!-- @if (env("DEMO_MODE") == "On")
+    </script>
+<!-- 
+    @if (env("DEMO_MODE") == "On")
         <script>
             var demoNav = document.querySelector('.aiz-demo-nav');
             var menuBtn = document.querySelector('.aiz-demo-nav-toggler');

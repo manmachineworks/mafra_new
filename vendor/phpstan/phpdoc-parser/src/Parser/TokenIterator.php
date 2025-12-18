@@ -3,7 +3,6 @@
 namespace PHPStan\PhpDocParser\Parser;
 
 use LogicException;
-use PHPStan\PhpDocParser\Ast\Comment;
 use PHPStan\PhpDocParser\Lexer\Lexer;
 use function array_pop;
 use function assert;
@@ -20,10 +19,7 @@ class TokenIterator
 
 	private int $index;
 
-	/** @var list<Comment> */
-	private array $comments = [];
-
-	/** @var list<array{int, list<Comment>}> */
+	/** @var int[] */
 	private array $savePoints = [];
 
 	/** @var list<int> */
@@ -156,7 +152,8 @@ class TokenIterator
 			}
 		}
 
-		$this->next();
+		$this->index++;
+		$this->skipIrrelevantTokens();
 	}
 
 
@@ -169,7 +166,8 @@ class TokenIterator
 			$this->throwError($tokenType, $tokenValue);
 		}
 
-		$this->next();
+		$this->index++;
+		$this->skipIrrelevantTokens();
 	}
 
 
@@ -180,20 +178,12 @@ class TokenIterator
 			return false;
 		}
 
-		$this->next();
+		$this->index++;
+		$this->skipIrrelevantTokens();
 
 		return true;
 	}
 
-	/**
-	 * @return list<Comment>
-	 */
-	public function flushComments(): array
-	{
-		$res = $this->comments;
-		$this->comments = [];
-		return $res;
-	}
 
 	/** @phpstan-impure */
 	public function tryConsumeTokenType(int $tokenType): bool
@@ -208,47 +198,10 @@ class TokenIterator
 			}
 		}
 
-		$this->next();
+		$this->index++;
+		$this->skipIrrelevantTokens();
 
 		return true;
-	}
-
-
-	/**
-	 * @deprecated Use skipNewLineTokensAndConsumeComments instead (when parsing a type)
-	 */
-	public function skipNewLineTokens(): void
-	{
-		if (!$this->isCurrentTokenType(Lexer::TOKEN_PHPDOC_EOL)) {
-			return;
-		}
-
-		do {
-			$foundNewLine = $this->tryConsumeTokenType(Lexer::TOKEN_PHPDOC_EOL);
-		} while ($foundNewLine === true);
-	}
-
-
-	public function skipNewLineTokensAndConsumeComments(): void
-	{
-		if ($this->currentTokenType() === Lexer::TOKEN_COMMENT) {
-			$this->comments[] = new Comment($this->currentTokenValue(), $this->currentTokenLine(), $this->currentTokenIndex());
-			$this->next();
-		}
-
-		if (!$this->isCurrentTokenType(Lexer::TOKEN_PHPDOC_EOL)) {
-			return;
-		}
-
-		do {
-			$foundNewLine = $this->tryConsumeTokenType(Lexer::TOKEN_PHPDOC_EOL);
-			if ($this->currentTokenType() !== Lexer::TOKEN_COMMENT) {
-				continue;
-			}
-
-			$this->comments[] = new Comment($this->currentTokenValue(), $this->currentTokenLine(), $this->currentTokenIndex());
-			$this->next();
-		} while ($foundNewLine === true);
 	}
 
 
@@ -327,7 +280,7 @@ class TokenIterator
 
 	public function pushSavePoint(): void
 	{
-		$this->savePoints[] = [$this->index, $this->comments];
+		$this->savePoints[] = $this->index;
 	}
 
 
@@ -339,9 +292,9 @@ class TokenIterator
 
 	public function rollback(): void
 	{
-		$savepoint = array_pop($this->savePoints);
-		assert($savepoint !== null);
-		[$this->index, $this->comments] = $savepoint;
+		$index = array_pop($this->savePoints);
+		assert($index !== null);
+		$this->index = $index;
 	}
 
 

@@ -8,7 +8,11 @@ use Doctrine\DBAL\Driver\AbstractException;
 
 use function sprintf;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @psalm-immutable
+ */
 final class UnknownParameterType extends AbstractException
 {
     /** @param mixed $type */

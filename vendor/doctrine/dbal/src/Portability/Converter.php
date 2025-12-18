@@ -151,7 +151,7 @@ final class Converter
      * @param T $value
      *
      * @return T|string
-     * @phpstan-return (T is string ? string : T)
+     * @psalm-return (T is string ? string : T)
      *
      * @template T
      */
@@ -228,7 +228,7 @@ final class Converter
         return /**
                 * @param T $value
                 *
-                * @phpstan-return (T is false ? false : T)
+                * @psalm-return (T is false ? false : T)
                 *
                 * @template T
                 */

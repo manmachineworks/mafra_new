@@ -19,6 +19,8 @@ use function var_export;
 
 /**
  * Conversion Exception is thrown when the database to PHP conversion fails.
+ *
+ * @psalm-immutable
  */
 class ConversionException extends Exception
 {

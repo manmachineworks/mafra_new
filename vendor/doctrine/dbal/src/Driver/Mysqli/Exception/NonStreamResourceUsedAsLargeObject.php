@@ -8,7 +8,11 @@ use Doctrine\DBAL\Driver\AbstractException;
 
 use function sprintf;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @psalm-immutable
+ */
 final class NonStreamResourceUsedAsLargeObject extends AbstractException
 {
     public static function new(int $parameter): self

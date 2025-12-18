@@ -10,7 +10,11 @@ use function pg_result_error_field;
 use const PGSQL_DIAG_MESSAGE_PRIMARY;
 use const PGSQL_DIAG_SQLSTATE;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @psalm-immutable
+ */
 final class Exception extends AbstractException
 {
     /** @param PgSqlResult|resource $result */

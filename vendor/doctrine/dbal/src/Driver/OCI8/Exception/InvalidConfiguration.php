@@ -6,7 +6,11 @@ namespace Doctrine\DBAL\Driver\OCI8\Exception;
 
 use Doctrine\DBAL\Driver\AbstractException;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @psalm-immutable
+ */
 final class InvalidConfiguration extends AbstractException
 {
     public static function forPersistentAndExclusive(): self
