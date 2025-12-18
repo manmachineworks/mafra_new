@@ -197,5 +197,3 @@
         
     </div>
 </div>
-<p>SDSDS</p>
-<p>SDSDS</p>
