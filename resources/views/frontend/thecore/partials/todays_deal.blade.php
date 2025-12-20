@@ -1,4 +1,4 @@
-
+﻿
 
 @if(count($todays_deal_products) > 0)
 <style>
