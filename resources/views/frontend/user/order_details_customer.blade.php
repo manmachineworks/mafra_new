@@ -11,103 +11,122 @@
     </div>
 
     <!-- Order Summary -->
-    <div class="card rounded-0 shadow-none border mb-4">
-        <div class="card-header border-bottom-0">
-            <h5 class="fs-16 fw-700 text-dark mb-0">{{ translate('Order Summary') }}</h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-
-                <div class="col-lg-6">
-                    <table class="table-borderless table">
-                        <tr>
-                            <td class="w-50 fw-600">{{ translate('Order Code') }}:</td>
-                            <td>{{ $order->code }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-50 fw-600">{{ translate('Customer') }}:</td>
-                            <td>{{ json_decode($order->shipping_address)->name }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-50 fw-600">{{ translate('Email') }}:</td>
-                            @if ($order->user_id != null)
-                                <td>{{ $order->user->email }}</td>
-                            @endif
-                        </tr>
-                        <tr>
-                            <td class="w-50 fw-600">{{ translate('Shipping address') }}:</td>
-                            <td>{{ json_decode($order->shipping_address)->address }},
-                                {{ json_decode($order->shipping_address)->city }},
-                                @if(isset(json_decode($order->shipping_address)->state)) {{ json_decode($order->shipping_address)->state }} - @endif
-                                {{ json_decode($order->shipping_address)->postal_code }},
-                                {{ json_decode($order->shipping_address)->country }}
-                            </td>
-                        </tr>
-                    </table>
+    @php
+        $shippingAddress = json_decode($order->shipping_address ?? '{}');
+        $prepaidDiscount = $order->prepaid_discount_amount ?? 0;
+        $couponDiscount = $order->coupon_discount ?? 0;
+        $totalSavings = $prepaidDiscount + $couponDiscount;
+    @endphp
+    <div class="card rounded-0 shadow-none border mb-4" style="background:#ffffff;">
+        <div class="card-header border-bottom-0 pb-0">
+            <div class="d-flex align-items-start justify-content-between flex-wrap">
+                <div>
+                    <h5 class="fs-18 fw-700 mb-1" style="color:#c70a0a;">{{ translate('Your Order Summary') }}</h5>
+                    <p class="mb-2" style="color:#212121;">{{ translate('Review your purchased items, payment details, and order status') }}</p>
                 </div>
-                <div class="col-lg-6">
-                    <table class="table-borderless table">
-                        <tr>
-                            <td class="w-50 fw-600">{{ translate('Order date') }}:</td>
-                            <td>{{ date('d-m-Y H:i A', $order->date) }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-50 fw-600">{{ translate('Order status') }}:</td>
-                            <td>{{ translate(ucfirst(str_replace('_', ' ', $order->delivery_status))) }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-50 fw-600">{{ translate('Total order amount') }}:</td>
-                            <td>{{ single_price($order->orderDetails->sum('price') + $order->orderDetails->sum('tax')) }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="w-50 fw-600">{{ translate('Shipping method') }}:</td>
-                            <td>{{ translate('Flat shipping rate') }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-50 fw-600">{{ translate('Payment method') }}:</td>
-                            <td>{{ ucfirst(translate(str_replace('_', ' ', $order->payment_type))) }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-main text-bold">{{ translate('Additional Info') }}</td>
-                            <td class="">{{ $order->additional_info }}</td>
-                        </tr>
-                        @if ($order->tracking_code)
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('Tracking code') }}:</td>
-                                <td>{{ $order->tracking_code }}</td>
-                            </tr>
+                <!-- <div class="rounded-0 px-3 py-2 mb-2" style="background:#c70a0a; color:#fff;">
+                    {{ translate(ucfirst(str_replace('_', ' ', $order->delivery_status))) }}
+                </div> -->
+            </div>
+        </div>
+        <div class="card-body pt-3">
+            <div class="row">
+                <div class="col-lg-6 mb-3">
+                    <div class="p-3 h-100" style="border:1px solid #f0f0f0; border-radius:8px;">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="las la-box fs-24 mr-2" style="color:#c70a0a;"></i>
+                            <div>
+                                <div class="fw-700" style="color:#212121;">{{ translate('Order Information') }}</div>
+                                <small class="text-muted">{{ translate('Quick snapshot of your order') }}</small>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-600" style="color:#212121;">{{ translate('Order Code') }}</span>
+                            <span>{{ $order->code }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-600" style="color:#212121;">{{ translate('Order Date') }}</span>
+                            <span>{{ date('d-m-Y H:i A', $order->date) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-600" style="color:#212121;">{{ translate('Payment Method') }}</span>
+                            <span>{{ ucfirst(translate(str_replace('_', ' ', $order->payment_type))) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-600" style="color:#212121;">{{ translate('Payment Status') }}</span>
+                            <span>{{ ucfirst(translate(str_replace('_', ' ', $order->payment_status))) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-600" style="color:#212121;">{{ translate('Shipping Method') }}</span>
+                            <span>{{ translate('Flat shipping rate') }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-600" style="color:#212121;">{{ translate('Delivery Status') }}</span>
+                            <span class="fw-700" style="color:#c70a0a;">{{ translate(ucfirst(str_replace('_', ' ', $order->delivery_status))) }}</span>
+                        </div>
+                        @if ($order->additional_info)
+                            <div class="mt-3" style="color:#212121;">
+                                <div class="fw-600 mb-1">{{ translate('Additional Info') }}</div>
+                                <div class="text-muted">{{ $order->additional_info }}</div>
+                            </div>
                         @endif
-                        @if ($order->shiprocket_awb)
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('Shiprocket AWB') }}:</td>
-                                <td>{{ $order->shiprocket_awb }}</td>
-                            </tr>
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('Shiprocket Order ID') }}:</td>
-                                <td>{{ $order->shiprocket_order_id ?? '-' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('Shiprocket Shipment ID') }}:</td>
-                                <td>{{ $order->shiprocket_shipment_id ?? '-' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('Shiprocket Status') }}:</td>
-                                <td>{{ translate($order->shiprocket_status ?? 'N/A') }}</td>
-                            </tr>
-                            @if ($order->shiprocket_label_url)
-                                <tr>
-                                    <td class="w-50 fw-600">{{ translate('Track/Label') }}:</td>
-                                    <td><a href="{{ $order->shiprocket_label_url }}" target="_blank">{{ translate('View') }}</a></td>
-                                </tr>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-3">
+                    <div class="p-3 h-100" style="border:1px solid #f0f0f0; border-radius:8px;">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="las la-map-marker-alt fs-24 mr-2" style="color:#c70a0a;"></i>
+                            <div>
+                                <div class="fw-700" style="color:#212121;">{{ translate('Delivery Address') }}</div>
+                                <small class="text-muted">{{ translate('Where your order will arrive') }}</small>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="fw-600" style="color:#212121;">{{ $shippingAddress->name ?? '-' }}</div>
+                            @if ($order->user_id != null && $order->user->email)
+                                <div class="text-muted">{{ $order->user->email }}</div>
+                            @endif
+                        </div>
+                        <div class="text-muted" style="line-height:1.6;">
+                            {{ $shippingAddress->address ?? '-' }}, {{ $shippingAddress->city ?? '' }}@if(isset($shippingAddress->state)), {{ $shippingAddress->state }} @endif @if($shippingAddress->postal_code) - {{ $shippingAddress->postal_code }} @endif @if($shippingAddress->country), {{ $shippingAddress->country }} @endif
+                        </div>
+                        @if ($order->tracking_code || $order->shiprocket_awb)
+                            <hr>
+                            @if ($order->tracking_code)
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-600" style="color:#212121;">{{ translate('Tracking Code') }}</span>
+                                    <span>{{ $order->tracking_code }}</span>
+                                </div>
+                            @endif
+                            @if ($order->shiprocket_awb)
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-600" style="color:#212121;">{{ translate('Shiprocket AWB') }}</span>
+                                    <span>{{ $order->shiprocket_awb }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-600" style="color:#212121;">{{ translate('Shiprocket Order ID') }}</span>
+                                    <span>{{ $order->shiprocket_order_id ?? '-' }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-600" style="color:#212121;">{{ translate('Shiprocket Shipment ID') }}</span>
+                                    <span>{{ $order->shiprocket_shipment_id ?? '-' }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-600" style="color:#212121;">{{ translate('Shiprocket Status') }}</span>
+                                    <span>{{ translate($order->shiprocket_status ?? 'N/A') }}</span>
+                                </div>
+                                @if ($order->shiprocket_label_url)
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-600" style="color:#212121;">{{ translate('Track/Label') }}</span>
+                                        <a href="{{ $order->shiprocket_label_url }}" target="_blank" class="text-decoration-underline" style="color:#c70a0a;">{{ translate('View') }}</a>
+                                    </div>
+                                @endif
+                                <button class="btn btn-sm mt-2" id="refresh_shiprocket_status_customer" style="border:1px solid #c70a0a; color:#c70a0a; background:transparent;">
+                                    {{ translate('Refresh Shiprocket Status') }}
+                                </button>
                             @endif
                         @endif
-                    </table>
-                    @if ($order->shiprocket_awb)
-                        <button class="btn btn-outline-primary btn-sm mt-2" id="refresh_shiprocket_status_customer">
-                            {{ translate('Refresh Shiprocket Status') }}
-                        </button>
-                    @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -125,10 +144,11 @@
                         <thead class="text-gray fs-12">
                             <tr>
                                 <th class="pl-0">#</th>
+                                <th class="text-center" data-breakpoints="md">{{ translate('Image') }}</th>
                                 <th width="30%">{{ translate('Product') }}</th>
                                 <th data-breakpoints="md">{{ translate('Variation') }}</th>
                                 <th>{{ translate('Quantity') }}</th>
-                                <th data-breakpoints="md">{{ translate('Delivery Type') }}</th>
+                                <!-- <th data-breakpoints="md">{{ translate('Delivery Type') }}</th> -->
                                 <th>{{ translate('Price') }}</th>
                                 @if (addon_is_activated('refund_request'))
                                     <th data-breakpoints="md">{{ translate('Refund') }}</th>
@@ -140,6 +160,13 @@
                             @foreach ($order->orderDetails as $key => $orderDetail)
                                 <tr>
                                     <td class="pl-0">{{ sprintf('%02d', $key+1) }}</td>
+                                    <td class="text-center">
+                                        @php $thumb = $orderDetail->product->thumbnail_img ?? get_setting('default_product_img'); @endphp
+                                        <a href="{{ $orderDetail->product ? route('product', $orderDetail->product->slug) : '#' }}" target="_blank">
+                                            <img src="{{ uploaded_asset($thumb) }}" alt="{{ $orderDetail->product->getTranslation('name') ?? 'Product' }}"
+                                                 class="img-fit size-60">
+                                        </a>
+                                    </td>
                                     <td>
                                         @if ($orderDetail->product != null && $orderDetail->product->auction_product == 0)
                                             <a href="{{ route('product', $orderDetail->product->slug) }}"
@@ -157,7 +184,7 @@
                                     <td>
                                         {{ $orderDetail->quantity }}
                                     </td>
-                                    <td>
+                                    <!-- <td>
                                         @if ($order->shipping_type != null && $order->shipping_type == 'home_delivery')
                                             {{ translate('Home Delivery') }}
                                         @elseif ($order->shipping_type == 'pickup_point')
@@ -175,7 +202,7 @@
                                                 {{ translate('Carrier') }}
                                             @endif
                                         @endif
-                                    </td>
+                                    </td> -->
                                     <td class="fw-700">{{ single_price($orderDetail->price) }}</td>
                                     @if (addon_is_activated('refund_request'))
                                         @php
@@ -232,47 +259,80 @@
             </div>
         </div>
 
-        <!-- Order Ammount -->
+        <!-- Order Amount (Amazon-style summary) -->
         <div class="col-md-3">
-            <div class="card rounded-0 shadow-none border mt-2">
-                <div class="card-header border-bottom-0">
-                    <b class="fs-16 fw-700 text-dark">{{ translate('Order Ammount') }}</b>
+            <div class="card rounded-0 shadow-none border mt-2" style="background:#ffffff;">
+                <div class="card-header border-bottom-0 pb-2">
+                    <div class="d-flex flex-column">
+                        <span class="fs-16 fw-700" style="color:#c70a0a;">{{ translate('Amount Details') }}</span>
+                        <!-- <small style="color:#212121;">{{ translate('Review your purchased items, payment details, and order status') }}</small> -->
+                    </div>
                 </div>
-                <div class="card-body pb-0">
-                    <table class="table-borderless table">
-                        <tbody>
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('Subtotal') }}</td>
-                                <td class="text-right">
-                                    <span class="strong-600">{{ single_price($order->orderDetails->sum('price')) }}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('Shipping') }}</td>
-                                <td class="text-right">
-                                    <span class="text-italic">{{ single_price($order->orderDetails->sum('shipping_cost')) }}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('Tax') }}</td>
-                                <td class="text-right">
-                                    <span class="text-italic">{{ single_price($order->orderDetails->sum('tax')) }}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('Coupon') }}</td>
-                                <td class="text-right">
-                                    <span class="text-italic">{{ single_price($order->coupon_discount) }}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="w-50 fw-600">{{ translate('Total') }}</td>
-                                <td class="text-right">
-                                    <strong>{{ single_price($order->grand_total) }}</strong>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="card-body pb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-700" style="color:#212121;">{{ translate('Items Summary') }}</span>
+                        <span class=" rounded-0 px-2" style="background:#212121; color:#fff;">{{ $order->orderDetails->sum('quantity') }} {{ translate('items') }}</span>
+                    </div>
+                    <!-- <div class="mb-3" style="border:1px solid #f0f0f0; border-radius:8px;">
+                        @foreach ($order->orderDetails as $detail)
+                            @php
+                                $product = $detail->product;
+                                $thumb = $product->thumbnail_img ?? get_setting('default_product_img');
+                                $productName = $product ? $product->getTranslation('name') : translate('Product Unavailable');
+                            @endphp
+                            <div class="d-flex p-3 align-items-center">
+                                <div class="mr-3" style="width:48px; height:48px;">
+                                    <img src="{{ uploaded_asset($thumb) }}" alt="{{ $productName ?? 'Product' }}" class="img-fit rounded" style="width:48px; height:48px; object-fit:cover;">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-600" style="color:#212121;">{{ $productName }}</div>
+                                    <div class="text-muted">{{ translate('Qty') }}: {{ $detail->quantity }} × {{ single_price($detail->price / max($detail->quantity,1)) }}</div>
+                                </div>
+                                <div class="fw-700" style="color:#212121;">{{ single_price($detail->price) }}</div>
+                            </div>
+                            @if(!$loop->last)
+                                <div style="height:1px; background:#f4f4f4;"></div>
+                            @endif
+                        @endforeach
+                    </div> -->
+                    <div class="mb-2" style="color:#212121; font-weight:700;">{{ translate('Price Breakdown') }}</div>
+                    <div class="d-flex justify-content-between mb-2" style="color:#212121;">
+                        <span>{{ translate('Subtotal') }}</span>
+                        <span>{{ single_price($order->orderDetails->sum('price')) }}</span>
+                    </div>
+                    @php
+                        $ship_fee = $order->orderDetails->sum('shipping_cost');
+                    @endphp
+                    <div class="d-flex justify-content-between mb-2" style="color:#212121;">
+                        <span>{{ translate('Shipping') }}</span>
+                        <span class="{{ $ship_fee == 0 ? 'text-success' : '' }}">{{ $ship_fee == 0 ? translate('Free') : single_price($ship_fee) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2" style="color:#212121;">
+                        <span>{{ translate('Coupon Discount') }}</span>
+                        <span class="text-success">- {{ single_price($couponDiscount) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2" style="color:#212121;">
+                        <span>{{ translate('Prepaid Discount') }}</span>
+                        <span class="text-success">- {{ single_price($prepaidDiscount) }}</span>
+                    </div>
+                    @if ($order->orderDetails->sum('tax') > 0)
+                        <div class="d-flex justify-content-between mb-2" style="color:#212121;">
+                            <span>{{ translate('Tax') }}</span>
+                            <span>{{ single_price($order->orderDetails->sum('tax')) }}</span>
+                        </div>
+                    @endif
+                    <div style="height:1px; background:#f4f4f4; margin:12px 0;"></div>
+                    <div class="d-flex justify-content-between align-items-center mb-2" style="color:#212121;">
+                        <span class="fw-700">{{ translate('Total') }}</span>
+                        <span class="fw-800" style="color:#c70a0a; font-size:18px;">{{ single_price($order->grand_total) }}</span>
+                    </div>
+                    <!-- <div class="mb-3" style="color:#16a34a; font-weight:700;">
+                        {{ translate('You saved') }} {{ single_price($totalSavings) }} {{ translate('on this order') }} 🎉
+                    </div>
+                    <div class="mb-3" style="color:#6c757d; font-size:12px;">
+                        <div>{{ translate('All prices include applicable taxes') }}</div>
+                        <div>{{ translate('Invoice will be available after delivery') }}</div>
+                    </div> -->
                 </div>
             </div>
             @if ($order->payment_status == 'unpaid' && $order->delivery_status == 'pending' && $order->manual_payment == 0)
@@ -282,7 +342,7 @@
                     @else
                         onclick="online_payment({{ $order->id }})"
                     @endif
-                    class="btn btn-block btn-primary">
+                    class="btn btn-block mt-2" style="background:#c70a0a; color:#fff;">
                     {{ translate('Make Payment') }}
                 </button>
             @endif

@@ -79,7 +79,7 @@
                                     </tr>
                                     <tr>
                                         <td class="w-50 fw-600">{{ translate('Total order amount')}}:</td>
-                                        <td>{{ single_price($order->orderDetails->sum('price') + $order->orderDetails->sum('tax')) }}</td>
+                                        <!-- <td>{{ single_price($order->orderDetails->sum('price') + $order->orderDetails->sum('tax')) }}</td> -->
                                     </tr>
                                     <tr>
                                         <td class="w-50 fw-600">{{ translate('Shipping method')}}:</td>

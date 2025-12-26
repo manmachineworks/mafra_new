@@ -16,6 +16,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Utility\EmailUtility;
 use App\Utility\NotificationUtility;
+use App\Services\PrepaidDiscountService;
 use Session;
 use Auth;
 use Hash;
@@ -125,6 +126,65 @@ class CheckoutController extends Controller
         }
         flash(translate('Please Select cart items to Proceed'))->error();
         return back();
+    }
+
+    public function recalculate(Request $request, PrepaidDiscountService $prepaidDiscountService)
+    {
+        $request->validate([
+            'payment_type' => ['required', 'string'],
+        ]);
+
+        $carts = Auth::check()
+            ? Cart::where('user_id', Auth::id())->active()->get()
+            : Cart::where('temp_user_id', $request->session()->get('temp_user_id'))->active()->get();
+
+        if ($carts->isEmpty()) {
+            return response()->json(['message' => translate('Your cart is empty')], 422);
+        }
+
+        $totals = $this->calculateCartTotals($carts);
+        $result = $prepaidDiscountService->applyToTotals(
+            $totals['subtotal'],
+            $totals['shipping'],
+            $totals['tax'],
+            $request->payment_type
+        );
+
+        return response()->json([
+            'subtotal' => $totals['subtotal'],
+            'shipping' => $totals['shipping'],
+            'tax' => $totals['tax'],
+            'discount_label' => $result['discount_amount'] > 0 ? 'Prepaid Discount ('.$result['discount_percent'].'%)' : null,
+            'discount_amount' => $result['discount_amount'],
+            'grand_total' => $result['grand_total'],
+            'formatted' => [
+                'subtotal' => single_price($totals['subtotal']),
+                'shipping' => single_price($totals['shipping']),
+                'tax' => single_price($totals['tax']),
+                'discount' => single_price($result['discount_amount']),
+                'grand_total' => single_price($result['grand_total']),
+            ],
+        ]);
+    }
+
+    private function calculateCartTotals($carts): array
+    {
+        $subtotal = 0;
+        $tax = 0;
+        $shipping = 0;
+
+        foreach ($carts as $cartItem) {
+            $product = Product::find($cartItem['product_id']);
+            $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+            $tax += cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
+            $shipping += $cartItem['shipping_cost'] ?? 0;
+        }
+
+        return [
+            'subtotal' => $subtotal,
+            'tax' => $tax,
+            'shipping' => $shipping,
+        ];
     }
 
     //check the selected payment gateway and redirect to that controller accordingly

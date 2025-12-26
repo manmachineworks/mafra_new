@@ -332,8 +332,9 @@ if (!function_exists('cart_product_price')) {
     {
         if ($product->auction_product == 0) {
             $str = '';
-            if ($cart_product['variation'] != null) {
-                $str = $cart_product['variation'];
+            $variation = is_array($cart_product) ? ($cart_product['variation'] ?? null) : (is_object($cart_product) ? ($cart_product->variation ?? null) : null);
+            if (!empty($variation)) {
+                $str = $variation;
             }
             $price = 0;
             $product_stock = $product->stocks->where('variant', $str)->first();
@@ -396,8 +397,9 @@ if (!function_exists('cart_product_tax')) {
     function cart_product_tax($cart_product, $product, $formatted = true)
     {
         $str = '';
-        if ($cart_product['variation'] != null) {
-            $str = $cart_product['variation'];
+        $variation = is_array($cart_product) ? ($cart_product['variation'] ?? null) : (is_object($cart_product) ? ($cart_product->variation ?? null) : null);
+        if (!empty($variation)) {
+            $str = $variation;
         }
         $product_stock = $product->stocks->where('variant', $str)->first();
         $price = $product_stock->price;
@@ -444,8 +446,9 @@ if (!function_exists('cart_product_discount')) {
     function cart_product_discount($cart_product, $product, $formatted = false)
     {
         $str = '';
-        if ($cart_product['variation'] != null) {
-            $str = $cart_product['variation'];
+        $variation = is_array($cart_product) ? ($cart_product['variation'] ?? null) : (is_object($cart_product) ? ($cart_product->variation ?? null) : null);
+        if (!empty($variation)) {
+            $str = $variation;
         }
         $product_stock = $product->stocks->where('variant', $str)->first();
         $price = $product_stock->price;
@@ -487,8 +490,9 @@ if (!function_exists('carts_product_discount')) {
         foreach ($cart_products as $key => $cart_product) {
             $str = '';
             $product = \App\Models\Product::find($cart_product['product_id']);
-            if ($cart_product['variation'] != null) {
-                $str = $cart_product['variation'];
+            $variation = is_array($cart_product) ? ($cart_product['variation'] ?? null) : (is_object($cart_product) ? ($cart_product->variation ?? null) : null);
+            if (!empty($variation)) {
+                $str = $variation;
             }
             $product_stock = $product->stocks->where('variant', $str)->first();
             $price = $product_stock->price;

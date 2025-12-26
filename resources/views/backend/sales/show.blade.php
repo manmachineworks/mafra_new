@@ -90,6 +90,9 @@
                         <input type="text" class="form-control" id="update_tracking_code"
                             value="{{ $order->tracking_code }}">
                     </div>
+                    @php
+                        $shiprocketTracking = $order->shiprocket_tracking_payload ? json_decode($order->shiprocket_tracking_payload, true) : null;
+                    @endphp
                     <div class="col-md-3 ml-auto">
                         <label>{{ translate('Shiprocket') }}</label>
                         @if ($order->shiprocket_shipment_id)
@@ -100,12 +103,33 @@
                                             {{ translate($order->shiprocket_status ?? 'created') }}
                                         </span>
                                         @if ($order->shiprocket_awb)
-                                            <span class="text-muted">{{ translate('AWB') }}: {{ $order->shiprocket_awb }}</span>
+                                            <span class="text-muted">
+                                                {{ translate('AWB') }}:
+                                                @if(!empty($shiprocketTracking['track_url']))
+                                                    <a href="{{ $shiprocketTracking['track_url'] }}" target="_blank">{{ $order->shiprocket_awb }}</a>
+                                                @else
+                                                    {{ $order->shiprocket_awb }}
+                                                @endif
+                                            </span>
                                         @endif
                                     </div>
                                     <div class="small text-muted mt-2">
                                         <div>{{ translate('Shiprocket Order ID') }}: {{ $order->shiprocket_order_id ?? '-' }}</div>
                                         <div>{{ translate('Shiprocket Shipment ID') }}: {{ $order->shiprocket_shipment_id ?? '-' }}</div>
+                                        @if ($order->shiprocket_courier_name)
+                                            <div>{{ translate('Courier') }}: {{ $order->shiprocket_courier_name }}</div>
+                                        @endif
+                                        @if (!empty($shiprocketTracking['last_activity']))
+                                            <div class="mt-1">
+                                                <strong>{{ translate('Last Update') }}:</strong>
+                                                <div class="text-dark">
+                                                    {{ $shiprocketTracking['last_activity']['activity'] ?? '' }}
+                                                </div>
+                                                <div class="text-muted">
+                                                    {{ $shiprocketTracking['last_activity']['date'] ?? '' }}
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                     @if ($order->shiprocket_label_url)
                                         <a href="{{ $order->shiprocket_label_url }}" target="_blank" class="d-block small mt-2">
@@ -118,9 +142,21 @@
                                 </div>
                             </div>
                         @else
-                            <button class="btn btn-primary w-100" id="push_to_shiprocket">
-                                {{ translate('Push to Shiprocket') }}
-                            </button>
+                            <div class="card border shadow-none">
+                                <div class="card-body p-3">
+                                    <div class="small text-muted mb-2">
+                                        {{ translate('No Shiprocket shipment yet.') }}
+                                    </div>
+                                    <button class="btn btn-primary w-100" id="push_to_shiprocket" @if($order->payment_status !== 'paid') disabled @endif>
+                                        {{ translate('Push to Shiprocket') }}
+                                    </button>
+                                    @if ($order->payment_status !== 'paid')
+                                        <div class="text-danger small mt-2">
+                                            {{ translate('Order must be marked paid before pushing.') }}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
                         @endif
                     </div>
                 @endif

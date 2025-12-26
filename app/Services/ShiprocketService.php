@@ -29,6 +29,12 @@ class ShiprocketService
                     'message' => 'Order already synced with Shiprocket',
                 ];
             }
+            if ($order->payment_status !== 'paid') {
+                return [
+                    'ok' => false,
+                    'message' => 'Order must be paid before pushing to Shiprocket',
+                ];
+            }
 
             $order->loadMissing('orderDetails.product');
 
@@ -119,6 +125,15 @@ class ShiprocketService
             return ['ok' => false, 'message' => 'AWB not available'];
         }
 
+        // Serve cached payload if recently synced to avoid hammering the API.
+        if ($order->shiprocket_tracking_payload && $order->shiprocket_last_synced_at && $order->shiprocket_last_synced_at->gt(now()->subMinutes(10))) {
+            return [
+                'ok' => true,
+                'message' => 'Using cached tracking data',
+                'response' => json_decode($order->shiprocket_tracking_payload, true),
+            ];
+        }
+
         try {
             $response = $this->client()->get('/courier/track/awb/' . $order->shiprocket_awb);
 
@@ -132,10 +147,29 @@ class ShiprocketService
             }
 
             $data = $response->json();
-            $order->shiprocket_status = $data['tracking_data']['shipment_status'] ?? ($data['tracking_status'] ?? $order->shiprocket_status);
-            if (isset($data['tracking_data']['track_url']) && empty($order->shiprocket_label_url)) {
-                $order->shiprocket_label_url = $data['tracking_data']['track_url'];
+            $trackingData = $data['tracking_data'] ?? $data;
+
+            $order->shiprocket_status = $trackingData['shipment_status'] ?? ($trackingData['tracking_status'] ?? $order->shiprocket_status);
+            $order->shiprocket_courier_name = $trackingData['courier_name'] ?? ($trackingData['assigned_courier_name'] ?? $order->shiprocket_courier_name);
+            $order->shiprocket_awb = $trackingData['awb'] ?? ($trackingData['awb_code'] ?? $order->shiprocket_awb);
+            if (isset($trackingData['track_url']) && empty($order->shiprocket_label_url)) {
+                $order->shiprocket_label_url = $trackingData['track_url'];
             }
+
+            $lastActivity = null;
+            if (!empty($trackingData['shipment_track_activities']) && is_array($trackingData['shipment_track_activities'])) {
+                $lastActivity = $trackingData['shipment_track_activities'][0];
+            }
+
+            $order->shiprocket_tracking_payload = json_encode([
+                'status' => $order->shiprocket_status,
+                'awb' => $order->shiprocket_awb,
+                'courier' => $order->shiprocket_courier_name,
+                'track_url' => $order->shiprocket_label_url ?? ($trackingData['track_url'] ?? null),
+                'eta' => $trackingData['etd'] ?? $trackingData['etd_text'] ?? null,
+                'last_activity' => $lastActivity,
+                'raw' => $trackingData,
+            ]);
             $order->shiprocket_last_synced_at = now();
             $order->save();
 
@@ -170,6 +204,16 @@ class ShiprocketService
         if (!empty($payload['pickup_scheduled_date'])) {
             $order->shiprocket_pickup_scheduled_at = Carbon::parse($payload['pickup_scheduled_date']);
         }
+        $order->shiprocket_tracking_payload = json_encode([
+            'status' => $order->shiprocket_status,
+            'awb' => $order->shiprocket_awb,
+            'courier' => $order->shiprocket_courier_name,
+            'last_activity' => [
+                'activity' => $payload['status'] ?? $payload['current_status'] ?? null,
+                'date' => now()->toDateTimeString(),
+            ],
+            'raw' => $payload,
+        ]);
         $order->shiprocket_last_synced_at = now();
         $order->save();
 

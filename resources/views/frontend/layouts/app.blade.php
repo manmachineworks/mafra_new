@@ -601,6 +601,13 @@
                 AIZ.plugins.slickCarousel();
             });
 
+             $.post('{{ route('home.section.todays_deal2') }}', {
+                _token: '{{ csrf_token() }}'
+            }, function(data) {
+                $('#todays_deal2').html(data);
+                AIZ.plugins.slickCarousel();
+            });
+
             $.post('{{ route('home.section.best_selling') }}', {
                 _token: '{{ csrf_token() }}'
             }, function(data) {

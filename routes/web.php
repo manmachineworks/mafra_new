@@ -141,6 +141,7 @@ Route::controller(HomeController::class)->group(function () {
 
     Route::post('/home/section/featured', 'load_featured_section')->name('home.section.featured');
     Route::post('/home/section/todays-deal', 'load_todays_deal_section')->name('home.section.todays_deal');
+    Route::post('/home/section/todays-deal2', 'load_todays_deal2_section')->name('home.section.todays_deal2');
     Route::post('/home/section/best-selling', 'load_best_selling_section')->name('home.section.best_selling');
     Route::post('/home/section/newest-products', 'load_newest_product_section')->name('home.section.newest_products');
     Route::post('/home/section/home-categories', 'load_home_categories_section')->name('home.section.home_categories');
@@ -156,6 +157,7 @@ Route::controller(HomeController::class)->group(function () {
 
     //Todays Deal Details Page
     Route::get('/todays-deal', 'todays_deal')->name('todays-deal');
+    Route::get('/todays-deal2', 'todays_deal2')->name('todays-deal2');
 
     //Todays Deal Details Page
     Route::get('/best-selling', 'best_selling')->name('best-selling');
@@ -315,6 +317,7 @@ Route::group(['prefix' => 'checkout'], function () {
         Route::post('/guest-customer-info-check', 'guestCustomerInfoCheck')->name('guest_customer_info_check');
         Route::post('/updateDeliveryAddress', 'updateDeliveryAddress')->name('checkout.updateDeliveryAddress');
         Route::post('/updateDeliveryInfo', 'updateDeliveryInfo')->name('checkout.updateDeliveryInfo');
+        Route::post('/recalculate', 'recalculate')->name('checkout.recalculate');
     });
 });
 

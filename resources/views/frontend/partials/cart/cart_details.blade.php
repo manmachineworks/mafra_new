@@ -114,11 +114,18 @@
                                             </div>
                                             <!-- Price & Tax -->
                                             <div class="col-md col-4 ml-4 ml-sm-0 my-3 my-md-0 d-flex flex-column ml-sm-5 ml-md-0">
+                                            
+                                                  @php $purchasePrice = $cartItem->purchase_price ?? $product->purchase_price ?? 0; @endphp
                                                 <span class="fs-12 text-secondary">{{ translate('Price')}}</span>
-                                                <span class="fw-700 fs-14 mb-2">{{ cart_product_price($cartItem, $product, true, false) }}</span>
-                                                <span>
-                                                    <span class="opacity-90 fs-12">{{ translate('Tax')}}: {{ cart_product_tax($cartItem, $product) }}</span>
+                                                <span class="fw-700 fs-14 mb-2">
+                                                    {{ cart_product_price($cartItem, $product, true, false) }}
+                                                    @if($purchasePrice > 0)
+                                                        <del class="ml-1 opacity-60">{{ single_price($purchasePrice) }}</del>
+                                                    @endif
                                                 </span>
+                                                <!-- <span>
+                                                    <span class="opacity-90 fs-12">{{ translate('Tax')}}: {{ cart_product_tax($cartItem, $product) }}</span>
+                                                </span> -->
                                             </div>
                                             <!-- Quantity & Total -->
                                             <div class="col-xl-4 col-md-3 col d-flex flex-column flex-xl-row justify-content-xl-between align-items-xl-center">
@@ -226,9 +233,10 @@
                                                 <div class="col-md col-4 ml-4 ml-sm-0 my-3 my-md-0 d-flex flex-column ml-sm-5 ml-md-0">
                                                     <span class="fs-12 text-secondary">{{ translate('Price')}}</span>
                                                     <span class="fw-700 fs-14 mb-2">{{ cart_product_price($cartItem, $product, true, false) }}</span>
-                                                    <span>
+                                                    
+                                                    <!-- <span>
                                                         <span class="opacity-90 fs-12">{{ translate('Tax')}}: {{ cart_product_tax($cartItem, $product) }}</span>
-                                                    </span>
+                                                    </span> -->
                                                 </div>
                                                 <!-- Quantity & Total -->
                                                 <div class="col-xl-4 col-md-3 col d-flex flex-column flex-xl-row justify-content-xl-between align-items-xl-center">

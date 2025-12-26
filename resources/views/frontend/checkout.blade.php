@@ -1,95 +1,252 @@
 @extends('frontend.layouts.app')
 
 @section('content')
+    <style>
+        :root{
+            --brand:#c70a04;
+            --dark:#212121;
+            --white:#ffffff;
+            --muted:#6b7280;
+            --border:#e9ecef;
+            --shadow:0 10px 30px rgba(33,33,33,.08);
+            --radius:14px;
+        }
 
-    <section class="my-4 gry-bg">
+        /* Page */
+        .checkout-wrap{ padding: 12px 0 40px; }
+        .checkout-title{ color: var(--dark); font-weight: 800; letter-spacing: .2px; }
+        .checkout-subtitle{ color: var(--muted); font-size: 13px; }
+
+        /* Cards */
+        .co-card{
+            background: var(--white);
+            border: 1px solid var(--border) !important;
+            border-radius: var(--radius) !important;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .co-card + .co-card{ margin-top: 16px; }
+
+        /* Accordion header */
+        .co-head{
+            background: var(--white);
+            padding: 16px 18px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            cursor:pointer;
+            border-bottom: 1px solid var(--border);
+        }
+        .co-head-left{ display:flex; align-items:center; gap:10px; min-width:0; }
+        .co-step-dot{
+            width: 34px; height: 34px;
+            border-radius: 999px;
+            display:flex; align-items:center; justify-content:center;
+            background: rgba(199,10,4,.08);
+            color: var(--brand);
+            font-weight: 800;
+            flex:0 0 auto;
+        }
+        .co-head-title{
+            color: var(--dark);
+            font-weight: 800;
+            font-size: 16px;
+            line-height: 1.2;
+            margin: 0;
+        }
+        .co-head-desc{
+            color: var(--muted);
+            font-size: 12px;
+            margin: 2px 0 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 520px;
+        }
+        .co-chevron{
+            color: var(--muted);
+            font-size: 20px;
+            transition: .2s ease;
+        }
+        .collapsed .co-chevron{ transform: rotate(-90deg); }
+        .co-body{ padding: 16px 18px; background:#fff; }
+
+        /* Buttons */
+        .btn-brand{
+            background: var(--brand) !important;
+            border-color: var(--brand) !important;
+            color: #fff !important;
+            font-weight: 800;
+            border-radius: 12px !important;
+            padding: 12px 18px !important;
+            box-shadow: 0 10px 20px rgba(199,10,4,.18);
+        }
+        .btn-brand:hover{ filter: brightness(.96); }
+        .btn-link-brand{
+            color: var(--dark) !important;
+            font-weight: 800;
+            text-decoration: none !important;
+        }
+        .btn-link-brand:hover{ color: var(--brand) !important; }
+
+        /* Summary */
+        .summary-sticky{ position: sticky; top: 92px; }
+        .summary-offer{
+            border: 1px dashed rgba(199,10,4,.35);
+            background: rgba(199,10,4,.05);
+            border-radius: var(--radius);
+            padding: 14px 14px;
+        }
+        .summary-offer .title{ color: var(--dark); font-weight: 900; font-size: 14px; margin-bottom: 2px; }
+        .summary-offer .desc{ color: var(--muted); font-size: 12px; line-height: 1.35; }
+
+        /* Agree box */
+        .agree-wrap{
+            border-top: 1px solid var(--border);
+            margin-top: 14px;
+            padding-top: 14px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .agree-wrap a{ color: var(--dark); font-weight: 800; }
+        .agree-wrap a:hover{ color: var(--brand); }
+
+        @media(max-width: 991px){
+            .summary-sticky{ position: static; top:auto; }
+            .co-head-desc{ max-width: 220px; }
+        }
+    </style>
+
+    <section class="gry-bg checkout-wrap">
         <div class="container">
+
+            <div class="mb-3">
+                <div class="checkout-title fs-24">{{ translate('Checkout') }}</div>
+                <div class="checkout-subtitle">
+                    {{ translate('Secure checkout • Best offers auto-applied • Pay prepaid to save more') }}
+                </div>
+            </div>
+
             <div class="row cols-xs-space cols-sm-space cols-md-space">
                 <div class="col-lg-8 mx-auto">
-                    <form class="form-default" data-toggle="validator" action="{{ route('payment.checkout') }}" role="form" method="POST" id="checkout-form">
+
+                    <form class="form-default" data-toggle="validator"
+                          action="{{ route('payment.checkout') }}"
+                          role="form" method="POST" id="checkout-form">
                         @csrf
 
                         <div class="accordion" id="accordioncCheckoutInfo">
 
                             <!-- Shipping Info -->
-                            <div class="card rounded-0 border shadow-none" style="margin-bottom: 2rem;">
-                                <div class="card-header border-bottom-0 py-3 py-xl-4" id="headingShippingInfo" type="button" data-toggle="collapse" data-target="#collapseShippingInfo" aria-expanded="true" aria-controls="collapseShippingInfo">
-                                    <div class="d-flex align-items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-                                            <path id="Path_42357" data-name="Path 42357" d="M58,48A10,10,0,1,0,68,58,10,10,0,0,0,58,48ZM56.457,61.543a.663.663,0,0,1-.423.212.693.693,0,0,1-.428-.216l-2.692-2.692.856-.856,2.269,2.269,6-6.043.841.87Z" transform="translate(-48 -48)" fill="#9d9da6"/>
-                                        </svg>
-                                        <span class="ml-2 fs-19 fw-700">{{ translate('Shipping Info') }}</span>
+                            <div class="card co-card">
+                                <div class="co-head" id="headingShippingInfo"
+                                     type="button" data-toggle="collapse"
+                                     data-target="#collapseShippingInfo"
+                                     aria-expanded="true" aria-controls="collapseShippingInfo">
+
+                                    <div class="co-head-left">
+                                        <div class="co-step-dot">1</div>
+                                        <div class="min-width-0">
+                                            <div class="co-head-title">{{ translate('Shipping Info') }}</div>
+                                            <div class="co-head-desc">{{ translate('Choose address / fill shipping details') }}</div>
+                                        </div>
                                     </div>
-                                    <i class="las la-angle-down fs-18"></i>
+
+                                    <i class="las la-angle-down co-chevron"></i>
                                 </div>
-                                <div id="collapseShippingInfo" class="collapse show" aria-labelledby="headingShippingInfo" data-parent="#accordioncCheckoutInfo">
-                                    <div class="card-body" id="shipping_info">
-                                       @include('frontend.partials.cart.shipping_info', ['address_id' => $address_id])
+
+                                <div id="collapseShippingInfo" class="collapse show"
+                                     aria-labelledby="headingShippingInfo"
+                                     data-parent="#accordioncCheckoutInfo">
+                                    <div class="co-body" id="shipping_info">
+                                        @include('frontend.partials.cart.shipping_info', ['address_id' => $address_id])
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Delivery Info -->
-                            <div class="card rounded-0 border shadow-none" style="margin-bottom: 2rem; overflow: visible !important;">
-                                <div class="card-header border-bottom-0 py-3 py-xl-4" id="headingDeliveryInfo" type="button" data-toggle="collapse" data-target="#collapseDeliveryInfo" aria-expanded="true" aria-controls="collapseDeliveryInfo">
-                                    <div class="d-flex align-items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-                                            <path id="Path_42357" data-name="Path 42357" d="M58,48A10,10,0,1,0,68,58,10,10,0,0,0,58,48ZM56.457,61.543a.663.663,0,0,1-.423.212.693.693,0,0,1-.428-.216l-2.692-2.692.856-.856,2.269,2.269,6-6.043.841.87Z" transform="translate(-48 -48)" fill="#9d9da6"/>
-                                        </svg>
-                                        <span class="ml-2 fs-19 fw-700">{{ translate('Delivery Info') }}</span>
+                            <div class="card co-card">
+                                <div class="co-head" id="headingDeliveryInfo"
+                                     type="button" data-toggle="collapse"
+                                     data-target="#collapseDeliveryInfo"
+                                     aria-expanded="true" aria-controls="collapseDeliveryInfo">
+
+                                    <div class="co-head-left">
+                                        <div class="co-step-dot">2</div>
+                                        <div class="min-width-0">
+                                            <div class="co-head-title">{{ translate('Delivery Info') }}</div>
+                                            <div class="co-head-desc">{{ translate('Select shipping method / pickup point') }}</div>
+                                        </div>
                                     </div>
-                                    <i class="las la-angle-down fs-18"></i>
+
+                                    <i class="las la-angle-down co-chevron"></i>
                                 </div>
-                                <div id="collapseDeliveryInfo" class="collapse show" aria-labelledby="headingDeliveryInfo" data-parent="#accordioncCheckoutInfo">
-                                    <div class="card-body" id="delivery_info">
-                                        @include('frontend.partials.cart.delivery_info', ['carts' => $carts, 'carrier_list' => $carrier_list, 'shipping_info' => $shipping_info])
+
+                                <div id="collapseDeliveryInfo" class="collapse show"
+                                     aria-labelledby="headingDeliveryInfo"
+                                     data-parent="#accordioncCheckoutInfo">
+                                    <div class="co-body" id="delivery_info">
+                                        @include('frontend.partials.cart.delivery_info', [
+                                            'carts' => $carts,
+                                            'carrier_list' => $carrier_list,
+                                            'shipping_info' => $shipping_info
+                                        ])
                                     </div>
                                 </div>
                             </div>
 
-
                             <!-- Payment Info -->
-                            <div class="card rounded-0 mb-0 border shadow-none">
-                                <div class="card-header border-bottom-0 py-3 py-xl-4" id="headingPaymentInfo" type="button" data-toggle="collapse" data-target="#collapsePaymentInfo" aria-expanded="true" aria-controls="collapsePaymentInfo">
-                                    <div class="d-flex align-items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-                                            <path id="Path_42357" data-name="Path 42357" d="M58,48A10,10,0,1,0,68,58,10,10,0,0,0,58,48ZM56.457,61.543a.663.663,0,0,1-.423.212.693.693,0,0,1-.428-.216l-2.692-2.692.856-.856,2.269,2.269,6-6.043.841.87Z" transform="translate(-48 -48)" fill="#9d9da6"/>
-                                        </svg>
-                                        <span class="ml-2 fs-19 fw-700">{{ translate('Payment') }}</span>
+                            <div class="card co-card">
+                                <div class="co-head" id="headingPaymentInfo"
+                                     type="button" data-toggle="collapse"
+                                     data-target="#collapsePaymentInfo"
+                                     aria-expanded="true" aria-controls="collapsePaymentInfo">
+
+                                    <div class="co-head-left">
+                                        <div class="co-step-dot">3</div>
+                                        <div class="min-width-0">
+                                            <div class="co-head-title">{{ translate('Payment') }}</div>
+                                            <div class="co-head-desc">{{ translate('Choose payment method & place your order') }}</div>
+                                        </div>
                                     </div>
-                                    <i class="las la-angle-down fs-18"></i>
+
+                                    <i class="las la-angle-down co-chevron"></i>
                                 </div>
-                                <div id="collapsePaymentInfo" class="collapse show" aria-labelledby="headingPaymentInfo" data-parent="#accordioncCheckoutInfo">
-                                    <div class="card-body" id="payment_info">
+
+                                <div id="collapsePaymentInfo" class="collapse show"
+                                     aria-labelledby="headingPaymentInfo"
+                                     data-parent="#accordioncCheckoutInfo">
+                                    <div class="co-body" id="payment_info">
+
                                         @include('frontend.partials.cart.payment_info', ['carts' => $carts, 'total' => $total])
 
                                         <!-- Agree Box -->
-                                        <div class="pt-2rem fs-14">
-                                            <label class="aiz-checkbox">
+                                        <div class="agree-wrap">
+                                            <label class="aiz-checkbox mb-2">
                                                 <input type="checkbox" required id="agree_checkbox" onchange="stepCompletionPaymentInfo()">
                                                 <span class="aiz-square-check"></span>
                                                 <span>{{ translate('I agree to the') }}</span>
                                             </label>
-                                            <a href="{{ route('terms') }}"
-                                                class="fw-700">{{ translate('terms and conditions') }}</a>,
-                                            <a href="{{ route('returnpolicy') }}"
-                                                class="fw-700">{{ translate('return policy') }}</a> &
-                                            <a href="{{ route('privacypolicy') }}"
-                                                class="fw-700">{{ translate('privacy policy') }}</a>
+
+                                            <div>
+                                                <a href="{{ route('terms') }}">{{ translate('terms and conditions') }}</a>,
+                                                <a href="{{ route('returnpolicy') }}">{{ translate('return policy') }}</a> &
+                                                <a href="{{ route('privacypolicy') }}">{{ translate('privacy policy') }}</a>
+                                            </div>
                                         </div>
 
-                                        <div class="row align-items-center pt-3 mb-4">
-                                            <!-- Return to shop -->
+                                        <div class="row align-items-center pt-3">
                                             <div class="col-6">
-                                                <a href="{{ route('home') }}" class="btn btn-link fs-14 fw-700 px-0">
+                                                <a href="{{ route('home') }}" class="btn-link-brand">
                                                     <i class="las la-arrow-left fs-16"></i>
                                                     {{ translate('Return to shop') }}
                                                 </a>
                                             </div>
-                                            <!-- Complete Ordert -->
                                             <div class="col-6 text-right">
                                                 <button type="button" onclick="submitOrder(this)" id="submitOrderBtn"
-                                                    class="btn btn-primary fs-14 fw-700 rounded-0 px-4">{{ translate('Complete Order') }}</button>
+                                                        class="btn btn-brand">
+                                                    {{ translate('Complete Order') }}
+                                                </button>
                                             </div>
                                         </div>
 
@@ -100,10 +257,23 @@
                         </div>
                     </form>
                 </div>
+
                 <!-- Cart Summary -->
                 <div class="col-lg-4 mt-4 mt-lg-0" id="cart_summary">
-                    @include('frontend.partials.cart.cart_summary', ['proceed' => 0, 'carts' => $carts])
+                    <div class="summary-sticky">
+
+                        <div class="summary-offer mb-3">
+                            <div class="title">{{ translate('Best offers auto-applied') }}</div>
+                            <div class="desc">
+                                {{ translate('Prepaid tiers use subtotal; coupons, and prepaid show in savings. COD skips prepaid discount.') }}
+                            </div>
+                        </div>
+
+                        @include('frontend.partials.cart.cart_summary', ['proceed' => 0, 'carts' => $carts])
+
+                    </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -118,12 +288,24 @@
 
 @section('script')
     <script type="text/javascript">
-       var carrierCount=0;
+        var carrierCount=0;
+
         $(document).ready(function() {
             $(".online_payment").click(function() {
                 $('#manual_payment_description').parent().addClass('d-none');
             });
             toggleManualPaymentData($('input[name=payment_option]:checked').data('id'));
+            recalcPrepaidTotals();
+
+            // Chevron rotation state (UI)
+            $('#accordioncCheckoutInfo .collapse').on('shown.bs.collapse', function () {
+                $(this).prev().removeClass('collapsed');
+            }).on('hidden.bs.collapse', function () {
+                $(this).prev().addClass('collapsed');
+            });
+            $('#accordioncCheckoutInfo .collapse').each(function(){
+                if(!$(this).hasClass('show')) $(this).prev().addClass('collapsed');
+            });
         });
 
         var minimum_order_amount_check = {{ get_setting('minimum_order_amount_check') == 1 ? 1 : 0 }};
@@ -217,6 +399,32 @@
                 $('#manual_payment_description').html($('#manual_payment_info_' + id).html());
             }
         }
+
+        function updatePrepaidDiscountSummary(res) {
+            if (res.discount_amount > 0) {
+                $('#prepaid-discount-label').text(res.discount_label || '{{ translate('Prepaid Discount') }}');
+                $('#prepaid-discount-amount').text(res.formatted.discount);
+                $('#prepaid-discount-row').removeClass('d-none');
+            } else {
+                $('#prepaid-discount-row').addClass('d-none');
+            }
+            $('#summary-subtotal').text(res.formatted.subtotal);
+            $('#summary-shipping').text(res.formatted.shipping);
+            $('#summary-total').text(res.formatted.grand_total);
+        }
+
+        function recalcPrepaidTotals() {
+            var paymentType = $('input[name="payment_option"]:checked').val();
+            if (!paymentType) { return; }
+
+            $.post('{{ route('checkout.recalculate') }}', {
+                _token: '{{ csrf_token() }}',
+                payment_type: paymentType
+            }).done(function(res){
+                updatePrepaidDiscountSummary(res);
+            });
+        }
+
         // coupon apply
         $(document).on("click", "#coupon-apply", function() {
             @if (Auth::check())
@@ -239,6 +447,7 @@
                     success: function(data, textStatus, jqXHR) {
                         AIZ.plugins.notify(data.response_message.response, data.response_message.message);
                         $("#cart_summary").html(data.html);
+                        recalcPrepaidTotals();
                     }
                 });
             @else
@@ -262,6 +471,7 @@
                     processData: false,
                     success: function(data, textStatus, jqXHR) {
                         $("#cart_summary").html(data);
+                        recalcPrepaidTotals();
                     }
                 });
             @endif
@@ -280,8 +490,9 @@
                 $('.aiz-refresh').removeClass('active');
                 carrierCount = data.carrier_count;
                 checkCarrerShippingInfo();
+                recalcPrepaidTotals();
             });
-           
+
             AIZ.plugins.bootstrapSelect("refresh");
         }
 
@@ -411,24 +622,25 @@
                 checkCarrerShippingInfo();
                 stepCompletionDeliveryInfo();
                 $('.aiz-refresh').removeClass('active');
+                recalcPrepaidTotals();
             });
             AIZ.plugins.bootstrapSelect("refresh");
         }
 
         function show_pickup_point(el, user_id) {
-        	var type = $(el).val();
-        	var target = $(el).data('target');
+            var type = $(el).val();
+            var target = $(el).data('target');
             var type_id = null;
 
-        	if(type == 'home_delivery' || type == 'carrier'){
+            if(type == 'home_delivery' || type == 'carrier'){
                 if(!$(target).hasClass('d-none')){
                     $(target).addClass('d-none');
                 }
                 $('.carrier_id_'+user_id).removeClass('d-none');
-        	}else{
-        		$(target).removeClass('d-none');
-        		$('.carrier_id_'+user_id).addClass('d-none');
-        	}
+            }else{
+                $(target).removeClass('d-none');
+                $('.carrier_id_'+user_id).addClass('d-none');
+            }
 
             if(type == 'carrier'){
                 type_id = $('input[name=carrier_id_'+user_id+']:checked').val();
@@ -487,10 +699,11 @@
 
         $('input[name="payment_option"]').change(function(){
             stepCompletionPaymentInfo();
+            recalcPrepaidTotals();
         });
 
         function checkCarrerShippingInfo(){
-           const shippingType = @json(get_setting('shipping_type'));
+            const shippingType = @json(get_setting('shipping_type'));
             const isDisabled = carrierCount === 0;
             let carrierSelected = false;
             let pickupSelected = false;
@@ -504,21 +717,21 @@
                     pickupSelected = true;
                 }
             });
-                if(shippingType == 'carrier_wise_shipping' && carrierSelected){
-                    if (carrierCount === 0) {
-                        if( (carrierSelected && pickupSelected) || (carrierSelected && !pickupSelected) ){
-                            $('#submitOrderBtn').prop('disabled', true);
-                            $('#agree_checkbox').prop('checked', false).prop('disabled', true);
-                            $('.online_payment, .offline_payment_option').prop('checked', false).prop('disabled', true);
-                        }
-                    } else {
-                        $('#agree_checkbox').prop('disabled', false);
-                        $('.online_payment, .offline_payment_option').prop('disabled', false);
+            if(shippingType == 'carrier_wise_shipping' && carrierSelected){
+                if (carrierCount === 0) {
+                    if( (carrierSelected && pickupSelected) || (carrierSelected && !pickupSelected) ){
+                        $('#submitOrderBtn').prop('disabled', true);
+                        $('#agree_checkbox').prop('checked', false).prop('disabled', true);
+                        $('.online_payment, .offline_payment_option').prop('checked', false).prop('disabled', true);
                     }
-                }else{
+                } else {
                     $('#agree_checkbox').prop('disabled', false);
                     $('.online_payment, .offline_payment_option').prop('disabled', false);
                 }
+            }else{
+                $('#agree_checkbox').prop('disabled', false);
+                $('.online_payment, .offline_payment_option').prop('disabled', false);
+            }
         }
 
         $(document).ready(function(){
@@ -533,22 +746,21 @@
     @include('frontend.partials.address.address_js')
 
     @if(get_active_countries()->count() == 1)
-    <script>
-        $(document).ready(function() {
-            @if(get_setting('has_state') == 1)
-                get_states(@json(get_active_countries()[0]->id));
-            @else
-                get_city_by_country(@json(get_active_countries()[0]->id));
+        <script>
+            $(document).ready(function() {
+                @if(get_setting('has_state') == 1)
+                    get_states(@json(get_active_countries()[0]->id));
+                @else
+                    get_city_by_country(@json(get_active_countries()[0]->id));
+                @endif
+            });
+            @if(get_setting('shipping_type') == 'carrier_wise_shipping' && !Auth::check() )
+                updateDeliveryAddress({{ get_active_countries()[0]->id }});
             @endif
-        });
-         @if(get_setting('shipping_type') == 'carrier_wise_shipping' && !Auth::check() )
-            updateDeliveryAddress({{ get_active_countries()[0]->id }});
-         @endif
-    </script>
+        </script>
     @endif
 
     @if (get_setting('google_map') == 1)
         @include('frontend.partials.google_map')
     @endif
-
 @endsection

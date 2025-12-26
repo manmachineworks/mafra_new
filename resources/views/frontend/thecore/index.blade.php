@@ -17,7 +17,7 @@
   <!-- Sliders -->
     <!-- Sliders -->
     <div class="home-banner-area mb-3" style="background-color:#000000;">
-        <div class="@if(get_setting('slider_section_full_width') == 1) p-0 @else container @endif">
+        <div class="@if(get_setting('slider_section_full_width') == 1) container-fluid px-0 @else container @endif">
             <!-- Sliders -->
             <div class="home-slider slider-full">
                 @if (get_setting('home_slider_images', null, $lang) != null)
@@ -557,6 +557,12 @@
         $todays_deal_section_bg = get_setting('todays_deal_section_bg_color');
     @endphp
     <div id="todays_deal" @if(get_setting('todays_deal_section_bg') == 1) style="background: {{ $todays_deal_section_bg }};" @endif>
+
+    </div>
+
+      <!-- Today's deal -->
+
+    <div id="todays_deal2" @if(get_setting('todays_deal_section_bg') == 1) style="background: {{ $todays_deal_section_bg }};" @endif>
 
     </div>
 

@@ -89,6 +89,7 @@ class CartUtility
         $cart->quantity = $quantity;
         $cart->product_id = $product->id;
         $cart->owner_id = $product->user_id;
+        $cart->purchase_price = $product->purchase_price;
         $cart->price = $price;
         $cart->tax = $tax;
         $cart->product_referral_code = null;

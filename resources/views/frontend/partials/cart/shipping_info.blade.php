@@ -75,6 +75,11 @@
                    onclick="edit_address('{{ $address->id }}')">
                     {{ translate('Change') }}
                 </a>
+                <a class="btn btn-sm btn-outline-danger rounded-0 px-4"
+                   href="{{ route('addresses.destroy', $address->id) }}"
+                   onclick="return confirm('{{ translate('Are you sure you want to delete this address?') }}');">
+                    {{ translate('Delete') }}
+                </a>
             </div>
             @if($is_disabled)
             <div class="col-md-12">

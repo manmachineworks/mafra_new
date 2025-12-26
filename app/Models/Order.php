@@ -8,6 +8,11 @@ use App\Traits\PreventDemoModeChanges;
 class Order extends Model
 {
     use PreventDemoModeChanges;
+
+    protected $casts = [
+        'shiprocket_pickup_scheduled_at' => 'datetime',
+        'shiprocket_last_synced_at' => 'datetime',
+    ];
     public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class);

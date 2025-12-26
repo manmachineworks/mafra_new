@@ -228,6 +228,7 @@ class CartController extends Controller
             }
 
             $cartItem['price'] = $price;
+            $cartItem['purchase_price'] = $product->purchase_price;
             $cartItem->save();
         }
 

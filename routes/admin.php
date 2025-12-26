@@ -53,6 +53,7 @@ use App\Http\Controllers\SizeChartController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\SubscriberController;
+use App\Http\Controllers\Admin\PrepaidDiscountController;
 use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\TopBannerController;
@@ -556,6 +557,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/coupon/get_form', 'get_coupon_form')->name('coupon.get_coupon_form');
         Route::post('/coupon/get_form_edit', 'get_coupon_form_edit')->name('coupon.get_coupon_form_edit');
     });
+
+    // Prepaid tier discounts
+    Route::resource('prepaid-discounts', PrepaidDiscountController::class, [
+        'as' => 'admin',
+        'parameters' => ['prepaid-discounts' => 'prepaid_discount']
+    ])->except(['show']);
+    Route::post('prepaid-discounts/{prepaid_discount}/toggle', [PrepaidDiscountController::class, 'toggleStatus'])->name('admin.prepaid-discounts.toggle');
 
     //Reviews
     Route::controller(ReviewController::class)->group(function () {

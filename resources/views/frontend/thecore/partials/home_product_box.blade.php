@@ -53,12 +53,22 @@
                 {{ $brand_name }}
             </span>
         @endif
-
-         <!-- Discount percentage tag -->
-        @if (discount_in_percentage($product) > 0)
-        <span class="absolute-top-left  ml-1 mt-1 fs-11 fw-700 text-white lh-1-6 w-35px text-center"
-            style="background-color:#c70a04;">-{{ discount_in_percentage($product) }}%</span>
+        
+         @php
+            $product_stock_total = $product->stocks ? $product->stocks->sum('qty') : $product->current_stock;
+        @endphp
+        @if ($product_stock_total <= 0)
+            <span class="absolute-top-right fs-11 text-white fw-700 px-2 lh-1-6 ml-1 mt-1" style="background-color:#c70a0a;">
+                {{ translate('Out of Stock') }}
+            </span>
         @endif
+
+         <!-- Discount / stock badges -->
+        @if (discount_in_percentage($product) > 0)
+            <span class="absolute-top-left ml-1 mt-1 fs-11 fw-700 text-white lh-1-6 w-35px text-center"
+                style="background-color:#c70a04;">-{{ discount_in_percentage($product) }}%</span>
+        @endif
+       
 
         <!-- @if ($discount_percentage > 0)
             <span class="absolute-top-left rounded rounded-4 bg-primary ml-1 mt-1 fs-11 fw-700 text-white w-35px text-center"

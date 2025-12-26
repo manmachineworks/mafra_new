@@ -171,10 +171,14 @@
                             <div class="text-muted fs-12 fw-700">{{ translate('Pricing') }}</div>
                             <div class="d-flex flex-wrap align-items-baseline" style="gap: 10px;">
                                 <div class="fs-22 fw-800" style="color: var(--primary);">
-                                    {{ home_discounted_price($product) }}
+                                    {{ home_discounted_price($product) }}/- 
                                 </div>
                                 @if($hasDiscount)
-                                    <del class="text-muted">{{ home_price($product) }}</del>
+                                    <del class="text-muted">{{ home_price($product) }}/- </del>
+                                @else
+                                
+                                    <del class="text-muted">{{ purchase_price($product) }}/- </del>
+                               
                                 @endif
                                 @if($product->unit)
                                     <span class="text-muted fs-12">/{{ $product->getTranslation('unit') }}</span>

@@ -58,8 +58,13 @@
                         <div class="text-secondary" style="font-size:13px;">
                             {{ translate('Total') }}
                             <span class="d-block text-dark fw-700" style="font-size:16px;">
-                                {{ single_price(cart_product_price($cart, $product, false) * $cart->quantity) }}
+                                {{ single_price(cart_product_price($cart, $product, false) * $cart->quantity) }}/- 
+                                @php $ppTotal = ($cart->purchase_price ?? $product->purchase_price ?? 0) * $cart->quantity; @endphp
+                                @if($ppTotal > 0)
+                                    <del class="text-secondary" style="font-size:13px;">{{ single_price($ppTotal) }}/-</del>
+                                @endif
                             </span>
+                            
                         </div>
 
                         <div class="text-right" style="font-size:13px;">

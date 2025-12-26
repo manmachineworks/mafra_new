@@ -1329,6 +1329,12 @@
                             </a>
                         </li>
                         @endif
+                        <li class="aiz-side-nav-item">
+                            <a href="{{ route('admin.prepaid-discounts.index') }}"
+                                class="aiz-side-nav-link {{ areActiveRoutes(['admin.prepaid-discounts.index','admin.prepaid-discounts.create','admin.prepaid-discounts.edit']) }}">
+                                <span class="aiz-side-nav-text">{{ translate('Prepaid Discounts') }}</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 @endcanany

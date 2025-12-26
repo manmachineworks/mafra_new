@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Notification;
 use App\Notifications\OrderNotification;
 use App\Utility\EmailUtility;
 use App\Services\ShiprocketService;
+use App\Services\PrepaidDiscountService;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -182,6 +183,8 @@ class OrderController extends Controller
         $combined_order->shipping_address = json_encode($shippingAddress);
         $combined_order->save();
 
+        $prepaidDiscountService = app(PrepaidDiscountService::class);
+        $prepaidDiscountService = app(PrepaidDiscountService::class);
         $seller_products = array();
         foreach ($carts as $cartItem) {
             $product_ids = array();
@@ -192,6 +195,32 @@ class OrderController extends Controller
             array_push($product_ids, $cartItem);
             $seller_products[$product->user_id] = $product_ids;
         }
+
+        // Combined subtotal (before shipping/tax) for prepaid discount calculation
+        $combined_subtotal = 0;
+        foreach ($carts as $cartItem) {
+            $product = Product::find($cartItem['product_id']);
+            $combined_subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+        }
+
+        $isCod = in_array(strtolower($request->payment_option), ['cod', 'cash_on_delivery', 'cashondelivery']);
+        $combined_rule = null;
+        $combined_discount_amount = 0;
+        $combined_discount_percent = null;
+        $combined_discount_rule_id = null;
+
+        if (!$isCod && $combined_subtotal > 0) {
+            $combined_rule = $prepaidDiscountService->getApplicableRule($combined_subtotal);
+            if ($combined_rule) {
+                $combined_discount_amount = $prepaidDiscountService->calculateDiscount($combined_subtotal, $combined_rule);
+                $combined_discount_percent = $combined_rule->percent;
+                $combined_discount_rule_id = $combined_rule->id;
+            }
+        }
+
+        $distributed_discount = 0;
+        $total_orders = count($seller_products);
+        $order_index = 0;
 
         foreach ($seller_products as $seller_product) {
             $order = new Order;
@@ -210,6 +239,9 @@ class OrderController extends Controller
             $tax = 0;
             $shipping = 0;
             $coupon_discount = 0;
+            $prepaid_discount_amount = 0;
+            $prepaid_discount_percent = $combined_discount_percent;
+            $prepaid_discount_rule_id = $combined_discount_rule_id;
 
             //Order Details Storing
             foreach ($seller_product as $cartItem) {
@@ -300,7 +332,25 @@ class OrderController extends Controller
                 }
             }
 
-            $order->grand_total = $subtotal + $tax + $shipping;
+            if ($combined_discount_amount > 0 && $combined_subtotal > 0) {
+                $order_index++;
+                $share = $subtotal > 0 ? ($subtotal / $combined_subtotal) : 0;
+                $prepaid_discount_amount = round($combined_discount_amount * $share, 2);
+                $distributed_discount += $prepaid_discount_amount;
+                // Put any rounding remainder on last order
+                if ($order_index === $total_orders) {
+                    $prepaid_discount_amount = $combined_discount_amount - ($distributed_discount - $prepaid_discount_amount);
+                }
+            }
+
+            $order->prepaid_discount_rule_id = $prepaid_discount_rule_id;
+            $order->prepaid_discount_percent = $prepaid_discount_percent;
+            $order->prepaid_discount_amount = $prepaid_discount_amount;
+            if ($prepaid_discount_amount > 0 && empty($order->discount_type)) {
+                $order->discount_type = 'prepaid_tier';
+            }
+
+            $order->grand_total = $subtotal + $tax + $shipping - $prepaid_discount_amount;
 
             if ($seller_product[0]->coupon_code != null) {
                 $order->coupon_discount = $coupon_discount;
@@ -310,6 +360,9 @@ class OrderController extends Controller
                 $coupon_usage->user_id = Auth::user()->id;
                 $coupon_usage->coupon_id = Coupon::where('code', $seller_product[0]->coupon_code)->first()->id;
                 $coupon_usage->save();
+            }
+            if ($order->grand_total < 0) {
+                $order->grand_total = 0;
             }
 
             $combined_order->grand_total += $order->grand_total;
@@ -612,6 +665,12 @@ class OrderController extends Controller
                 'message' => translate('Order already pushed to Shiprocket.'),
             ];
         }
+        if ($order->payment_status !== 'paid') {
+            return response()->json([
+                'success' => false,
+                'message' => translate('Order must be marked paid before pushing to Shiprocket.'),
+            ], 422);
+        }
 
         $result = $shiprocket->pushOrder($order);
 
@@ -630,6 +689,8 @@ class OrderController extends Controller
         return [
             'success' => true,
             'message' => translate('Order pushed to Shiprocket.'),
+            'shiprocket_order_id' => $order->shiprocket_order_id,
+            'shiprocket_shipment_id' => $order->shiprocket_shipment_id,
         ];
     }
 
@@ -666,6 +727,7 @@ class OrderController extends Controller
             'status' => $order->shiprocket_status,
             'awb' => $order->shiprocket_awb,
             'label_url' => $order->shiprocket_label_url,
+            'tracking' => $order->shiprocket_tracking_payload ? json_decode($order->shiprocket_tracking_payload, true) : null,
         ], $status);
     }
 

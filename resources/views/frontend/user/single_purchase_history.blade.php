@@ -2,7 +2,7 @@
   <div class="mb-4">
       <div class="d-flex justify-content-between align-items-center mb-2">
           <div>
-              <p class="mb-2 fs-16 fw-700 deep-blue mb-0"><a class="deep-blue" href="{{route('purchase_history.details', encrypt($order->id))}}">{{ translate('Order ID')}} - {{ $order->code }}</a></p>
+              <p class="mb-2 fs-16 fw-700 mafra-color mb-0"><a class="mafra-color" href="{{route('purchase_history.details', encrypt($order->id))}}">{{ translate('Order ID')}} - {{ $order->code }}</a></p>
               <span class="text-muted d-block d-md-none fs-12">{{ translate('Date')}}: {{ date('d-m-Y', $order->date) }}</span>
           </div>
 
@@ -35,7 +35,7 @@
           <div class="col-md-6">
               <div class="row fs-12">
                   <div class="col-auto w-200px">
-                      <span class="font-weight-bold light-blue">{{ get_shop_by_user_id($order->seller_id)->name??"Inhouse Products" }}</span>
+                      <span class="font-weight-bold mafra-color">{{ get_shop_by_user_id($order->seller_id)->name??"Products" }}</span>
                   </div>
                   <div class="col">
                       <span class="text-muted">{{ translate('Date')}}: {{ date('d-m-Y', $order->date) }}</span>

@@ -3,7 +3,7 @@
 @section('content')
 
     <!-- Steps -->
-    <section class="pt-5 mb-0">
+    <!-- <section class="pt-5 mb-0">
         <div class="container">
             <div class="row">
                 <div class="col-xl-8 mx-auto">
@@ -52,7 +52,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- Order Confirmation -->
     <section class="py-4">
@@ -61,6 +61,7 @@
                 <div class="col-xl-8 mx-auto">
                     @php
                         $first_order = $combined_order->orders->first()
+                        $prepaid_discount_total = $combined_order->orders->sum('prepaid_discount_amount');
                     @endphp
                     <!-- Order Confirmation Text-->
                     <div class="text-center py-4 mb-0">
@@ -74,7 +75,12 @@
                             </g>
                         </svg>
                         <h1 class="mb-2 fs-28 fw-500 text-success">{{ translate('Thank You for Your Order!')}}</h1>
-                        <p class="fs-13 text-soft-dark">{{  translate('A copy or your order summary has been sent to') }} <strong>{{ json_decode($first_order->shipping_address)->email }}</strong></p>
+                        <p class="fs-13 text-soft-dark">{{  translate('A copy or your order summary has been sent to') }} <strong>{{ optional(json_decode($first_order->shipping_address))->email }}</strong></p>
+                        @if($prepaid_discount_total > 0 || $combined_order->orders->sum('coupon_discount') > 0)
+                            <div class="mt-2 badge badge-success px-3 py-2" style="border-radius: 999px;">
+                                {{ translate('You saved') }} {{ single_price($prepaid_discount_total + $combined_order->orders->sum('coupon_discount')) }}
+                            </div>
+                        @endif
                     </div>
                     <!-- Order Summary -->
                     <div class="mb-4 bg-white p-4 border">
@@ -84,19 +90,20 @@
                                 <table class="table fs-14 text-soft-dark">
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 pl-0 py-2">{{ translate('Order date')}}:</td>
-                                        <td class="border-top-0 py-2">{{ date('d-m-Y H:i A', $first_order->date) }}</td>
+                                        <td class="border-top-0 py-2">{{ $first_order ? date('d-m-Y H:i A', $first_order->date) : '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 pl-0 py-2">{{ translate('Name')}}:</td>
-                                        <td class="border-top-0 py-2">{{ json_decode($first_order->shipping_address)->name }}</td>
+                                        <td class="border-top-0 py-2">{{ optional(json_decode(optional($first_order)->shipping_address ?? '{}'))->name }}</td>
                                     </tr>
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 pl-0 py-2">{{ translate('Email')}}:</td>
-                                        <td class="border-top-0 py-2">{{ json_decode($first_order->shipping_address)->email }}</td>
+                                        <td class="border-top-0 py-2">{{ optional(json_decode(optional($first_order)->shipping_address ?? '{}'))->email }}</td>
                                     </tr>
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 pl-0 py-2">{{ translate('Shipping address')}}:</td>
-                                        <td class="border-top-0 py-2">{{ json_decode($first_order->shipping_address)->address }}, {{ json_decode($first_order->shipping_address)->city }}, {{ json_decode($first_order->shipping_address)->country }}</td>
+                                        @php $sa = json_decode(optional($first_order)->shipping_address ?? '{}'); @endphp
+                                        <td class="border-top-0 py-2">{{ $sa->address ?? '-' }}, {{ $sa->city ?? '' }}, {{ $sa->country ?? '' }}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -104,7 +111,7 @@
                                 <table class="table">
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 py-2">{{ translate('Order status')}}:</td>
-                                        <td class="border-top-0 pr-0 py-2">{{ translate(ucfirst(str_replace('_', ' ', $first_order->delivery_status))) }}</td>
+                                        <td class="border-top-0 pr-0 py-2">{{ translate(ucfirst(str_replace('_', ' ', optional($first_order)->delivery_status))) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 py-2">{{ translate('Total order amount')}}:</td>
@@ -116,8 +123,20 @@
                                     </tr>
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 py-2">{{ translate('Payment method')}}:</td>
-                                        <td class="border-top-0 pr-0 py-2">{{ translate(ucfirst(str_replace('_', ' ', $first_order->payment_type))) }}</td>
+                                        <td class="border-top-0 pr-0 py-2">{{ translate(ucfirst(str_replace('_', ' ', optional($first_order)->payment_type))) }}</td>
                                     </tr>
+                                    @if($prepaid_discount_total > 0)
+                                        <tr>
+                                            <td class="w-50 fw-600 border-top-0 py-2">{{ translate('Prepaid Discount') }}:</td>
+                                            <td class="border-top-0 pr-0 py-2 text-success">- {{ single_price($prepaid_discount_total) }}</td>
+                                        </tr>
+                                    @endif
+                                    @if($combined_order->orders->sum('coupon_discount') > 0)
+                                        <tr>
+                                            <td class="w-50 fw-600 border-top-0 py-2">{{ translate('Coupon Discount') }}:</td>
+                                            <td class="border-top-0 pr-0 py-2 text-success">- {{ single_price($combined_order->orders->sum('coupon_discount')) }}</td>
+                                        </tr>
+                                    @endif
                                 </table>
                             </div>
                         </div>
@@ -125,6 +144,7 @@
 
                     <!-- Orders Info -->
                     @foreach ($combined_order->orders as $order)
+                       
                         <div class="card shadow-none border rounded-0">
                             <div class="card-body">
                                 <!-- Order Code -->
@@ -203,19 +223,36 @@
                                                         </td>
                                                     </tr>
                                                     <!-- Shipping -->
+                                                     @php
+                                                     $ship_fee = 0;
+                                                    $ship_fee = $order->orderDetails->sum('shipping_cost');
+                                                    @endphp
                                                     <tr>
                                                         <th class="border-top-0 py-2">{{ translate('Shipping')}}</th>
                                                         <td class="text-right border-top-0 pr-0 py-2">
-                                                            <span>{{ single_price($order->orderDetails->sum('shipping_cost')) }}</span>
+                                                            @if($ship_fee == 0)
+                                                                <span class="text-italic text-success">{{ translate('Free') }}</span>
+                                                            @else
+                                                                <span class="">{{ single_price($order->orderDetails->sum('shipping_cost')) }}</span>
+                                                            @endif
                                                         </td>
                                                     </tr>
+                                                    @if($order->prepaid_discount_amount > 0)
+                                                        <tr>
+                                                            <th class="border-top-0 py-2">{{ translate('Prepaid Discount') }}</th>
+                                                            <td class="text-right border-top-0 pr-0 py-2 text-success">
+                                                                <span>- {{ single_price($order->prepaid_discount_amount) }}</span>
+                                                              
+                                                            </td>
+                                                        </tr>
+                                                    @endif
                                                     <!-- Tax -->
-                                                    <tr>
+                                                    <!-- <tr>
                                                         <th class="border-top-0 py-2">{{ translate('Tax')}}</th>
                                                         <td class="text-right border-top-0 pr-0 py-2">
                                                             <span>{{ single_price($order->orderDetails->sum('tax')) }}</span>
                                                         </td>
-                                                    </tr>
+                                                    </tr> -->
                                                     <!-- Coupon Discount -->
                                                     <tr>
                                                         <th class="border-top-0 py-2">{{ translate('Coupon Discount')}}</th>

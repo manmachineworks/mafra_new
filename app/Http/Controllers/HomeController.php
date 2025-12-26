@@ -69,6 +69,13 @@ class HomeController extends Controller
         return view('frontend.' . get_setting('homepage_select') . '.partials.todays_deal', compact('todays_deal_products'));
     }
 
+    
+    public function load_todays_deal2_section()
+    {
+        $todays_deal2_products = filter_products(Product::where('todays_deal2', '1'))->orderBy('id', 'desc')->get();
+        return view('frontend.' . get_setting('homepage_select') . '.partials.todays_deal2', compact('todays_deal2_products'));
+    }
+
     public function load_newest_product_section(Request $request)
     {
         $limit = 12;
@@ -865,6 +872,15 @@ class HomeController extends Controller
         });
 
         return view("frontend.todays_deal", compact('todays_deal_products'));
+    }
+
+    public function todays_deal2()
+    {
+        $todays_deal2_products = Cache::rememberForever('todays_deal2_products', function () {
+            return filter_products(Product::with('thumbnail')->where('todays_deal2', '1'))->get();
+        });
+
+        return view("frontend.todays_deal2", compact('todays_deal2_products'));
     }
 
     public function best_selling()
