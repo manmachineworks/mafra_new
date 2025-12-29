@@ -64,6 +64,7 @@ use App\Http\Controllers\ZoneController;
 use App\Http\Controllers\Cybersource\CybersourceSettingController;
 use App\Http\Controllers\ElementController;
 use App\Http\Controllers\NewUpdateController;
+use App\Http\Controllers\ShiprocketFetcherController;
 use App\Http\Controllers\ShiprocketTokenController;
 
 /*
@@ -500,6 +501,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/orders/update_payment_status', 'update_payment_status')->name('orders.update_payment_status');
         Route::post('/orders/update_tracking_code', 'update_tracking_code')->name('orders.update_tracking_code');
         Route::post('/orders/push-to-shiprocket', 'push_to_shiprocket')->name('orders.push_to_shiprocket');
+        Route::post('/orders/{order}/push-to-shiprocket', 'push_to_shiprocket')->name('orders.push_to_shiprocket.single');
         Route::post('/orders/shiprocket-track', 'shiprocket_track')->name('orders.shiprocket_track');
 
         //Delivery Boy Assign
@@ -512,8 +514,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('order-payment-notification', 'unpaid_order_payment_notification_send')->name('unpaid_order_payment_notification');
     });
 
-    // Shiprocket Token
+    // Shiprocket Token + Ops
     Route::post('/shiprocket/token/refresh', [ShiprocketTokenController::class, 'refresh'])->name('shiprocket.token.refresh');
+    Route::post('/shiprocket/refresh-token', [ShiprocketTokenController::class, 'refresh'])->name('shiprocket.refresh_token');
+    Route::post('/shiprocket/token', [ShiprocketTokenController::class, 'get'])->name('shiprocket.token.current');
+    Route::post('/shiprocket/fetch-tracking/{order}', [ShiprocketFetcherController::class, 'fetchTracking'])->name('shiprocket.fetch_tracking');
+    Route::get('/shiprocket/wallet', [ShiprocketFetcherController::class, 'fetchWallet'])->name('shiprocket.wallet');
+    Route::get('/shiprocket/pickups', [ShiprocketFetcherController::class, 'fetchPickups'])->name('shiprocket.pickups');
+    Route::post('/shiprocket/generate-label/{order}', [ShiprocketFetcherController::class, 'generateLabel'])->name('shiprocket.generate_label');
+    Route::post('/shiprocket/generate-invoice/{order}', [ShiprocketFetcherController::class, 'generateInvoice'])->name('shiprocket.generate_invoice');
+    Route::post('/shiprocket/cancel-shipment/{order}', [ShiprocketFetcherController::class, 'cancelShipment'])->name('shiprocket.cancel_shipment');
 
     Route::post('/pay_to_seller', [CommissionController::class, 'pay_to_seller'])->name('commissions.pay_to_seller');
 

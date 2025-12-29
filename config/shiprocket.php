@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'base_url' => env('SHIPROCKET_BASE_URL', 'https://apiv2.shiprocket.in/v1/external'),
+    'base_url' => env('SHIPROCKET_API_URL', env('SHIPROCKET_BASE_URL', 'https://apiv2.shiprocket.in/v1/external')),
     'email' => env('SHIPROCKET_EMAIL'),
     'password' => env('SHIPROCKET_PASSWORD'),
 

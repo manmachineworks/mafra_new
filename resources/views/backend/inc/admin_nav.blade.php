@@ -70,6 +70,12 @@
                     </button>
                 </div>
             </div>
+            <div class="aiz-topbar-item mr-3">
+                <div class="d-flex align-items-center">
+                    <span class="badge badge-inline badge-primary" id="shiprocket_status_badge">{{ translate('Shiprocket') }}</span>
+                    <span class="ml-2 small text-muted" id="shiprocket_wallet_balance">--</span>
+                </div>
+            </div>
             <!-- Topbar menus -->
             <div class="aiz-topbar-item mr-2 d-none d-xl-block">
                 <div class="d-flex align-items-center h-100">
@@ -313,8 +319,11 @@
         var spinner = btn.querySelector('.spinner-border');
         var icon = btn.querySelector('.token-refresh-icon');
         var lastRefreshedKey = 'shiprocketTokenRefreshedAt';
-        var refreshEndpoint = "{{ route('shiprocket.token.refresh') }}";
+        var refreshEndpoint = "{{ route('shiprocket.refresh_token') }}";
+        var walletEndpoint = "{{ route('shiprocket.wallet') }}";
         var csrf = "{{ csrf_token() }}";
+        var walletEl = document.getElementById('shiprocket_wallet_balance');
+        var statusBadge = document.getElementById('shiprocket_status_badge');
 
         function setLoading(state) {
             if (!spinner || !icon) return;
@@ -323,11 +332,43 @@
             btn.disabled = state;
         }
 
+        function setStatusBadge(ok) {
+            if (!statusBadge) return;
+            statusBadge.classList.remove('badge-soft-danger', 'badge-soft-primary', 'badge-soft-success');
+            statusBadge.classList.add(ok ? 'badge-soft-success' : 'badge-soft-danger');
+        }
+
+        function fetchWallet(showNotify) {
+            if (!walletEndpoint || !walletEl) return;
+            $.get(walletEndpoint)
+                .done(function(resp) {
+                    var balance = null;
+                    if (resp.data && typeof resp.data.balance !== 'undefined') {
+                        balance = resp.data.balance;
+                    } else if (resp.data && resp.data.data && typeof resp.data.data.balance !== 'undefined') {
+                        balance = resp.data.data.balance;
+                    }
+                    walletEl.textContent = balance !== null ? balance : '--';
+                    setStatusBadge(true);
+                    if (showNotify !== false) {
+                        AIZ.plugins.notify('success', resp.message || "{{ translate('Shiprocket wallet updated') }}");
+                    }
+                })
+                .fail(function(xhr) {
+                    setStatusBadge(false);
+                    if (showNotify !== false) {
+                        var message = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : "{{ translate('Failed to fetch Shiprocket wallet') }}";
+                        AIZ.plugins.notify('danger', message);
+                    }
+                });
+        }
+
         function doRefresh(showNotify) {
             setLoading(true);
             $.post(refreshEndpoint, { _token: csrf })
                 .done(function(resp) {
                     localStorage.setItem(lastRefreshedKey, Date.now().toString());
+                    fetchWallet(false);
                     if (showNotify !== false) {
                         AIZ.plugins.notify('success', resp.message || "{{ translate('Shiprocket token refreshed') }}");
                     }
@@ -352,6 +393,8 @@
         var fortyFiveMinutes = 45 * 60 * 1000;
         if (Date.now() - last > fortyFiveMinutes) {
             doRefresh(false);
+        } else {
+            fetchWallet(false);
         }
     })();
 </script>

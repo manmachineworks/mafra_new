@@ -16,6 +16,8 @@ use DB;
 use \App\Utility\NotificationUtility;
 use App\Models\CombinedOrder;
 use App\Http\Controllers\AffiliateController;
+use App\Services\ShiprocketService;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -196,6 +198,17 @@ class OrderController extends Controller
             }
 
             $order->save();
+
+            if (config('shiprocket.auto_push_on_paid') && ($order->payment_status === 'paid' || $order->payment_type === 'cash_on_delivery')) {
+                try {
+                    app(ShiprocketService::class)->pushOrder($order);
+                } catch (\Throwable $e) {
+                    Log::error('Shiprocket auto-push failed (api)', [
+                        'order_id' => $order->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
         }
         $combined_order->save();
 

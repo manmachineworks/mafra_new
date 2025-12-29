@@ -67,4 +67,28 @@ class Order extends Model
     {
         return $this->hasOne(CommissionHistory::class);
     }
+
+    public function isShiprocketPushed(): bool
+    {
+        return !empty($this->shiprocket_shipment_id);
+    }
+
+    public function isShipmentLive(): bool
+    {
+        return !empty($this->shiprocket_awb) && !in_array($this->shiprocket_status, ['cancelled', 'cancelled_by_user']);
+    }
+
+    public function getTrackingUrl(): ?string
+    {
+        if (!empty($this->shiprocket_label_url)) {
+            return $this->shiprocket_label_url;
+        }
+
+        if (!empty($this->shiprocket_tracking_payload)) {
+            $payload = json_decode($this->shiprocket_tracking_payload, true);
+            return $payload['track_url'] ?? null;
+        }
+
+        return null;
+    }
 }

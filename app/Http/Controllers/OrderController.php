@@ -28,6 +28,7 @@ use App\Notifications\OrderNotification;
 use App\Utility\EmailUtility;
 use App\Services\ShiprocketService;
 use App\Services\PrepaidDiscountService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -655,9 +656,9 @@ class OrderController extends Controller
         return 1;
     }
 
-    public function push_to_shiprocket(Request $request, ShiprocketService $shiprocket)
+    public function push_to_shiprocket(Request $request, ShiprocketService $shiprocket, Order $routeOrder = null)
     {
-        $order = Order::findOrFail($request->order_id);
+        $order = $routeOrder ?? Order::findOrFail($request->order_id);
 
         if ($order->shiprocket_shipment_id) {
             return [
@@ -672,7 +673,9 @@ class OrderController extends Controller
             ], 422);
         }
 
-        $result = $shiprocket->pushOrder($order);
+        $result = DB::transaction(function () use ($shiprocket, $order) {
+            return $shiprocket->pushOrder($order);
+        });
 
         if (!$result['ok']) {
             return response()->json([

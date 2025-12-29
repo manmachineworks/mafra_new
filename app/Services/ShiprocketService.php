@@ -12,6 +12,7 @@ use Throwable;
 class ShiprocketService
 {
     private const TOKEN_CACHE_KEY = 'shiprocket_api_token';
+    private const TOKEN_META_CACHE_KEY = 'shiprocket_api_token_meta';
 
     private string $baseUrl;
 
@@ -39,7 +40,7 @@ class ShiprocketService
             $order->loadMissing('orderDetails.product');
 
             $payload = $this->buildOrderPayload($order, $options);
-            $response = $this->client()->post('/orders/create/adhoc', $payload);
+            $response = $this->request('post', '/orders/create/adhoc', $payload);
 
             if (!$response->successful()) {
                 $this->logFailure('Order push failed', $response, ['order_id' => $order->id]);
@@ -91,7 +92,7 @@ class ShiprocketService
                 'pickup_date' => ($pickupDate ?? now())->toDateString(),
             ];
 
-            $response = $this->client()->post('/courier/generate/pickup', $payload);
+            $response = $this->request('post', '/courier/generate/pickup', $payload);
             if (!$response->successful()) {
                 $this->logFailure('Pickup scheduling failed', $response, ['order_id' => $order->id]);
                 return [
@@ -135,7 +136,7 @@ class ShiprocketService
         }
 
         try {
-            $response = $this->client()->get('/courier/track/awb/' . $order->shiprocket_awb);
+            $response = $this->request('get', '/courier/track/awb/' . $order->shiprocket_awb);
 
             if (!$response->successful()) {
                 $this->logFailure('Tracking fetch failed', $response, ['order_id' => $order->id]);
@@ -286,9 +287,52 @@ class ShiprocketService
             ->acceptJson();
     }
 
-    private function token(): string
+    private function request(string $method, string $uri, array $payload = [], array $query = [])
     {
-        return Cache::remember(self::TOKEN_CACHE_KEY, now()->addMinutes(50), function () {
+        $response = $this->performRequest($method, $uri, $payload, $query);
+
+        // Retry once on 401 with a refreshed token.
+        if ($response->status() === 401) {
+            $refresh = $this->refreshToken();
+            if (!empty($refresh['ok'])) {
+                $response = $this->performRequest($method, $uri, $payload, $query);
+            }
+        }
+
+        return $response;
+    }
+
+    private function performRequest(string $method, string $uri, array $payload, array $query)
+    {
+        $client = Http::baseUrl($this->baseUrl)
+            ->timeout(config('shiprocket.timeout'))
+            ->withToken($this->token())
+            ->acceptJson();
+
+        if ($method === 'get') {
+            return $client->get($uri, empty($query) ? $payload : $query);
+        }
+
+        return $client->{$method}($uri, $payload);
+    }
+
+    private function token(bool $forceRefresh = false): string
+    {
+        $meta = Cache::get(self::TOKEN_META_CACHE_KEY);
+        $cached = Cache::get(self::TOKEN_CACHE_KEY);
+
+        if (!$forceRefresh && $cached && $meta && isset($meta['expires_at'])) {
+            if (Carbon::parse($meta['expires_at'])->gt(now()->addMinutes(5))) {
+                return $cached;
+            }
+        }
+
+        return Cache::remember(self::TOKEN_CACHE_KEY, now()->addMinutes(50), function () use ($forceRefresh) {
+            if ($forceRefresh) {
+                Cache::forget(self::TOKEN_CACHE_KEY);
+                Cache::forget(self::TOKEN_META_CACHE_KEY);
+            }
+
             $payload = [
                 'email' => config('shiprocket.email'),
                 'password' => config('shiprocket.password'),
@@ -313,19 +357,42 @@ class ShiprocketService
                 throw new \RuntimeException('Shiprocket token missing from response');
             }
 
-            $expires = $response->json('expires_in') ?? 50;
+            $expiresSeconds = (int) ($response->json('expires_in') ?? 3000);
+            $expiresAt = now()->addSeconds($expiresSeconds);
 
-            Cache::put(self::TOKEN_CACHE_KEY, $token, now()->addMinutes((int) $expires));
+            Cache::put(self::TOKEN_CACHE_KEY, $token, $expiresAt);
+            Cache::put(self::TOKEN_META_CACHE_KEY, ['expires_at' => $expiresAt], $expiresAt);
 
             return $token;
         });
+    }
+
+    public function getToken(): array
+    {
+        try {
+            $token = $this->token();
+            $meta = Cache::get(self::TOKEN_META_CACHE_KEY);
+
+            return [
+                'ok' => true,
+                'token' => $token,
+                'expires_at' => isset($meta['expires_at']) ? Carbon::parse($meta['expires_at'])->toDateTimeString() : null,
+            ];
+        } catch (Throwable $e) {
+            $this->logException('Shiprocket token fetch failed', $e);
+            return [
+                'ok' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
     }
 
     public function refreshToken(): array
     {
         try {
             Cache::forget(self::TOKEN_CACHE_KEY);
-            $token = $this->token();
+            Cache::forget(self::TOKEN_META_CACHE_KEY);
+            $token = $this->token(true);
 
             return [
                 'ok' => true,
@@ -338,6 +405,168 @@ class ShiprocketService
                 'ok' => false,
                 'message' => $e->getMessage(),
             ];
+        }
+    }
+
+    public function fetchTrackingByAwb(string $awb): array
+    {
+        try {
+            $response = $this->request('get', '/courier/track/awb/' . $awb);
+            if (!$response->successful()) {
+                $this->logFailure('Shiprocket tracking fetch failed', $response, ['awb' => $awb]);
+                return ['ok' => false, 'message' => $response->json('message') ?? 'Tracking fetch failed', 'response' => $response->json()];
+            }
+
+            return ['ok' => true, 'response' => $response->json()];
+        } catch (Throwable $e) {
+            $this->logException('Shiprocket tracking fetch exception', $e, ['awb' => $awb]);
+            return ['ok' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    public function fetchAvailableCouriers(Order $order, array $overrides = []): array
+    {
+        $address = json_decode($order->shipping_address ?? '{}', true) ?: [];
+
+        $payload = array_merge([
+            'pickup_postcode' => $address['postal_code'] ?? '',
+            'delivery_postcode' => $address['postal_code'] ?? '',
+            'cod' => $order->payment_type === 'cash_on_delivery' ? 1 : 0,
+            'weight' => $overrides['weight'] ?? $this->calculateWeight($order),
+            'mode' => $overrides['mode'] ?? 'Surface',
+        ], $overrides);
+
+        try {
+            $response = $this->request('get', '/courier/serviceability', $payload);
+            if (!$response->successful()) {
+                $this->logFailure('Shiprocket courier serviceability failed', $response, ['order_id' => $order->id]);
+                return ['ok' => false, 'message' => $response->json('message') ?? 'Could not fetch couriers', 'response' => $response->json()];
+            }
+
+            return ['ok' => true, 'response' => $response->json()];
+        } catch (Throwable $e) {
+            $this->logException('Shiprocket courier serviceability exception', $e, ['order_id' => $order->id]);
+            return ['ok' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    public function fetchPickupLocations(): array
+    {
+        try {
+            $response = $this->request('get', '/settings/company/pickup');
+            if (!$response->successful()) {
+                $this->logFailure('Shiprocket pickup locations failed', $response, []);
+                return ['ok' => false, 'message' => $response->json('message') ?? 'Could not fetch pickup locations', 'response' => $response->json()];
+            }
+
+            return ['ok' => true, 'response' => $response->json()];
+        } catch (Throwable $e) {
+            $this->logException('Shiprocket pickup fetch exception', $e);
+            return ['ok' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    public function fetchWalletBalance(): array
+    {
+        try {
+            $response = $this->request('get', '/wallet/balance');
+            if (!$response->successful()) {
+                $this->logFailure('Shiprocket wallet fetch failed', $response, []);
+                return ['ok' => false, 'message' => $response->json('message') ?? 'Could not fetch wallet balance', 'response' => $response->json()];
+            }
+
+            return ['ok' => true, 'response' => $response->json()];
+        } catch (Throwable $e) {
+            $this->logException('Shiprocket wallet fetch exception', $e);
+            return ['ok' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    public function generateLabel(Order $order): array
+    {
+        if (!$order->shiprocket_shipment_id) {
+            return ['ok' => false, 'message' => 'Shipment ID missing'];
+        }
+
+        try {
+            $response = $this->request('post', '/courier/generate/label', [
+                'shipment_id' => [$order->shiprocket_shipment_id],
+            ]);
+
+            if (!$response->successful()) {
+                $this->logFailure('Shiprocket label generation failed', $response, ['order_id' => $order->id]);
+                return ['ok' => false, 'message' => $response->json('message') ?? 'Label generation failed', 'response' => $response->json()];
+            }
+
+            $url = $response->json('label_url') ?? ($response->json('data.label_url') ?? null);
+            if ($url) {
+                $order->shiprocket_label_url = $url;
+                $order->shiprocket_last_synced_at = now();
+                $order->save();
+            }
+
+            return ['ok' => true, 'message' => 'Label generated', 'response' => $response->json(), 'url' => $url];
+        } catch (Throwable $e) {
+            $this->logException('Shiprocket label generation exception', $e, ['order_id' => $order->id]);
+            return ['ok' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    public function generateInvoice(Order $order): array
+    {
+        if (!$order->shiprocket_order_id) {
+            return ['ok' => false, 'message' => 'Order ID missing for invoice'];
+        }
+
+        try {
+            $response = $this->request('post', '/orders/print/invoice', [
+                'ids' => [$order->shiprocket_order_id],
+            ]);
+
+            if (!$response->successful()) {
+                $this->logFailure('Shiprocket invoice generation failed', $response, ['order_id' => $order->id]);
+                return ['ok' => false, 'message' => $response->json('message') ?? 'Invoice generation failed', 'response' => $response->json()];
+            }
+
+            $url = $response->json('invoice_url') ?? ($response->json('data.invoice_url') ?? null);
+            if ($url) {
+                $order->shiprocket_manifest_url = $url;
+                $order->shiprocket_last_synced_at = now();
+                $order->save();
+            }
+
+            return ['ok' => true, 'message' => 'Invoice generated', 'response' => $response->json(), 'url' => $url];
+        } catch (Throwable $e) {
+            $this->logException('Shiprocket invoice generation exception', $e, ['order_id' => $order->id]);
+            return ['ok' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    public function cancelShipment(Order $order, string $reason = ''): array
+    {
+        if (!$order->shiprocket_order_id) {
+            return ['ok' => false, 'message' => 'Order not pushed to Shiprocket'];
+        }
+
+        try {
+            $response = $this->request('post', '/orders/cancel', [
+                'ids' => [$order->shiprocket_order_id],
+                'reason' => $reason ?: 'Cancelled from admin',
+            ]);
+
+            if (!$response->successful()) {
+                $this->logFailure('Shiprocket cancellation failed', $response, ['order_id' => $order->id]);
+                return ['ok' => false, 'message' => $response->json('message') ?? 'Cancellation failed', 'response' => $response->json()];
+            }
+
+            $order->shiprocket_status = 'cancelled';
+            $order->shiprocket_last_synced_at = now();
+            $order->save();
+
+            return ['ok' => true, 'message' => 'Shipment cancelled', 'response' => $response->json()];
+        } catch (Throwable $e) {
+            $this->logException('Shiprocket cancellation exception', $e, ['order_id' => $order->id]);
+            return ['ok' => false, 'message' => $e->getMessage()];
         }
     }
 

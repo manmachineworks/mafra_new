@@ -119,6 +119,11 @@
                                         @if ($order->shiprocket_courier_name)
                                             <div>{{ translate('Courier') }}: {{ $order->shiprocket_courier_name }}</div>
                                         @endif
+                                        @if ($order->getTrackingUrl())
+                                            <div class="mt-1">
+                                                <a href="{{ $order->getTrackingUrl() }}" target="_blank">{{ translate('Tracking URL') }}</a>
+                                            </div>
+                                        @endif
                                         @if (!empty($shiprocketTracking['last_activity']))
                                             <div class="mt-1">
                                                 <strong>{{ translate('Last Update') }}:</strong>
@@ -136,9 +141,20 @@
                                             {{ translate('Label/Tracking') }}
                                         </a>
                                     @endif
-                                    <button class="btn btn-soft-primary btn-sm mt-2" id="refresh_shiprocket_status">
-                                        {{ translate('Refresh Status') }}
-                                    </button>
+                                    <div class="d-flex flex-wrap gap-2 mt-3">
+                                        <button class="btn btn-soft-primary btn-sm mr-1 mb-2" id="refresh_shiprocket_status">
+                                            {{ translate('Refresh Status') }}
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm mr-1 mb-2" id="generate_shiprocket_label">
+                                            {{ translate('Generate Label') }}
+                                        </button>
+                                        <button class="btn btn-outline-secondary btn-sm mr-1 mb-2" id="generate_shiprocket_invoice">
+                                            {{ translate('Generate Invoice') }}
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm mb-2" id="cancel_shiprocket_shipment">
+                                            {{ translate('Cancel Shipment') }}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         @else
@@ -478,9 +494,8 @@
         $('#push_to_shiprocket').on('click', function() {
             var button = $(this);
             button.prop('disabled', true);
-            $.post('{{ route('orders.push_to_shiprocket') }}', {
-                _token: '{{ @csrf_token() }}',
-                order_id: {{ $order->id }}
+            $.post('{{ route('orders.push_to_shiprocket.single', $order->id) }}', {
+                _token: '{{ @csrf_token() }}'
             }, function(data) {
                 AIZ.plugins.notify('success', data.message ?? "{{ translate('Pushed to Shiprocket') }}");
                 location.reload();
@@ -494,9 +509,8 @@
         $('#refresh_shiprocket_status').on('click', function() {
             var button = $(this);
             button.prop('disabled', true);
-            $.post('{{ route('orders.shiprocket_track') }}', {
-                _token: '{{ @csrf_token() }}',
-                order_id: {{ $order->id }}
+            $.post('{{ route('shiprocket.fetch_tracking', $order->id) }}', {
+                _token: '{{ @csrf_token() }}'
             }, function(data) {
                 AIZ.plugins.notify('success', data.message || "{{ translate('Shiprocket status updated') }}");
                 location.reload();
@@ -505,6 +519,58 @@
                 var message = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : "{{ translate('Failed to fetch Shiprocket status') }}";
                 AIZ.plugins.notify('danger', message);
             });
+        });
+
+        $('#generate_shiprocket_label').on('click', function() {
+            var button = $(this);
+            button.prop('disabled', true);
+            $.post('{{ route('shiprocket.generate_label', $order->id) }}', { _token: '{{ @csrf_token() }}' })
+                .done(function(resp) {
+                    AIZ.plugins.notify('success', resp.message || "{{ translate('Label generated') }}");
+                    if (resp.url) {
+                        window.open(resp.url, '_blank');
+                    }
+                })
+                .fail(function(xhr) {
+                    var message = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : "{{ translate('Failed to generate label') }}";
+                    AIZ.plugins.notify('danger', message);
+                })
+                .always(function() { button.prop('disabled', false); });
+        });
+
+        $('#generate_shiprocket_invoice').on('click', function() {
+            var button = $(this);
+            button.prop('disabled', true);
+            $.post('{{ route('shiprocket.generate_invoice', $order->id) }}', { _token: '{{ @csrf_token() }}' })
+                .done(function(resp) {
+                    AIZ.plugins.notify('success', resp.message || "{{ translate('Invoice generated') }}");
+                    if (resp.url) {
+                        window.open(resp.url, '_blank');
+                    }
+                })
+                .fail(function(xhr) {
+                    var message = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : "{{ translate('Failed to generate invoice') }}";
+                    AIZ.plugins.notify('danger', message);
+                })
+                .always(function() { button.prop('disabled', false); });
+        });
+
+        $('#cancel_shiprocket_shipment').on('click', function() {
+            var button = $(this);
+            if (!confirm("{{ translate('Are you sure you want to cancel this shipment?') }}")) {
+                return;
+            }
+            button.prop('disabled', true);
+            $.post('{{ route('shiprocket.cancel_shipment', $order->id) }}', { _token: '{{ @csrf_token() }}' })
+                .done(function(resp) {
+                    AIZ.plugins.notify('success', resp.message || "{{ translate('Shipment cancelled') }}");
+                    location.reload();
+                })
+                .fail(function(xhr) {
+                    var message = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : "{{ translate('Failed to cancel shipment') }}";
+                    AIZ.plugins.notify('danger', message);
+                })
+                .always(function() { button.prop('disabled', false); });
         });
     </script>
 @endsection
