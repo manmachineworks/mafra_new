@@ -447,7 +447,7 @@ $bottomHeaderTextColor = get_setting('bottom_header_text_color');
                         </span>
                         <a href="{{ route('user.login') }}"
                             class="opacity-60 hov-opacity-100 fs-12 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3 top-text-color-visibility" style="color: {{ $topHeaderTextColor }}">{{ translate('Login') }}</a>
-                        {{-- <a href="{{ route(get_setting('customer_registration_verify') === '1' ? 'registration.verification' : 'user.registration') }}" --}}
+                        <!-- {{-- <a href="{{ route(get_setting('customer_registration_verify') === '1' ? 'registration.verification' : 'user.registration') }}" --}} -->
                              <a href="{{ route('user.registration') }}" 
                             class="opacity-60 hov-opacity-100 fs-12 d-inline-block py-2 pl-2 top-text-color-visibility" style="color: {{ $topHeaderTextColor }}">{{ translate('Registration') }}</a>
                     </span>
