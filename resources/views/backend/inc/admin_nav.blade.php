@@ -72,7 +72,7 @@
             </div>
             <div class="aiz-topbar-item mr-3">
                 <div class="d-flex align-items-center">
-                    <span class="badge badge-inline badge-primary" id="shiprocket_status_badge">{{ translate('Shiprocket') }}</span>
+                    <span class="badge badge-inline badge-primary" id="shiprocket_status_badge">{{ translate('Shiprocket') }}s</span>
                     <span class="ml-2 small text-muted" id="shiprocket_wallet_balance">--</span>
                 </div>
             </div>
