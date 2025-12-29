@@ -15,15 +15,15 @@
             @if($top_banner_image != null)
             <!-- For Large device -->
             <img src="{{ uploaded_asset($top_banner_image)  }}"
-                class="d-none d-xl-block img-fit h-100 w-100" alt="{{ translate('top_banner') }}">
+                class="d-none d-xl-block img-fit h-100 w-100" alt="{{ translate('top_banner') }}" loading="lazy" decoding="async">
 
             <!-- For Medium device -->
             <img src="{{ uploaded_asset($top_banner_image_for_tabs ?? $top_banner_image)  }}"
-                class="d-none d-md-block d-xl-none img-fit h-100 w-100" alt="{{ translate('top_banner') }}">
+                class="d-none d-md-block d-xl-none img-fit h-100 w-100" alt="{{ translate('top_banner') }}" loading="lazy" decoding="async">
 
             <!-- For Small device -->
             <img src="{{ uploaded_asset($top_banner_image_for_mobile ?? $top_banner_image) }}"
-                class="d-md-none img-fit h-100 w-100" alt="{{ translate('top_banner') }}">
+                class="d-md-none img-fit h-100 w-100" alt="{{ translate('top_banner') }}" loading="lazy" decoding="async">
             @endif
 
             <!-- Scroll Text -->

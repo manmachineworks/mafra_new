@@ -51,6 +51,7 @@ use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\SizeChartController;
+use App\Http\Controllers\ProductViewController;
 use App\Http\Controllers\Webhook\ShiprocketWebhookController;
 
 /*
@@ -188,6 +189,9 @@ Route::controller(HomeController::class)->group(function () {
 
     Route::get('/track-your-order', 'trackOrder')->name('orders.track');
 });
+
+// Product view stats (per product, live/today)
+Route::get('/product/{product}/view-stats', [ProductViewController::class, 'viewStats'])->name('product.view-stats');
 
 // Language Switch
 Route::post('/language', [LanguageController::class, 'changeLanguage'])->name('language.change');

@@ -147,14 +147,9 @@
                                     <div class="small text-muted mb-2">
                                         {{ translate('No Shiprocket shipment yet.') }}
                                     </div>
-                                    <button class="btn btn-primary w-100" id="push_to_shiprocket" @if($order->payment_status !== 'paid') disabled @endif>
+                                    <button class="btn btn-primary w-100" id="push_to_shiprocket">
                                         {{ translate('Push to Shiprocket') }}
                                     </button>
-                                    @if ($order->payment_status !== 'paid')
-                                        <div class="text-danger small mt-2">
-                                            {{ translate('Order must be marked paid before pushing.') }}
-                                        </div>
-                                    @endif
                                 </div>
                             </div>
                         @endif

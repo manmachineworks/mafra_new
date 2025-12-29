@@ -413,6 +413,36 @@
             getVariantPrice();
         });
 
+        (function () {
+            const statsRoot = document.getElementById('product-view-stats');
+            if (!statsRoot) return;
+            const todayEl = document.getElementById('product-today-views');
+            const liveEl = document.getElementById('product-live-viewers');
+            const url = "{{ route('product.view-stats', ['product' => $detailedProduct->id]) }}";
+            const refreshMs = 10000;
+
+            const render = (data) => {
+                if (todayEl && typeof data.today_views !== 'undefined') {
+                    todayEl.textContent = data.today_views;
+                }
+                if (liveEl && typeof data.live_viewers !== 'undefined') {
+                    liveEl.textContent = data.live_viewers;
+                }
+            };
+
+            const fetchStats = () => {
+                fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then((res) => res.ok ? res.json() : Promise.reject())
+                    .then(render)
+                    .catch(() => {
+                        // keep UI silent on failure
+                    });
+            };
+
+            fetchStats();
+            setInterval(fetchStats, refreshMs);
+        })();
+
         function CopyToClipboard(e) {
             var url = $(e).data('url');
             var $temp = $("<input>");

@@ -1,4 +1,4 @@
-<div class="aiz-sidebar-wrap">
+<div class="aiz-sidebar-wrap admin-nav-theme">
     <div class="aiz-sidebar left c-scrollbar">
         <div class="aiz-side-nav-logo-wrap">
             <a href="{{ route('admin.dashboard') }}" class="d-block text-left">
@@ -65,17 +65,8 @@
                                 </g>
                             </svg>
                         </div>
-                        <span class="aiz-side-nav-text">{{translate('POS System')}} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                        @if (env("DEMO_MODE") == "On")
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001"
-                            class="mx-2">
-                            <path id="Union_49" data-name="Union 49"
-                                d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                transform="translate(19337 -3329)" fill="#f51350" />
-                        </svg>
-                        @endif
+                        <span class="aiz-side-nav-text">{{translate('POS System')}} </span>
+                     
                         <span class="aiz-side-nav-arrow"></span>
                     </a>
                     <ul class="aiz-side-nav-list level-2">
@@ -134,14 +125,14 @@
                                 </a>
                             </li>
                             @endcan
-                            @can('show_in_house_products')
+                            <!-- @can('show_in_house_products')
                             <li class="aiz-side-nav-item">
                                 <a href="{{route('products.admin')}}"
                                     class="aiz-side-nav-link {{ areActiveRoutes(['products.admin', 'products.admin.edit']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('In House Products') }}</span>
                                 </a>
                             </li>
-                            @endcan
+                            @endcan -->
                             @can('show_digital_products')
                             <li class="aiz-side-nav-item">
                                 <a href="{{route('digitalproducts.index')}}"
@@ -526,17 +517,8 @@
                                             transform="translate(-4.993 -4.912)" fill="#575b6a" />
                                     </svg>
                                 </div>
-                                <span class="aiz-side-nav-text">{{translate('Auction Products')}} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                                @if (env("DEMO_MODE") == "On")
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001"
-                                    class="mx-2">
-                                    <path id="Union_49" data-name="Union 49"
-                                        d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                        transform="translate(19337 -3329)" fill="#f51350" />
-                                </svg>
-                                @endif
+                                <span class="aiz-side-nav-text">{{translate('Auction Products')}} </span>
+                              
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <!--Submenu-->
@@ -597,17 +579,8 @@
                                     fill="#575b6a" />
                             </svg>
                         </div>
-                        <span class="aiz-side-nav-text">{{translate('Wholesale Products')}} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                        @if (env("DEMO_MODE") == "On")
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001"
-                            class="mx-2">
-                            <path id="Union_49" data-name="Union 49"
-                                d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                transform="translate(19337 -3329)" fill="#f51350" />
-                        </svg>
-                        @endif
+                        <span class="aiz-side-nav-text">{{translate('Wholesale Products')}} </span>
+                       
                         <span class="aiz-side-nav-arrow"></span>
                     </a>
                     <ul class="aiz-side-nav-list level-2">
@@ -665,7 +638,7 @@
                                 </g>
                             </svg>
                         </div>
-                        <span class="aiz-side-nav-text">{{translate('Sales')}}</span>
+                        <span class="aiz-side-nav-text">{{translate('Orders')}}</span>
                         <span class="aiz-side-nav-arrow"></span>
                     </a>
                     <!--Submenu-->
@@ -733,17 +706,8 @@
                                     transform="translate(-363.281 -392.344)" fill="#575b6a" />
                             </svg>
                         </div>
-                        <span class="aiz-side-nav-text">{{translate('Delivery Boy')}} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                        @if (env("DEMO_MODE") == "On")
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001"
-                            class="mx-2">
-                            <path id="Union_49" data-name="Union 49"
-                                d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                transform="translate(19337 -3329)" fill="#f51350" />
-                        </svg>
-                        @endif
+                        <span class="aiz-side-nav-text">{{translate('Delivery Boy')}} </span>
+                      
                         <span class="aiz-side-nav-arrow"></span>
                     </a>
                     <ul class="aiz-side-nav-list level-2">
@@ -807,17 +771,8 @@
                                             transform="translate(-3.25 -3.25)" fill="#575b6a" />
                                     </svg>
                                 </div>
-                                <span class="aiz-side-nav-text">{{ translate('Refunds') }} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                                @if (env("DEMO_MODE") == "On")
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001"
-                                    class="mx-2">
-                                    <path id="Union_49" data-name="Union 49"
-                                        d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                        transform="translate(19337 -3329)" fill="#f51350" />
-                                </svg>
-                                @endif
+                                <span class="aiz-side-nav-text">{{ translate('Refunds') }} </span>
+                              
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2">
@@ -992,17 +947,8 @@
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('seller_packages.index') }}"
                                 class="aiz-side-nav-link {{ areActiveRoutes(['seller_packages.index', 'seller_packages.create', 'seller_packages.edit'])}}">
-                                <span class="aiz-side-nav-text">{{ translate('Seller Packages') }} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                                @if (env("DEMO_MODE") == "On")
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001"
-                                    viewBox="0 0 16 14.001" class="mx-2">
-                                    <path id="Union_49" data-name="Union 49"
-                                        d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                        transform="translate(19337 -3329)" fill="#f51350" />
-                                </svg>
-                                @endif
+                                <span class="aiz-side-nav-text">{{ translate('Seller Packages') }} </span>
+                           
                             </a>
                         </li>
                         @endcan
@@ -1037,7 +983,7 @@
                 </li>
 
                 <!-- Reports -->
-                @canany(['earning_report',
+                <!-- @canany(['earning_report',
                 'in_house_product_sale_report','seller_products_sale_report','products_stock_report','product_wishlist_report','user_search_report','commission_history_report','wallet_transaction_report'])
                 <li class="aiz-side-nav-item">
                     <a href="#" class="aiz-side-nav-link">
@@ -1123,7 +1069,7 @@
                         @endcan
                     </ul>
                 </li>
-                @endcanany
+                @endcanany -->
 
                 <!--Blog System-->
                 @canany(['view_blogs','view_blog_categories'])
@@ -1300,17 +1246,8 @@
                         @if (addon_is_activated('otp_system') && auth()->user()->can('send_bulk_sms'))
                         <li class="aiz-side-nav-item">
                             <a href="{{route('sms.index')}}" class="aiz-side-nav-link">
-                                <span class="aiz-side-nav-text">{{ translate('Bulk SMS') }} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                                @if (env("DEMO_MODE") == "On")
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001"
-                                    viewBox="0 0 16 14.001" class="mx-2">
-                                    <path id="Union_49" data-name="Union 49"
-                                        d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                        transform="translate(19337 -3329)" fill="#f51350" />
-                                </svg>
-                                @endif
+                                <span class="aiz-side-nav-text">{{ translate('Bulk SMS') }}</span>
+                                
                             </a>
                         </li>
                         @endif
@@ -1417,7 +1354,7 @@
                 @endcanany
 
                 <!-- Affiliate Addon -->
-                @if (addon_is_activated('affiliate_system'))
+                <!-- @if (addon_is_activated('affiliate_system'))
                 @canany(['affiliate_registration_form_config','affiliate_configurations','view_affiliate_users','view_all_referral_users','view_affiliate_withdraw_requests','view_affiliate_logs'])
                 <li class="aiz-side-nav-item">
                     <a href="#" class="aiz-side-nav-link">
@@ -1447,17 +1384,8 @@
                                     transform="translate(-170.498 -267.375)" fill="#575b6a" />
                             </svg>
                         </div>
-                        <span class="aiz-side-nav-text">{{translate('Affiliate System')}} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                        @if (env("DEMO_MODE") == "On")
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001"
-                                class="mx-2">
-                                <path id="Union_49" data-name="Union 49"
-                                    d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                    transform="translate(19337 -3329)" fill="#f51350" />
-                            </svg>
-                        @endif
+                        <span class="aiz-side-nav-text">{{translate('Affiliate System')}} </span>
+                       
                         <span class="aiz-side-nav-arrow"></span>
                     </a>
                     <ul class="aiz-side-nav-list level-2">
@@ -1507,12 +1435,12 @@
                     </ul>
                 </li>
                 @endcanany
-                @endif
+                @endif -->
 
                
 
                 <!-- Club Point Addon-->
-                @if (addon_is_activated('club_point'))
+                <!-- @if (addon_is_activated('club_point'))
                 @canany(['club_point_configurations','set_club_points','view_users_club_points'])
                 <li class="aiz-side-nav-item">
                     <a href="#" class="aiz-side-nav-link">
@@ -1533,17 +1461,8 @@
                                 </g>
                             </svg>
                         </div>
-                        <span class="aiz-side-nav-text">{{translate('Club Point System')}} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                        @if (env("DEMO_MODE") == "On")
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001"
-                            class="mx-2">
-                            <path id="Union_49" data-name="Union 49"
-                                d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                transform="translate(19337 -3329)" fill="#f51350" />
-                        </svg>
-                        @endif
+                        <span class="aiz-side-nav-text">{{translate('Club Point System')}} </span>
+                       
                         <span class="aiz-side-nav-arrow"></span>
                     </a>
                     <ul class="aiz-side-nav-list level-2">
@@ -1573,7 +1492,7 @@
                     </ul>
                 </li>
                 @endcanany
-                @endif
+                @endif -->
 
                 <!--OTP addon -->
                 @if (addon_is_activated('otp_system'))
@@ -1587,17 +1506,8 @@
                                     transform="translate(0)" fill="#575b6a" />
                             </svg>
                         </div>
-                        <span class="aiz-side-nav-text">{{translate('OTP System')}} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                        @if (env("DEMO_MODE") == "On")
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001"
-                            class="mx-2">
-                            <path id="Union_49" data-name="Union 49"
-                                d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                transform="translate(19337 -3329)" fill="#f51350" />
-                        </svg>
-                        @endif
+                        <span class="aiz-side-nav-text">{{translate('OTP System')}} </span>
+                        
                         <span class="aiz-side-nav-arrow"></span>
                     </a>
                     <ul class="aiz-side-nav-list level-2">
@@ -1667,23 +1577,14 @@
 
                         
                         <!-- Cybersource Addon -->
-                        @if (addon_is_activated('cybersource')  && auth()->user()->can('cybersource_pg_configuration'))
+                        <!-- @if (addon_is_activated('cybersource')  && auth()->user()->can('cybersource_pg_configuration'))
                         <li class="aiz-side-nav-item">
                             <a href="{{route('cybersource_configuration')}}" class="aiz-side-nav-link">
-                                <span class="aiz-side-nav-text">{{translate('Cybersource Payment Gateway')}} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                                @if (env("DEMO_MODE") == "On")
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001"
-                                    class="mx-2">
-                                    <path id="Union_49" data-name="Union 49"
-                                        d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                        transform="translate(19337 -3329)" fill="#f51350" />
-                                </svg>
-                                @endif
+                                <span class="aiz-side-nav-text">{{translate('Cybersource Payment Gateway')}} </span>
+                               
                             </a>
                         </li>
-                        @endif
+                        @endif -->
 
                        
 
@@ -1693,41 +1594,23 @@
                         @if (addon_is_activated('paytm') && auth()->user()->can('asian_payment_gateway_configuration'))
                         <li class="aiz-side-nav-item">
                             <a href="{{route('paytm.index')}}" class="aiz-side-nav-link">
-                                <span class="aiz-side-nav-text">{{translate('Asian Payment Gateway')}} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                                @if (env("DEMO_MODE") == "On")
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001"
-                                    class="mx-2">
-                                    <path id="Union_49" data-name="Union 49"
-                                        d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                        transform="translate(19337 -3329)" fill="#f51350" />
-                                </svg>
-                                @endif
+                                <span class="aiz-side-nav-text">{{translate('Payment Gateway')}} </span>
+                              
                             </a>
                         </li>
                         @endif
 
                          <!-- African Payment Gateway -->
-                        @if(addon_is_activated('african_pg'))
+                        <!-- @if(addon_is_activated('african_pg'))
                         @canany(['african_pg_configuration','african_pg_credentials_configuration'])
                          <li class="aiz-side-nav-item">
                             <a href="{{route('african_credentials.index')}}" class="aiz-side-nav-link">
-                                <span class="aiz-side-nav-text">{{translate('African Payment Gateway')}} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                                @if (env("DEMO_MODE") == "On")
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001"
-                                    class="mx-2">
-                                    <path id="Union_49" data-name="Union 49"
-                                        d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                        transform="translate(19337 -3329)" fill="#f51350" />
-                                </svg>
-                                @endif
+                                <span class="aiz-side-nav-text">{{translate('African Payment Gateway')}} </span>
+                             
                             </a>
                         </li>
                         @endcanany
-                        @endif
+                        @endif -->
 
 
 
@@ -1737,17 +1620,8 @@
                         'view_all_offline_wallet_recharges','view_all_offline_customer_package_payments','view_all_offline_seller_package_payments'])
                         <li class="aiz-side-nav-item">
                             <a href="#" class="aiz-side-nav-link">
-                                <span class="aiz-side-nav-text">{{translate('Offline Payment System')}} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001" class="mx-2">
-                            <path id="Union_49" data-name="Union 49" d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z" transform="translate(19337 -3329)" fill="#f51350"></path>
-                        </svg></span>
-                                @if (env("DEMO_MODE") == "On")
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.001" viewBox="0 0 16 14.001"
-                                    class="mx-2">
-                                    <path id="Union_49" data-name="Union 49"
-                                        d="M-19322,3342.5v-5a2.007,2.007,0,0,0-2-2v1.5a3,3,0,0,1-3,3h-4v-10h4a3,3,0,0,1,3,3v1.5a3,3,0,0,1,3,3v5a.506.506,0,0,1-.5.5A.5.5,0,0,1-19322,3342.5Zm-11-2V3339h-3a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v-7.5a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5v11a.5.5,0,0,1-.5.5A.506.506,0,0,1-19333,3340.5Zm-3-7.5a1,1,0,0,1-1-1,1,1,0,0,1,1-1h3v2Z"
-                                        transform="translate(19337 -3329)" fill="#f51350" />
-                                </svg>
-                                @endif
+                                <span class="aiz-side-nav-text">{{translate('Offline Payment System')}} </span>
+                              
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-3">
@@ -1826,13 +1700,13 @@
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <ul class="aiz-side-nav-list level-2">
-                            @can('select_homepage')
+                            <!-- @can('select_homepage')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('website.select-homepage') }}" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{translate('Select Homepage')}}</span>
                                     </a>
                                 </li>
-                            @endcan
+                            @endcan -->
                             @can('edit_website_page')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('custom-pages.edit', ['id' => 'home', 'lang' => env('DEFAULT_LANGUAGE'), 'page' => 'home']) }}"
@@ -1848,7 +1722,7 @@
                                     </a>
                                 </li>
                             @endcan
-                            <!-- @can('show_element')
+                             <!-- @can('show_element')
                                 <li class="aiz-side-nav-item">
                                     <a href="javascript:void(0);" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{translate('Element')}}</span>
@@ -1862,14 +1736,14 @@
                                         </li>
                                     </ul>
                                 </li>
-                            @endcan -->
-                            @can('select_header')
+                            @endcan  -->
+                            <!-- @can('select_header')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('website.select-header') }}" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{translate('Select Header')}}</span>
                                     </a>
                                 </li>
-                            @endcan
+                            @endcan -->
                             @can('header_setup')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('website.header') }}" class="aiz-side-nav-link">
@@ -1949,14 +1823,14 @@
                             </a>
                         </li>
                         @endcan
-                        @can('language_setup')
+                        <!-- @can('language_setup')
                         <li class="aiz-side-nav-item">
                             <a href="{{route('languages.index')}}"
                                 class="aiz-side-nav-link {{ areActiveRoutes(['languages.index', 'languages.create', 'languages.store', 'languages.show', 'languages.edit'])}}">
                                 <span class="aiz-side-nav-text">{{translate('Languages')}}</span>
                             </a>
                         </li>
-                        @endcan
+                        @endcan -->
                         @can('currency_setup')
                         <li class="aiz-side-nav-item">
                             <a href="{{route('currency.index')}}" class="aiz-side-nav-link">
@@ -1972,14 +1846,14 @@
                             </a>
                         </li>
                         @endcan
-                        @can('pickup_point_setup')
+                        <!-- @can('pickup_point_setup')
                         <li class="aiz-side-nav-item">
                             <a href="{{route('pick_up_points.index')}}"
                                 class="aiz-side-nav-link {{ areActiveRoutes(['pick_up_points.index','pick_up_points.create','pick_up_points.edit'])}}">
                                 <span class="aiz-side-nav-text">{{translate('Pickup point')}}</span>
                             </a>
                         </li>
-                        @endcan
+                        @endcan -->
                         @can('smtp_settings')
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('smtp_settings.index') }}" class="aiz-side-nav-link">
@@ -2260,13 +2134,13 @@
                         <span class="aiz-side-nav-arrow"></span>
                     </a>
                     <ul class="aiz-side-nav-list level-2">
-                        @can('system_update')
+                        <!-- @can('system_update')
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('system_update') }}" class="aiz-side-nav-link">
                                 <span class="aiz-side-nav-text">{{translate('Update')}}</span>
                             </a>
                         </li>
-                        @endcan
+                        @endcan -->
                         @can('server_status')
                         <li class="aiz-side-nav-item">
                             <a href="{{route('system_server')}}" class="aiz-side-nav-link">
@@ -2287,7 +2161,7 @@
                 @endcanany
 
                 <!-- Addon Manager -->
-                @can('manage_addons')
+                <!-- @can('manage_addons')
                 <li class="aiz-side-nav-item">
                     <a href="{{route('addons.index')}}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['addons.index', 'addons.create'])}}">
@@ -2302,9 +2176,30 @@
                         <span class="aiz-side-nav-text">{{translate('Addon Manager')}}</span>
                     </a>
                 </li>
-                @endcan
+                @endcan -->
             </ul><!-- .aiz-side-nav -->
         </div><!-- .aiz-side-nav-wrap -->
-    </div><!-- .aiz-sidebar -->
-    <div class="aiz-sidebar-overlay"></div>
 </div><!-- .aiz-sidebar -->
+<div class="aiz-sidebar-overlay"></div>
+</div><!-- .aiz-sidebar -->
+
+@push('css')
+<style>
+    .admin-nav-theme .aiz-sidebar { background:#ffffff; border-right:1px solid #f0f0f0; }
+    .admin-nav-theme .aiz-side-nav-logo-wrap { padding:18px; border-bottom:1px solid #f0f0f0; }
+    .admin-nav-theme #menu-search { background:#fff; color:#212121; border:1px solid #f0f0f0; }
+    .admin-nav-theme .aiz-side-nav-link { color:#212121; border-radius:10px; padding:10px 12px; }
+    .admin-nav-theme .aiz-side-nav-link:hover,
+    .admin-nav-theme .aiz-side-nav-link.active,
+    .admin-nav-theme .aiz-side-nav-link[aria-expanded="true"] {
+        background:#fff3f3;
+        color:#c70a0a;
+        box-shadow:0 10px 24px rgba(199,10,10,0.08);
+    }
+    .admin-nav-theme .aiz-side-nav-link svg,
+    .admin-nav-theme .aiz-side-nav-link svg * { fill: currentColor !important; }
+    .admin-nav-theme .aiz-side-nav-text { color:inherit; }
+    .admin-nav-theme .aiz-side-nav-item + .aiz-side-nav-item { margin-top:4px; }
+    .admin-nav-theme .aiz-side-nav-arrow { color:inherit; }
+</style>
+@endpush

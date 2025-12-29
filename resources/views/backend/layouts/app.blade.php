@@ -34,12 +34,12 @@
 
     <style>
         :root {
-            --blue: #3390f3;
-            --hov-blue: #1f6dc2;
+            --blue: #d91604;
+            --hov-blue: #b61304ff;
             --soft-blue: #f1fafd;
 
-            --primary: #009ef7;
-            --hov-primary: #008cdd;
+            --primary: #d91604;
+            --hov-primary: #b61304ff;
             --soft-primary: #f1fafd;
             --secondary: #a1a5b3;
             --soft-secondary: rgba(143, 151, 171, 0.15);
@@ -131,7 +131,7 @@
                     @yield('content')
                 </div>
                 <div class="bg-white text-center py-3 px-15px px-lg-25px mt-auto border-top">
-                    <p class="mb-0">&copy; {{ get_setting('site_name') }} v{{ get_setting('current_version') }}</p>
+                    <p class="mb-0">&copy; {{ get_setting('site_name') }} 2026</p>
                 </div>
             </div><!-- .aiz-main-content -->
         </div><!-- .aiz-content-wrapper -->

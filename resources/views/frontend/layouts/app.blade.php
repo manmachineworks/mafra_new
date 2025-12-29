@@ -38,6 +38,15 @@
     <meta name="robots" content="index, follow">
     <meta name="description" content="@yield('meta_description', get_setting('meta_description'))" />
     <meta name="keywords" content="@yield('meta_keywords', get_setting('meta_keywords'))">
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+    <link rel="preconnect" href="https://connect.facebook.net">
+    <link rel="dns-prefetch" href="//connect.facebook.net">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
 
     @yield('meta')
 
@@ -81,6 +90,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"> -->
 
     <!-- CSS Files -->
+    <link rel="preload" as="style" href="{{ static_asset('assets/css/vendors.css') }}?v={{ $assetVersion }}">
+    <link rel="preload" as="style" href="{{ static_asset('assets/css/aiz-core.css') }}?v={{ $assetVersion }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/vendors.css') }}?v={{ $assetVersion }}">
     @if ($rtl == 1)
         <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-rtl.min.css') }}?v={{ $assetVersion }}">
@@ -304,38 +315,6 @@
     .ph-cart-btn:active { transform: translateY(0); }
     </style>
 
-@if (get_setting('google_analytics') == 1)
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ env('TRACKING_ID') }}"></script>
-
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '{{ env('TRACKING_ID') }}');
-    </script>
-@endif
-
-@if (get_setting('facebook_pixel') == 1)
-    <!-- Facebook Pixel Code -->
-    <script>
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '{{ env('FACEBOOK_PIXEL_ID') }}');
-        fbq('track', 'PageView');
-    </script>
-    <noscript>
-        <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id={{ env('FACEBOOK_PIXEL_ID') }}&ev=PageView&noscript=1"/>
-    </noscript>
-    <!-- End Facebook Pixel Code -->
-@endif
-
 @php
     echo get_setting('header_script');
 @endphp
@@ -364,20 +343,10 @@
 
     </div>
 
-    @if(get_setting('use_floating_buttons') == 1)
-        <!-- Floating Buttons -->
-        @include('frontend.inc.floating_buttons')
-    @endif
 
     <div class="aiz-refresh">
         <div class="aiz-refresh-content"><div></div><div></div><div></div></div>
     </div>
-
-
-    @if (env("DEMO_MODE") == "On")
-        <!-- demo nav -->
-        @include('frontend.inc.demo_nav')
-    @endif
 
     <!-- cookies agreement -->
     @php
@@ -550,6 +519,37 @@
     <script src="{{ static_asset('assets/js/vendors.js') }}?v={{ $assetVersion }}"></script>
     <script src="{{ static_asset('assets/js/aiz-core.js') }}?v={{ $assetVersion }}"></script>
 
+    @if (get_setting('google_analytics') == 1)
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ env('TRACKING_ID') }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '{{ env('TRACKING_ID') }}');
+        </script>
+    @endif
+
+    @if (get_setting('facebook_pixel') == 1)
+        <!-- Facebook Pixel Code (deferred to footer) -->
+        <script>
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '{{ env('FACEBOOK_PIXEL_ID') }}');
+            fbq('track', 'PageView');
+        </script>
+        <noscript>
+            <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id={{ env('FACEBOOK_PIXEL_ID') }}&ev=PageView&noscript=1" alt="fbpixel"/>
+        </noscript>
+        <!-- End Facebook Pixel Code -->
+    @endif
+
     {{-- WhatsaApp Chat --}}
     @if (get_setting('whatsapp_chat') == 1)
         <script type="text/javascript">
@@ -625,12 +625,12 @@
                 @endif
             });
 
-            $.post('{{ route('home.section.auction_products') }}', {
-                _token: '{{ csrf_token() }}'
-            }, function(data) {
-                $('#auction_products').html(data);
-                AIZ.plugins.slickCarousel();
-            });
+            // $.post('{{ route('home.section.auction_products') }}', {
+            //     _token: '{{ csrf_token() }}'
+            // }, function(data) {
+            //     $('#auction_products').html(data);
+            //     AIZ.plugins.slickCarousel();
+            // });
 
             var isPreorderEnabled = @json(addon_is_activated('preorder'));
 
@@ -1022,19 +1022,19 @@
             }
         }
 
-        function bid_single_modal(bid_product_id, min_bid_amount){
-            @if (Auth::check() && (isCustomer() || isSeller()))
-                var min_bid_amount_text = "({{ translate('Min Bid Amount: ') }}"+min_bid_amount+")";
-                $('#min_bid_amount').text(min_bid_amount_text);
-                $('#bid_product_id').val(bid_product_id);
-                $('#bid_amount').attr('min', min_bid_amount);
-                $('#bid_for_product').modal('show');
-            @elseif (Auth::check() && isAdmin())
-                AIZ.plugins.notify('warning', '{{ translate('Sorry, Only customers & Sellers can Bid.') }}');
-            @else
-                $('#login_modal').modal('show');
-            @endif
-        }
+        // function bid_single_modal(bid_product_id, min_bid_amount){
+        //     @if (Auth::check() && (isCustomer() || isSeller()))
+        //         var min_bid_amount_text = "({{ translate('Min Bid Amount: ') }}"+min_bid_amount+")";
+        //         $('#min_bid_amount').text(min_bid_amount_text);
+        //         $('#bid_product_id').val(bid_product_id);
+        //         $('#bid_amount').attr('min', min_bid_amount);
+        //         $('#bid_for_product').modal('show');
+        //     @elseif (Auth::check() && isAdmin())
+        //         AIZ.plugins.notify('warning', '{{ translate('Sorry, Only customers & Sellers can Bid.') }}');
+        //     @else
+        //         $('#login_modal').modal('show');
+        //     @endif
+        // }
 
         function clickToSlide(btn,id){
             $('#'+id+' .aiz-carousel').find('.'+btn).trigger('click');
@@ -1324,6 +1324,15 @@
             e.preventDefault();
         }
     });
+    </script>
+    <script>
+        // Default lazy loading + async decoding for all images unless explicitly opted-out with loading="eager".
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('img:not([loading])').forEach(function (img) {
+                img.setAttribute('loading', 'lazy');
+                img.setAttribute('decoding', 'async');
+            });
+        });
     </script>
     @yield('script')
 

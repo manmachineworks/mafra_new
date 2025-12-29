@@ -1,3 +1,73 @@
+{{-- ✅ NO layout change: only add these styles (put in @section('style') or global css) --}}
+<style>
+    :root{
+        --brand:#c70a0a;
+        --dark:#212121;
+        --white:#ffffff;
+        --border:#e5e7eb;
+        --muted:rgba(33,33,33,.65);
+        --shadow-sm:0 6px 16px rgba(17,24,39,.08);
+        --shadow:0 10px 28px rgba(17,24,39,.10);
+        --radius:16px;
+        --radius-sm:12px;
+    }
+
+    /* ===== Sidebar shell ===== */
+    .aiz-user-sidenav-wrap{
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius) !important;
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .aiz-user-sidenav{
+        background: var(--white);
+    }
+
+    /* Close button (mobile) */
+    .aiz-user-sidenav .d-xl-none .btn{
+        border: 1px solid var(--border);
+        background: var(--white);
+        color: var(--dark);
+        border-radius: 12px;
+        transition: .15s ease;
+    }
+    .aiz-user-sidenav .d-xl-none .btn:hover{
+        border-color: rgba(199,10,10,.35);
+        background: rgba(199,10,10,.06);
+        transform: translateY(-1px);
+    }
+
+    /* ===== Profile block ===== */
+    .aiz-user-sidenav .p-4.text-center.mb-4.border-bottom{
+        border-bottom: 1px solid var(--border) !important;
+        background: linear-gradient(180deg, rgba(199,10,10,.06), rgba(255,255,255,0));
+    }
+
+    .aiz-user-sidenav .avatar.avatar-md{
+        width: 74px;
+        height: 74px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid rgba(199,10,10,.18);
+        background: rgba(33,33,33,.04);
+        box-shadow: 0 12px 22px rgba(199,10,10,.12);
+        overflow: hidden;
+    }
+    .aiz-user-sidenav .avatar.avatar-md img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 999px;
+    }
+
+
+</style>
+
+{{-- ✅ Your existing sidebar HTML remains exactly the same --}}
 <div class="aiz-user-sidenav-wrap position-relative z-1 rounded-0">
     <div class="aiz-user-sidenav overflow-auto c-scrollbar-light px-4 pb-4">
         <!-- Close button -->
@@ -40,6 +110,7 @@
 
         <!-- Menus -->
         <div class="sidemnenu">
+           
             <ul class="aiz-side-nav-list mb-3 pb-3 border-bottom" data-toggle="aiz-side-menu">
 
                 <!-- Dashboard -->
@@ -117,7 +188,7 @@
                 @endif
 
                 <!-- Downloads -->
-                <li class="aiz-side-nav-item">
+                <!-- <li class="aiz-side-nav-item">
                     <a href="{{ route('digital_purchase_history.index') }}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['digital_purchase_history.index']) }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16.001" height="16" viewBox="0 0 16.001 16">
@@ -128,7 +199,7 @@
                         </svg>
                         <span class="aiz-side-nav-text ml-3">{{ translate('Downloads') }}</span>
                     </a>
-                </li>
+                </li> -->
 
                 <!-- Refund Requests -->
                 @if (addon_is_activated('refund_request'))

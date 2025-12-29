@@ -143,9 +143,9 @@
         <div class="mt-3 mb-4">
             <a href="{{ route('home') }}" class="d-block">
                 @if(get_setting('footer_logo') != null)
-                    <img class="lazyload h-45px" src="{{ static_asset('assets/img/placeholder-rect.jpg') }}" data-src="{{ uploaded_asset(get_setting('footer_logo')) }}" alt="{{ env('APP_NAME') }}" height="45">
+                    <img class="lazyload h-45px" src="{{ static_asset('assets/img/placeholder-rect.jpg') }}" data-src="{{ uploaded_asset(get_setting('footer_logo')) }}" alt="{{ env('APP_NAME') }}" height="45" loading="lazy" decoding="async">
                 @else
-                    <img class="lazyload h-45px" src="{{ static_asset('assets/img/placeholder-rect.jpg') }}" data-src="{{ static_asset('assets/img/logo.png') }}" alt="{{ env('APP_NAME') }}" height="45">
+                    <img class="lazyload h-45px" src="{{ static_asset('assets/img/placeholder-rect.jpg') }}" data-src="{{ static_asset('assets/img/logo.png') }}" alt="{{ env('APP_NAME') }}" height="45" loading="lazy" decoding="async">
                 @endif
             </a>
         </div>
@@ -221,7 +221,7 @@
                 @endif
 
                 <!-- Apps link -->
-                @if((get_setting('play_store_link') != null) || (get_setting('app_store_link') != null))
+                <!-- @if((get_setting('play_store_link') != null) || (get_setting('app_store_link') != null))
                     <h5 class="fs-14 fw-700 text-secondary text-uppercase mt-3">{{ translate('Mobile Apps') }}</h5>
                     <div class="d-flex mt-3">
                         <div class="">
@@ -235,7 +235,7 @@
                             </a>
                         </div>
                     </div>
-                @endif
+                @endif -->
 
             </div>
         </div>
@@ -343,10 +343,10 @@
             </div>
 
             <!-- Seller & Delivery Boy -->
-            @if ((get_setting('vendor_system_activation') == 1) || addon_is_activated('delivery_boy'))
+            <!-- @if ((get_setting('vendor_system_activation') == 1) || addon_is_activated('delivery_boy'))
             <div class="col-lg-3 col-md-4 col-sm-6">
                 <div class="text-center text-sm-left mt-4">
-                    <!-- Seller -->
+                  
                     @if (get_setting('vendor_system_activation') == 1)
                         <h4 class="fs-14 text-secondary text-uppercase fw-700 mb-3">{{ translate('Seller Zone') }}</h4>
                         <ul class="list-unstyled">
@@ -374,7 +374,7 @@
                         </ul>
                     @endif
 
-                    <!-- Delivery Boy -->
+                    
                     @if (addon_is_activated('delivery_boy'))
                         <h4 class="fs-14 text-secondary text-uppercase fw-700 mt-4 mb-3">{{ translate('Delivery Boy') }}</h4>
                         <ul class="list-unstyled">
@@ -394,10 +394,10 @@
                                 </li>
                             @endif
                         </ul>
-                    @endif
+                    @endif 
                 </div>
             </div>
-            @endif
+            @endif -->
         </div>
     </div>
 
@@ -494,20 +494,20 @@
                                 {{ translate('Track Order') }}
                             </a>
                         </li>
-                        @if (addon_is_activated('affiliate_system'))
+                        <!-- @if (addon_is_activated('affiliate_system'))
                             <li class="mb-2 pb-2 {{ areActiveRoutes(['affiliate.apply'],' active')}}">
                                 <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white" href="{{ route('affiliate.apply') }}">
                                     {{ translate('Be an affiliate partner')}}
                                 </a>
                             </li>
-                        @endif
+                        @endif -->
                     </ul>
                 </div>
             </div>
         </div>
 
         <!-- Seller -->
-        @if (get_setting('vendor_system_activation') == 1)
+        <!-- @if (get_setting('vendor_system_activation') == 1)
         <div class="aiz-accordion-wrap bg-black">
             <div class="aiz-accordion-heading container bg-black">
                 <button class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('Seller Zone') }}</button>
@@ -539,10 +539,10 @@
                 </div>
             </div>
         </div>
-        @endif
+        @endif -->
 
         <!-- Delivery Boy -->
-        @if (addon_is_activated('delivery_boy'))
+        <!-- @if (addon_is_activated('delivery_boy'))
         <div class="aiz-accordion-wrap bg-black">
             <div class="aiz-accordion-heading container bg-black">
                 <button class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('Delivery Boy') }}</button>
@@ -568,7 +568,7 @@
                 </div>
             </div>
         </div>
-        @endif
+        @endif -->
     </div>
 </section>
 
@@ -590,7 +590,7 @@
                         @if ( get_setting('payment_method_images') !=  null )
                             @foreach (explode(',', get_setting('payment_method_images')) as $key => $value)
                                 <li class="list-inline-item mr-3">
-                                    <img src="{{ uploaded_asset($value) }}" height="20" class="mw-100 h-auto" style="max-height: 20px" alt="{{ translate('payment_method') }}">
+                                    <img src="{{ uploaded_asset($value) }}" height="20" class="mw-100 h-auto" style="max-height: 20px" alt="{{ translate('payment_method') }}" loading="lazy" decoding="async">
                                 </li>
                             @endforeach
                         @endif
@@ -685,9 +685,9 @@
                     <a href="{{ route('admin.dashboard') }}" class="text-secondary d-block text-center pb-2 pt-3">
                         <span class="d-block mx-auto">
                             @if($user->avatar_original != null)
-                                <img src="{{ $user_avatar }}" alt="{{ translate('avatar') }}" class="rounded-circle size-20px">
+                                <img src="{{ $user_avatar }}" alt="{{ translate('avatar') }}" class="rounded-circle size-20px" loading="lazy" decoding="async">
                             @else
-                                <img src="{{ static_asset('assets/img/avatar-place.png') }}" alt="{{ translate('avatar') }}" class="rounded-circle size-20px">
+                                <img src="{{ static_asset('assets/img/avatar-place.png') }}" alt="{{ translate('avatar') }}" class="rounded-circle size-20px" loading="lazy" decoding="async">
                             @endif
                         </span>
                         <span class="d-block mt-1 fs-10 fw-600 text-reset">{{ translate('My Account') }}</span>
@@ -696,9 +696,9 @@
                     <a href="{{ route('dashboard') }}" class="text-secondary d-block text-center pb-2 pt-3">
                         <span class="d-block mx-auto">
                             @if($user->avatar_original != null)
-                                <img src="{{ $user_avatar }}" alt="{{ translate('avatar') }}" class="rounded-circle size-20px">
+                                <img src="{{ $user_avatar }}" alt="{{ translate('avatar') }}" class="rounded-circle size-20px" loading="lazy" decoding="async">
                             @else
-                                <img src="{{ static_asset('assets/img/avatar-place.png') }}" alt="{{ translate('avatar') }}" class="rounded-circle size-20px">
+                                <img src="{{ static_asset('assets/img/avatar-place.png') }}" alt="{{ translate('avatar') }}" class="rounded-circle size-20px" loading="lazy" decoding="async">
                             @endif
                         </span>
                         <span class="d-block mt-1 fs-10 fw-600 text-reset">{{ translate('My Account') }}</span>
@@ -707,9 +707,9 @@
                     <a href="javascript:void(0)" class="text-secondary d-block text-center pb-2 pt-3 mobile-side-nav-thumb" data-toggle="class-toggle" data-backdrop="static" data-target=".aiz-mobile-side-nav">
                         <span class="d-block mx-auto">
                             @if($user->avatar_original != null)
-                                <img src="{{ $user_avatar }}" alt="{{ translate('avatar') }}" class="rounded-circle size-20px">
+                                <img src="{{ $user_avatar }}" alt="{{ translate('avatar') }}" class="rounded-circle size-20px" loading="lazy" decoding="async">
                             @else
-                                <img src="{{ static_asset('assets/img/avatar-place.png') }}" alt="{{ translate('avatar') }}" class="rounded-circle size-20px">
+                                <img src="{{ static_asset('assets/img/avatar-place.png') }}" alt="{{ translate('avatar') }}" class="rounded-circle size-20px" loading="lazy" decoding="async">
                             @endif
                         </span>
                         <span class="d-block mt-1 fs-10 fw-600 text-reset">{{ translate('My Account') }}</span>

@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Sitemap\SitemapGenerator;
+use App\Services\ActiveUserService;
 
 class AdminController extends Controller
 {
@@ -390,6 +391,17 @@ class AdminController extends Controller
         }
 
         return view('backend.system.sitemap_generator', compact('file_info'))->render();
+    }
+
+    /**
+     * Live active users count (last 5 minutes).
+     */
+    public function activeUsersCount(ActiveUserService $activeUserService)
+    {
+        return response()->json([
+            'count' => $activeUserService->count(),
+            'checked_at' => now()->toIso8601String(),
+        ]);
     }
 
     /*

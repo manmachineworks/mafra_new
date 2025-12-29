@@ -543,7 +543,7 @@ $bottomHeaderTextColor = get_setting('bottom_header_text_color');
                             </li>
                             @endif
 
-                            <li class="user-top-nav-element border border-top-0" data-id="1">
+                            <!-- <li class="user-top-nav-element border border-top-0" data-id="1">
                                 <a href="{{ route('digital_purchase_history.index') }}"
                                     class="text-truncate text-dark px-4 fs-14 d-flex align-items-center hov-column-gap-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16.001" height="16"
@@ -560,7 +560,7 @@ $bottomHeaderTextColor = get_setting('bottom_header_text_color');
                                     </svg>
                                     <span class="user-top-menu-name has-transition ml-3">{{ translate('Downloads') }}</span>
                                 </a>
-                            </li>
+                            </li> -->
                             @if (get_setting('conversation_system') == 1)
                             <li class="user-top-nav-element border border-top-0" data-id="1">
                                 <a href="{{ route('conversations.index') }}"
@@ -654,7 +654,7 @@ $bottomHeaderTextColor = get_setting('bottom_header_text_color');
     </div>
 
     <!-- Menu Bar -->
-    <div class="d-none d-lg-block position-relative h-50px bottom-background-color-visibility border-bottom" style="background-color: {{ get_setting('bottom_header_bg_color') }};box-shadow: 0 8px 8px rgba(0, 0, 0, 0.05);">
+    <div class="d-none d-lg-block position-relative h-50px bottom-background-color-visibility" style="background-color: {{ get_setting('bottom_header_bg_color') }};box-shadow: 0 8px 8px rgba(0, 0, 0, 0.05);">
         <div class="container h-100">
             <div class="d-flex h-100">
                 <!-- Categoty Menu Button -->

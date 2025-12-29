@@ -1,4 +1,4 @@
-<div class="aiz-topbar px-15px px-lg-25px d-flex align-items-stretch justify-content-between">
+<div class="aiz-topbar px-15px px-lg-25px d-flex align-items-stretch justify-content-between admin-topbar-theme">
     <div class="d-flex">
         <!-- Mobile toggler -->
         <div class="aiz-topbar-nav-toggler d-flex align-items-center justify-content-start ml-0 mr-2" data-toggle="aiz-mobile-nav">
@@ -83,14 +83,14 @@
                     <a class="aiz-topbar-menu fs-13 fw-600 d-flex align-items-center justify-content-center {{ areActiveRoutes(['all_orders.index']) }}"
                             href="{{ route('all_preorder.list') }}">{{ translate('Preorders') }}</a>
                     @endif
-                    @can('earning_report')
+                    <!-- @can('earning_report')
                         <a class="aiz-topbar-menu fs-13 fw-600 d-flex align-items-center justify-content-center {{ areActiveRoutes(['earning_payout_report.index']) }}"
                             href="{{ route('earning_payout_report.index') }}">{{ translate('Earnings') }}</a>
-                    @endcan
-                    @can('edit_website_page')
+                    @endcan -->
+                    <!-- @can('edit_website_page')
                         <a class="aiz-topbar-menu fs-13 fw-600 d-flex align-items-center justify-content-center {{ (url()->current() == url('/admin/website/custom-pages/edit/home')) ? 'active' : '' }}"
                             href="{{ route('custom-pages.edit', ['id'=>'home', 'lang'=>env('DEFAULT_LANGUAGE'), 'page'=>'home']) }}">{{ translate('Homepage Settings') }}</a>
-                    @endcan
+                    @endcan -->
                 </div>
             </div>
             <!-- Add New Button -->
@@ -202,7 +202,7 @@
             @endcan
 
             <!-- language -->
-            @php
+            <!-- @php
                 if (Session::has('locale')) {
                     $locale = Session::get('locale', Config::get('app.locale'));
                 } else {
@@ -231,7 +231,7 @@
                         @endforeach
                     </ul>
                 </div>
-            </div>
+            </div> -->
             <!-- User -->
             <div class="aiz-topbar-item">
                 <div class="align-items-stretch d-flex dropdown">
@@ -266,6 +266,45 @@
         </div>
     </div>
 </div><!-- .aiz-topbar -->
+@push('css')
+<style>
+    .admin-topbar-theme {
+        background:#ffffff;
+        border-bottom:1px solid #f0f0f0;
+    }
+    .admin-topbar-theme .btn-topbar,
+    .admin-topbar-theme .aiz-topbar-menu {
+        color:#212121;
+    }
+    .admin-topbar-theme .btn-topbar:hover,
+    .admin-topbar-theme .aiz-topbar-menu:hover,
+    .admin-topbar-theme .aiz-topbar-menu.active {
+        color:#c70a0a;
+    }
+    .admin-topbar-theme .btn-topbar.btn-light,
+    .admin-topbar-theme .btn-soft-blue {
+        background:#fff;
+        border:1px solid #f0f0f0;
+    }
+    .admin-topbar-theme .btn-action,
+    .admin-topbar-theme .btn-soft-blue:hover {
+        background:#c70a0a;
+        color:#fff;
+    }
+    .admin-topbar-theme .dropdown-menu {
+        border-radius:10px;
+        border:1px solid #f0f0f0;
+        box-shadow:0 12px 30px rgba(0,0,0,0.08);
+    }
+    .admin-topbar-theme .dropdown-item:hover {
+        background:#fff3f3;
+        color:#c70a0a;
+    }
+    .admin-topbar-theme .badge-danger { background:#c70a0a; }
+    .admin-topbar-theme .hov-bg-primary:hover { background:#c70a0a !important; }
+    .admin-topbar-theme .hov-svg-white:hover svg * { fill:#fff !important; }
+</style>
+@endpush
 @push('scripts')
 <script>
     (function() {

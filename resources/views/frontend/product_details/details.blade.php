@@ -33,6 +33,21 @@
             </div>
         @endif
     </div>
+    <div class="d-flex flex-wrap align-items-center mb-3" id="product-view-stats" data-product-id="{{ $detailedProduct->id }}">
+         <!-- <div class="mr-2 mb-2 d-flex align-items-center">
+            <span class="mr-2">👁</span>
+            <span class="fs-12 text-secondary">{{ translate('Today') }}:</span>
+            <span class="fs-14 fw-700 text-dark ml-1" id="product-today-views">--</span>
+            <span class="fs-12 text-muted ml-1">{{ translate('views') }}</span>
+        </div>  -->
+        <div class=" mb-2 d-flex align-items-center">
+            <span class="mr-2 text-danger">🔴</span>
+            <span class="fs-12 text-secondary">{{ translate('Live') }}:</span>
+            <!-- <span class="fs-14 fw-700 text-dark ml-1" id="product-live-viewers">--</span> -->
+            <span class="fs-14 fw-700 text-dark ml-1" id="product-today-views">--</span>
+            <span class="fs-12 text-muted ml-1">{{ translate('users viewing now') }}</span>
+        </div>
+    </div>
     <div class="row align-items-center">
         @if(get_setting('product_query_activation') == 1)
             <!-- Ask about this product -->

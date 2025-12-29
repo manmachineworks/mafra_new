@@ -1,10 +1,14 @@
 @php
     $total = 0;
+    $originalTotal = 0;
     $carts = get_user_cart();
     if (count($carts) > 0) {
         foreach ($carts as $key => $cartItem) {
             $product = get_single_product($cartItem['product_id']);
-            $total = $total + cart_product_price($cartItem, $product, false) * $cartItem['quantity'];
+            $unitPrice = cart_product_price($cartItem, $product, false);
+            $total = $total + $unitPrice * $cartItem['quantity'];
+            $basePrice = $cartItem['purchase_price'] ?? ($product->purchase_price ?? $unitPrice);
+            $originalTotal = $originalTotal + $basePrice * $cartItem['quantity'];
         }
     }
 @endphp
@@ -40,7 +44,15 @@
             </svg>
         </span>
         <span class="d-none d-xl-block ml-2 fs-14 fw-700 {{ get_setting('header_element') !=5 ? 'bottom-text-color-visibility' : 'middle-text-color-visibility' }}"
-            style="color: {{ get_setting('header_element') !=5 ? get_setting('bottom_header_text_color'): get_setting('middle_header_text_color') }}">{{ single_price($total) }}</span>
+            style="color: {{ get_setting('header_element') !=5 ? get_setting('bottom_header_text_color'): get_setting('middle_header_text_color') }}">
+            {{ single_price($total) }}
+            @if($originalTotal > $total)
+                <del class="ml-1 opacity-60 fs-12">{{ single_price($originalTotal) }}</del>
+                <span class="badge badge-inline badge-success ml-1 fs-10 align-middle">
+                    -{{ round((($originalTotal - $total) / $originalTotal) * 100) }}%
+                </span>
+            @endif
+        </span>
         <span class="nav-box-text d-none d-xl-block ml-2 fs-12 {{ get_setting('header_element') !=5 ? 'bottom-text-color-visibility' : 'middle-text-color-visibility' }}"
             style="color: {{ get_setting('header_element') !=5 ? get_setting('bottom_header_text_color'): get_setting('middle_header_text_color') }}">
 
@@ -79,6 +91,12 @@
                     $product = get_single_product($cartItem['product_id']);
                 @endphp
                 @if ($product != null)
+                    @php
+                        $unitPrice = cart_product_price($cartItem, $product, false);
+                        $basePrice = $cartItem['purchase_price'] ?? ($product->purchase_price ?? $unitPrice);
+                        $hasDiscount = $basePrice > $unitPrice;
+                        $discountPercent = $hasDiscount && $basePrice > 0 ? round((($basePrice - $unitPrice) / $basePrice) * 100) : 0;
+                    @endphp
                     <li class="list-group-item border-0 hov-scale-img">
                         <span class="d-flex align-items-center">
                             <a href="{{ route('product', $product->slug) }}"
@@ -92,8 +110,16 @@
                                         title="{{ $product->getTranslation('name') }}">
                                         {{ $product->getTranslation('name') }}
                                     </span>
-                                    <span class="fs-14 fw-400 text-secondary">{{ $cartItem['quantity'] }}x</span>
-                                    <span class="fs-14 fw-400 text-secondary">{{ cart_product_price($cartItem, $product) }}</span>
+                                    <!-- <span class="fs-14 fw-400 text-secondary">{{ $cartItem['quantity'] }}x</span> -->
+                                    <div class="d-flex align-items-center">
+                                        <span class="fs-14 fw-700 text-dark">{{ $cartItem['quantity'] }}x{{ single_price($unitPrice) }}</span>
+                                        @if($hasDiscount)
+                                            <del class="fs-12 text-secondary ml-2">{{ single_price($basePrice) }}</del>
+                                            @if($discountPercent > 0)
+                                                <span class="badge badge-inline badge-success ml-2 fs-10">-{{ $discountPercent }}%</span>
+                                            @endif
+                                        @endif
+                                    </div>
                                 </span>
                             </a>
                             <span class="">
