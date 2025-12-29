@@ -60,7 +60,7 @@
             <div class="row">
                 <div class="col-xl-8 mx-auto">
                     @php
-                        $first_order = $combined_order->orders->first()
+                        $first_order = $combined_order->orders->first();
                         $prepaid_discount_total = $combined_order->orders->sum('prepaid_discount_amount');
                     @endphp
                     <!-- Order Confirmation Text-->
