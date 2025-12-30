@@ -34,4 +34,4 @@ install.zip
 public/uploads.zip
 .env
 public/all
-
+/app/firebase/*.json

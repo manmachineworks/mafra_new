@@ -111,21 +111,7 @@
                                             </div>
                                         </form>
 
-                                        <!-- DEMO MODE -->
-                                        @if (env("DEMO_MODE") == "On")
-                                            <div class="mb-4">
-                                                <table class="table table-bordered mb-0">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>{{ translate('Customer Account')}}</td>
-                                                            <td class="text-center">
-                                                                <button class="btn btn-info btn-sm" onclick="autoFillCustomer()">{{ translate('Copy credentials') }}</button>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        @endif
+                                      
 
                                         <!-- Social Login -->
                                         @if(get_setting('google_login') == 1 || get_setting('facebook_login') == 1 || get_setting('twitter_login') == 1 || get_setting('apple_login') == 1)
@@ -194,12 +180,7 @@
 @endsection
 
 @section('script')
-    <script>
-        function autoFillCustomer(){
-            $('#email').val('customer@example.com');
-            $('#password').val('123456');
-        }
-    </script>
+   
 
     @if(get_setting('google_recaptcha') == 1 && get_setting('recaptcha_customer_login') == 1)
         <script src="https://www.google.com/recaptcha/api.js?render={{ env('CAPTCHA_KEY') }}"></script>
