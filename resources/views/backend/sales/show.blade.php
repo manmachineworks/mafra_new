@@ -494,8 +494,9 @@
         $('#push_to_shiprocket').on('click', function() {
             var button = $(this);
             button.prop('disabled', true);
-            $.post('{{ route('orders.push_to_shiprocket.single', $order->id) }}', {
-                _token: '{{ @csrf_token() }}'
+            $.post('{{ route('orders.push_to_shiprocket') }}', {
+                _token: '{{ @csrf_token() }}',
+                order_id: {{ $order->id }}
             }, function(data) {
                 AIZ.plugins.notify('success', data.message ?? "{{ translate('Pushed to Shiprocket') }}");
                 location.reload();
