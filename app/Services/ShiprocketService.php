@@ -243,7 +243,7 @@ class ShiprocketService
         })->values()->toArray();
 
         $totalDiscount = ($order->prepaid_discount_amount ?? 0) + ($order->coupon_discount ?? 0);
-
+        
         return [
             'order_id' => $order->code,
             'order_date' => Carbon::createFromTimestamp($order->date)->format('Y-m-d H:i'),
@@ -262,7 +262,7 @@ class ShiprocketService
             'billing_phone' => $shippingAddress['phone'] ?? $order->user->phone,
             'shipping_is_billing' => true,
             'order_items' => $items,
-            'discount' => max(0, round($totalDiscount, 2)),
+            'total_discount' => max(0, round($totalDiscount, 2)),
             'payment_method' => $paymentMethod,
             'sub_total' => round($order->grand_total, 2),
             'length' => $options['length'] ?? config('shiprocket.default_length'),

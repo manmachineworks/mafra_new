@@ -77,7 +77,7 @@
                         <h1 class="mb-2 fs-28 fw-500 text-success">{{ translate('Thank You for Your Order!')}}</h1>
                         <p class="fs-13 text-soft-dark">{{  translate('A copy or your order summary has been sent to') }} <strong>{{ optional(json_decode($first_order->shipping_address))->email }}</strong></p>
                         @if($prepaid_discount_total > 0 || $combined_order->orders->sum('coupon_discount') > 0)
-                            <div class="mt-2 badge badge-success px-3 py-2" style="border-radius: 999px;">
+                            <div class="mt-2 badge-success px-3 py-2" style="border-radius: 999px;">
                                 {{ translate('You saved') }} {{ single_price($prepaid_discount_total + $combined_order->orders->sum('coupon_discount')) }}
                             </div>
                         @endif

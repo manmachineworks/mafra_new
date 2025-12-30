@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-lg-6 col-xl-4 mx-auto">
                 <div class="card text-left">
-                    <div class="card-header">{{ translate('Create a New Account') }}</div>
+                    <div class="card-header">{{ translate('CCreate a New Account') }}</div>
                     <div class="card-body">
                         <form method="POST" action="{{ route('register') }}">
                             @csrf
