@@ -381,6 +381,19 @@
                                 {{ single_price($order->orderDetails->sum('shipping_cost')) }}
                             </td>
                         </tr>
+                        @if($order->prepaid_discount_amount > 0)
+                            <tr>
+                                <td>
+                                    <strong class="text-muted">{{ translate('Prepaid Discount') }} :</strong>
+                                </td>
+                                <td class="text-success">
+                                    -{{ single_price($order->prepaid_discount_amount) }}
+                                </td>
+                            </tr>
+                        @endif
+                        @php
+                            $totalDiscounts = ($order->prepaid_discount_amount ?? 0) + ($order->coupon_discount ?? 0);
+                        @endphp
                         <tr>
                             <td>
                                 <strong class="text-muted">{{ translate('Coupon') }} :</strong>
@@ -389,6 +402,16 @@
                                 {{ single_price($order->coupon_discount) }}
                             </td>
                         </tr>
+                        @if($totalDiscounts > 0)
+                            <tr>
+                                <td>
+                                    <strong class="text-muted">{{ translate('Total Discounts') }} :</strong>
+                                </td>
+                                <td class="text-success">
+                                    -{{ single_price($totalDiscounts) }}
+                                </td>
+                            </tr>
+                        @endif
                         <tr>
                             <td>
                                 <strong class="text-muted">{{ translate('TOTAL') }} :</strong>

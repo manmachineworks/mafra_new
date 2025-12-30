@@ -202,10 +202,25 @@
 							            <th class="gry-color text-left">{{ translate('Total Tax') }}</th>
 							            <td class="currency">{{ single_price($order->orderDetails->sum('tax')) }}</td>
 							        </tr>
+                                    @if(($order->prepaid_discount_amount ?? 0) > 0)
+                                        <tr>
+                                            <th class="gry-color text-left">{{ translate('Prepaid Discount') }}</th>
+                                            <td class="currency text-success">-{{ single_price($order->prepaid_discount_amount) }}</td>
+                                        </tr>
+                                    @endif
 				                    <tr class="border-bottom">
 							            <th class="gry-color text-left">{{ translate('Coupon Discount') }}</th>
 							            <td class="currency">{{ single_price($order->coupon_discount) }}</td>
 							        </tr>
+                                    @php
+                                        $totalDiscounts = ($order->prepaid_discount_amount ?? 0) + ($order->coupon_discount ?? 0);
+                                    @endphp
+                                    @if($totalDiscounts > 0)
+                                        <tr>
+                                            <th class="gry-color text-left">{{ translate('Total Discounts') }}</th>
+                                            <td class="currency text-success">-{{ single_price($totalDiscounts) }}</td>
+                                        </tr>
+                                    @endif
 							        <tr>
 							            <th class="text-left strong">{{ translate('Grand Total') }}</th>
 							            <td class="currency">{{ single_price($order->grand_total) }}</td>

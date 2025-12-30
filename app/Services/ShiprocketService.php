@@ -224,6 +224,7 @@ class ShiprocketService
     private function buildOrderPayload(Order $order, array $options = []): array
     {
         $shippingAddress = json_decode($order->shipping_address ?? '{}', true) ?: [];
+        $state = $shippingAddress['state'] ?? config('shiprocket.default_state', 'NA');
         $paymentMethod = ($order->payment_type === 'cash_on_delivery' || $order->payment_status !== 'paid') ? 'COD' : 'Prepaid';
         $weight = $this->calculateWeight($order);
 
@@ -237,9 +238,11 @@ class ShiprocketService
                 'selling_price' => round($detail->price / max(1, $detail->quantity), 2),
                 'discount' => 0,
                 'tax' => round($detail->tax / max(1, $detail->quantity), 2),
-                'hsn' => $product?->hsn,
+                'hsn' => $this->sanitizeHsn($product?->hsn),
             ];
         })->values()->toArray();
+
+        $totalDiscount = ($order->prepaid_discount_amount ?? 0) + ($order->coupon_discount ?? 0);
 
         return [
             'order_id' => $order->code,
@@ -253,12 +256,13 @@ class ShiprocketService
             'billing_address_2' => $shippingAddress['address_2'] ?? '',
             'billing_city' => $shippingAddress['city'] ?? '',
             'billing_pincode' => $shippingAddress['postal_code'] ?? '',
-            'billing_state' => $shippingAddress['state'] ?? '',
+            'billing_state' => $state ?: config('shiprocket.default_state', 'NA'),
             'billing_country' => $shippingAddress['country'] ?? 'India',
             'billing_email' => $shippingAddress['email'] ?? $order->user->email,
             'billing_phone' => $shippingAddress['phone'] ?? $order->user->phone,
             'shipping_is_billing' => true,
             'order_items' => $items,
+            'discount' => max(0, round($totalDiscount, 2)),
             'payment_method' => $paymentMethod,
             'sub_total' => round($order->grand_total, 2),
             'length' => $options['length'] ?? config('shiprocket.default_length'),
@@ -266,6 +270,17 @@ class ShiprocketService
             'height' => $options['height'] ?? config('shiprocket.default_height'),
             'weight' => $options['weight'] ?? $weight,
         ];
+    }
+
+    /**
+     * Shiprocket requires numeric HSN with max length 15; default to "0" when unavailable.
+     */
+    private function sanitizeHsn($value): string
+    {
+        $digits = preg_replace('/\D/', '', (string) $value);
+        $digits = $digits ? substr($digits, 0, 15) : '0';
+
+        return $digits;
     }
 
     private function calculateWeight(Order $order): float
