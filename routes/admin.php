@@ -30,6 +30,7 @@ use App\Http\Controllers\DigitalProductController;
 use App\Http\Controllers\DynamicPopupController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\FlashDealController;
+use App\Http\Controllers\Admin\CartController as AdminCartController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\MeasurementPointsController;
 use App\Http\Controllers\NewsletterController;
@@ -757,6 +758,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     Route::post('/system/generate-sitemap', [AdminController::class, 'DoSitemapGenerate'])->name('generate_sitemap');
     Route::post('/system/delete-sitemap', [AdminController::class, 'DeleteSitemapFile'])->name('delete_sitemap');
     Route::post('/system/download-old-sitemap', [AdminController::class, 'DownloadSingleSitemapFile'])->name('download_old_sitemap');
+
+    // Cart list & reminders
+    Route::controller(AdminCartController::class)->group(function () {
+        Route::get('/cart-list', 'index')->name('admin.cart-list.index');
+        Route::get('/cart-list/{cart}', 'show')->name('admin.cart-list.show');
+        Route::post('/cart-list/{cart}/email', 'sendEmail')->name('admin.cart-list.email');
+        Route::post('/cart-list/{cart}/sms', 'sendSMS')->name('admin.cart-list.sms');
+    });
 
     //Custom Visitors Setup
     Route::view('/custom-product-visitors', 'backend.marketing.custom_product_visitors')->name('custom_product_visitors');

@@ -1234,28 +1234,34 @@
                                 </li>
                                 @endcan
                                 @can('view_custom_notification_history')
-                                <li class="aiz-side-nav-item">
-                                    <a href="{{ route('custom_notification.history') }}" class="aiz-side-nav-link">
-                                        <span class="aiz-side-nav-text">{{translate('Custom Notification History')}}</span>
-                                    </a>
-                                </li>
-                                @endcan
-                            </ul>
-                        </li>
-                        @endcanany
-                        @if (addon_is_activated('otp_system') && auth()->user()->can('send_bulk_sms'))
                         <li class="aiz-side-nav-item">
-                            <a href="{{route('sms.index')}}" class="aiz-side-nav-link">
-                                <span class="aiz-side-nav-text">{{ translate('Bulk SMS') }}</span>
-                                
+                            <a href="{{ route('custom_notification.history') }}" class="aiz-side-nav-link">
+                                <span class="aiz-side-nav-text">{{translate('Custom Notification History')}}</span>
                             </a>
                         </li>
-                        @endif
-                        @can('view_all_subscribers')
-                        <li class="aiz-side-nav-item">
-                            <a href="{{ route('subscribers.index') }}" class="aiz-side-nav-link">
-                                <span class="aiz-side-nav-text">{{ translate('Subscribers') }}</span>
-                            </a>
+                        @endcan
+                    </ul>
+                </li>
+                @endcanany
+                @if (addon_is_activated('otp_system') && auth()->user()->can('send_bulk_sms'))
+                <li class="aiz-side-nav-item">
+                    <a href="{{route('sms.index')}}" class="aiz-side-nav-link">
+                        <span class="aiz-side-nav-text">{{ translate('Bulk SMS') }}</span>
+                        
+                    </a>
+                </li>
+                @endif
+                <li class="aiz-side-nav-item">
+                    <a href="{{ route('admin.cart-list.index') }}"
+                        class="aiz-side-nav-link {{ areActiveRoutes(['admin.cart-list.index', 'admin.cart-list.show']) }}">
+                        <span class="aiz-side-nav-text">{{ translate('Cart List') }}</span>
+                    </a>
+                </li>
+                @can('view_all_subscribers')
+                <li class="aiz-side-nav-item">
+                    <a href="{{ route('subscribers.index') }}" class="aiz-side-nav-link">
+                        <span class="aiz-side-nav-text">{{ translate('Subscribers') }}</span>
+                    </a>
                         </li>
                         @endcan
                         @if (get_setting('coupon_system') == 1 && auth()->user()->can('view_all_coupons') )

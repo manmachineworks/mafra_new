@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Product;
 use App\Models\User;
 use App\Models\Address;
 use Illuminate\Database\Eloquent\Model;
@@ -30,5 +31,25 @@ class Cart extends Model
     public function scopeActive($query)
     {
         return $query->where('status', 1);
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->updated_at && $this->updated_at->gt(now()->subMinutes(30))
+            ? 'active'
+            : 'abandoned';
+    }
+
+    public function getLineTotalAttribute(): float
+    {
+        if (!$this->relationLoaded('product') || !$this->product) {
+            return 0;
+        }
+
+        $unitPrice = cart_product_price($this, $this->product, false, true);
+        $discount = $this->discount ?? 0;
+        $shipping = $this->shipping_cost ?? 0;
+
+        return max(0, ($unitPrice * $this->quantity) + $shipping - $discount);
     }
 }
