@@ -19,6 +19,8 @@ use GuzzleHttp\Client;
 use Storage;
 use App\Rules\Recaptcha;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use App\Services\FirebaseTokenVerifier;
 
 class LoginController extends Controller
 {
@@ -235,6 +237,8 @@ class LoginController extends Controller
      */
     protected function validateLogin(Request $request)
     {
+        $this->syncFirebaseVerification($request);
+
         $request->validate([
             'email'    => 'required_without:phone',
             'phone'    => 'required_without:email',
@@ -253,8 +257,13 @@ class LoginController extends Controller
      */
     protected function credentials(Request $request)
     {
-        if ($request->get('phone') != null) {
-            return ['phone' => "+{$request['country_code']}{$request['phone']}", 'password' => $request->get('password')];
+        $verifiedPhone = $request->get('firebase_verified_phone') ?: $request->get('phone');
+        if ($verifiedPhone != null) {
+            $phone = $verifiedPhone;
+            if (strpos($phone, '+') !== 0 && $request->filled('country_code')) {
+                $phone = "+{$request['country_code']}{$phone}";
+            }
+            return ['phone' => $phone, 'password' => $request->get('password')];
         } elseif ($request->get('email') != null) {
             return $request->only($this->username(), 'password');
         }
@@ -409,5 +418,39 @@ class LoginController extends Controller
     public function handle_demo_login()
     {
         return view('frontend.handle_demo_login');
+    }
+
+    private function syncFirebaseVerification(Request $request): void
+    {
+        if (!$this->firebaseOtpEnabled()) {
+            return;
+        }
+
+        $token = $request->input('firebase_id_token');
+        $isPhoneFlow = $request->filled('phone') || $request->filled('firebase_verified_phone');
+        $required = $this->firebaseOtpLoginRequired() && $isPhoneFlow;
+        if ($required && !$token) {
+            throw ValidationException::withMessages([
+                'phone' => translate('Phone verification via Firebase is required for login.'),
+            ]);
+        }
+
+        if ($token) {
+            $verified = app(FirebaseTokenVerifier::class)->verify($token);
+            $request->merge([
+                'firebase_verified_phone' => $verified['phone'],
+                'firebase_uid' => $verified['uid'],
+            ]);
+        }
+    }
+
+    private function firebaseOtpEnabled(): bool
+    {
+        return (bool) (get_setting('firebase_otp_enabled') == 1 && env('FIREBASE_OTP_ENABLED', false));
+    }
+
+    private function firebaseOtpLoginRequired(): bool
+    {
+        return $this->firebaseOtpEnabled() && get_setting('firebase_otp_require_login') == 1;
     }
 }

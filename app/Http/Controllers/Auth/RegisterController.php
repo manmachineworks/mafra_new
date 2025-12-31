@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Http\Controllers\OTPVerificationController;
 use App\Utility\EmailUtility;
+use App\Services\FirebaseTokenVerifier;
 
 class RegisterController extends Controller
 {
@@ -57,13 +58,21 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
+        $rules = [
             'name' => 'required|string|max:255',
             'password' => 'required|string|min:6|confirmed',
             'g-recaptcha-response' => [
                 Rule::when(get_setting('google_recaptcha') == 1 && get_setting('recaptcha_customer_register') == 1 , ['required', new Recaptcha()], ['sometimes'])
             ]
-        ]);
+        ];
+
+        if ($this->firebaseOtpRegistrationRequired()) {
+            $rules['phone'] = ['required', 'string'];
+            $rules['firebase_id_token'] = ['required', 'string'];
+            $rules['firebase_verified_phone'] = ['required', 'string'];
+        }
+
+        return Validator::make($data, $rules);
     }
 
     /**
@@ -75,11 +84,17 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         // dd($data);
+        $verifiedPhone = $data['firebase_verified_phone'] ?? session('firebase_verified_phone');
+        $firebaseUid = $data['firebase_uid'] ?? session('firebase_uid');
+        $isFirebaseVerified = !empty($data['firebase_id_token']);
+
         if (isset($data['email']) && filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
+                'firebase_uid' => $firebaseUid,
+                'phone_verified_at' => $isFirebaseVerified ? now() : null,
             ]);
         }
         else {
@@ -87,9 +102,11 @@ class RegisterController extends Controller
                 $cleanPhone = preg_replace('/\D+/', '', $data['phone']);
                 $user = User::create([
                     'name' => $data['name'],
-                    'phone' => '+'.$data['country_code'].$cleanPhone,
+                    'phone' => $verifiedPhone ?: '+'.$data['country_code'].$cleanPhone,
                     'password' => Hash::make($data['password']),
-                    'verification_code' => rand(100000, 999999)
+                    'verification_code' => rand(100000, 999999),
+                    'firebase_uid' => $firebaseUid,
+                    'phone_verified_at' => $isFirebaseVerified ? now() : null,
                 ]);
 
                 if(get_setting('customer_registration_verify') != '1' ){
@@ -130,7 +147,8 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
-        //dd($request->all());
+        $this->syncFirebaseVerification($request);
+
         if (filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
             if(User::where('email', $request->email)->first() != null){
                 flash(translate('Email or Phone already exists.'));
@@ -210,5 +228,39 @@ class RegisterController extends Controller
         }else {
             return redirect()->route('home');
         }
+    }
+
+    private function syncFirebaseVerification(Request $request): void
+    {
+        if (!$this->firebaseOtpEnabled()) {
+            return;
+        }
+
+        $token = $request->input('firebase_id_token');
+        if (!$token && $this->firebaseOtpRegistrationRequired()) {
+            abort(422, translate('Phone verification via Firebase is required.'));
+        }
+
+        if ($token) {
+            $verified = app(FirebaseTokenVerifier::class)->verify($token);
+            $request->merge([
+                'firebase_verified_phone' => $verified['phone'],
+                'firebase_uid' => $verified['uid'],
+            ]);
+            session([
+                'firebase_verified_phone' => $verified['phone'],
+                'firebase_uid' => $verified['uid'],
+            ]);
+        }
+    }
+
+    private function firebaseOtpEnabled(): bool
+    {
+        return (bool) (get_setting('firebase_otp_enabled') == 1 && env('FIREBASE_OTP_ENABLED', false));
+    }
+
+    private function firebaseOtpRegistrationRequired(): bool
+    {
+        return $this->firebaseOtpEnabled() && get_setting('firebase_otp_require_registration') == 1;
     }
 }

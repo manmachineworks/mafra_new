@@ -27,7 +27,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'address', 'city', 'postal_code', 'phone', 'country', 'provider_id', 'email_verified_at', 'verification_code'
+        'name', 'email', 'password', 'address', 'city', 'postal_code', 'phone', 'country', 'provider_id', 'email_verified_at', 'verification_code', 'firebase_uid', 'phone_verified_at'
     ];
 
     /**
@@ -37,6 +37,10 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $hidden = [
         'password', 'remember_token',
+    ];
+
+    protected $casts = [
+        'phone_verified_at' => 'datetime',
     ];
 
     public function wishlists()

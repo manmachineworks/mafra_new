@@ -1,6 +1,10 @@
 @extends('auth.layouts.authentication')
 
 @section('content')
+@php
+    $firebaseOtpEnabled = get_setting('firebase_otp_enabled') == 1 && env('FIREBASE_OTP_ENABLED', false);
+    $firebaseOtpLoginRequired = $firebaseOtpEnabled && get_setting('firebase_otp_require_login') == 1;
+@endphp
     <!-- aiz-main-wrapper -->
     <div class="aiz-main-wrapper d-flex flex-column justify-content-md-center bg-white">
         <section class="bg-white overflow-hidden">
@@ -36,7 +40,17 @@
                                             @if (addon_is_activated('otp_system'))
                                                 <div class="form-group phone-form-group mb-1">
                                                     <label for="phone" class="fs-12 fw-700 text-soft-dark">{{  translate('Phone') }}</label>
-                                                    <input type="tel" id="phone-code" class="form-control{{ $errors->has('phone') ? ' is-invalid' : '' }} rounded-0" value="{{ old('phone') }}" placeholder="" name="phone" autocomplete="off">
+                                                    <div class="input-group">
+                                                        <input type="tel" id="phone-code" class="form-control{{ $errors->has('phone') ? ' is-invalid' : '' }} rounded-0" value="{{ old('phone') }}" placeholder="" name="phone" autocomplete="off">
+                                                        @if($firebaseOtpEnabled)
+                                                            <button type="button" class="btn btn-outline-primary js-send-firebase-otp"
+                                                                data-target-form="#user-login-form"
+                                                                data-phone-input="#phone-code"
+                                                                data-otp-wrapper="#login-otp-wrapper">
+                                                                {{ translate('Send OTP') }}
+                                                            </button>
+                                                        @endif
+                                                    </div>
                                                 </div>
 
                                                 <input type="hidden" name="country_code" value="">
@@ -105,9 +119,25 @@
                                                 </div>
                                             </div>
 
+                                            @if($firebaseOtpEnabled)
+                                                <div class="form-group mb-3 d-none" id="login-otp-wrapper">
+                                                    <label class="form-label" for="login_verification_code">{{ translate('Verification Code') }}</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="login_verification_code" placeholder="{{ translate('OTP Code') }}" maxlength="6">
+                                                        <button class="btn btn-outline-primary js-verify-firebase-otp" type="button"
+                                                            data-target-form="#user-login-form" data-otp-input="#login_verification_code">
+                                                            {{ translate('Verify OTP') }}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" name="firebase_id_token" id="firebase_login_id_token">
+                                                <input type="hidden" name="firebase_verified_phone" id="firebase_login_verified_phone">
+                                                <input type="hidden" name="firebase_uid" id="firebase_login_uid">
+                                            @endif
+
                                             <!-- Submit Button -->
                                             <div class="mb-4 mt-4">
-                                                <button type="submit" class="btn btn-primary btn-block fw-700 fs-14 rounded-0 submit-button">{{  translate('Login') }}</button>
+                                                <button type="submit" class="btn btn-primary btn-block fw-700 fs-14 rounded-0 submit-button js-requires-otp">{{  translate('Login') }}</button>
                                             </div>
                                         </form>
 

@@ -14,6 +14,8 @@ use App\Rules\Recaptcha;
 use Illuminate\Validation\Rule;
 use App\Utility\SmsUtility;
 use Mail;
+use App\Services\FirebaseTokenVerifier;
+use Illuminate\Validation\ValidationException;
 
 class ForgotPasswordController extends Controller
 {
@@ -48,6 +50,7 @@ class ForgotPasswordController extends Controller
      */
     public function sendResetLinkEmail(Request $request)
     {
+        $this->syncFirebaseVerification($request);
 
         // validate recaptcha
         $request->validate([
@@ -56,7 +59,8 @@ class ForgotPasswordController extends Controller
             ],
         ]);
         
-        $phone = "+{$request['country_code']}{$request['phone']}";
+        $verifiedPhone = $request->input('firebase_verified_phone');
+        $phone = $verifiedPhone ?: "+{$request['country_code']}{$request['phone']}";
         if (filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
             $user = User::where('email', $request->email)->first();
             if ($user != null) {
@@ -96,5 +100,44 @@ class ForgotPasswordController extends Controller
                 return back();
             }
         }
+    }
+
+    private function syncFirebaseVerification(Request $request): void
+    {
+        if (!$this->firebaseOtpEnabled()) {
+            return;
+        }
+
+        $token = $request->input('firebase_id_token');
+        $isPhoneFlow = $request->filled('phone') || $request->filled('firebase_verified_phone');
+        $required = $this->firebaseOtpForgotRequired() && $isPhoneFlow;
+        if ($required && !$request->filled('phone')) {
+            throw ValidationException::withMessages([
+                'phone' => translate('Phone number is required for OTP reset.'),
+            ]);
+        }
+        if ($required && !$token) {
+            throw ValidationException::withMessages([
+                'phone' => translate('Phone verification via Firebase is required to reset your password.'),
+            ]);
+        }
+
+        if ($token) {
+            $verified = app(FirebaseTokenVerifier::class)->verify($token);
+            $request->merge([
+                'firebase_verified_phone' => $verified['phone'],
+                'firebase_uid' => $verified['uid'],
+            ]);
+        }
+    }
+
+    private function firebaseOtpEnabled(): bool
+    {
+        return (bool) (get_setting('firebase_otp_enabled') == 1 && env('FIREBASE_OTP_ENABLED', false));
+    }
+
+    private function firebaseOtpForgotRequired(): bool
+    {
+        return $this->firebaseOtpEnabled() && get_setting('firebase_otp_require_forgot') == 1;
     }
 }
