@@ -45,7 +45,7 @@
                                 <td class="text-right">{{ single_price($cartValue) }}</td>
                                 <td class="text-truncate" style="max-width:200px;">{{ $lastProductName }}</td>
                                 <td>
-                                    <span class="badge badge-pill badge-{{ $isActive ? 'success' : 'danger' }}">
+                                    <span class=" badge-pill badge-{{ $isActive ? 'success' : 'danger' }}">
                                         {{ $isActive ? translate('Active') : translate('Abandoned') }}
                                     </span>
                                 </td>
