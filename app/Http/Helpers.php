@@ -1365,25 +1365,6 @@ if (!function_exists('get_setting')) {
     }
 }
 
-if (!function_exists('otp_provider')) {
-    function otp_provider()
-    {
-        return Cache::remember('phone_otp_provider', 3600, function () {
-            $provider = get_setting('phone_otp_provider');
-
-            if ($provider === 'firebase') {
-                return 'firebase';
-            }
-
-            if ($provider === 'old') {
-                return 'old';
-            }
-
-            return env('FIREBASE_PHONE_OTP_ENABLED') ? 'firebase' : 'old';
-        });
-    }
-}
-
 function hex2rgba($color, $opacity = false)
 {
     return (new ColorCodeConverter())->convertHexToRgba($color, $opacity);

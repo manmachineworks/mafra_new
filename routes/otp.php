@@ -15,7 +15,6 @@ use App\Http\Controllers\OTPVerificationController;
 use App\Http\Controllers\OTPController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\SmsTemplateController;
-use App\Http\Controllers\Auth\FirebasePhoneController;
 
 //Verofocation phone
 Route::controller(OTPVerificationController::class)->group(function () {
@@ -35,15 +34,6 @@ Route::controller(OTPVerificationController::class)->group(function () {
     
 });
 
-// Phone login entry + Firebase phone auth (coexists with legacy OTP)
-Route::middleware('guest')->group(function () {
-    Route::get('/login/phone', [FirebasePhoneController::class, 'entry'])->name('login.phone');
-    Route::get('/login/phone/firebase', [FirebasePhoneController::class, 'show'])->name('login.phone.firebase');
-    Route::post('/auth/firebase/phone', [FirebasePhoneController::class, 'login'])
-        ->middleware('throttle:10,1')
-        ->name('auth.firebase.phone');
-});
-
 //Admin
 Route::group(['prefix' =>'admin', 'middleware' => ['auth', 'admin']], function(){
     Route::controller(OTPController::class)->group(function () {
@@ -51,7 +41,6 @@ Route::group(['prefix' =>'admin', 'middleware' => ['auth', 'admin']], function()
         Route::get('/otp-configuration', 'configure_index')->name('otp.configconfiguration');
         Route::post('/otp-configuration/update/activation', 'updateActivationSettings')->name('otp_configurations.update.activation');
         Route::post('/otp-credentials-update', 'update_credentials')->name('update_credentials');
-        Route::post('/otp-provider', 'updateProvider')->name('otp.provider.update');
     });
     //Messaging
     Route::controller(SmsController::class)->group(function () {

@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\OtpConfiguration;
-use App\Models\BusinessSetting;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
 
 class OTPController extends Controller
 {
@@ -90,23 +87,5 @@ class OTPController extends Controller
                 file_put_contents($path, file_get_contents($path)."\r\n".$type.'='.$val);
             }
         }
-    }
-
-    public function updateProvider(Request $request)
-    {
-        $request->validate([
-            'provider' => 'required|in:old,firebase',
-        ]);
-
-        $setting = BusinessSetting::firstOrNew(['type' => 'phone_otp_provider']);
-        $setting->value = $request->provider;
-        $setting->save();
-
-        Cache::forget('phone_otp_provider');
-        Artisan::call('cache:clear');
-
-        flash(translate('Phone OTP provider updated successfully'))->success();
-
-        return back();
     }
 }
