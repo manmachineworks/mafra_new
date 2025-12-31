@@ -68,8 +68,13 @@
 
 
                                              <!-- Recaptcha -->
-                                            @if(get_setting('google_recaptcha') == 1 && get_setting('recaptcha_customer_mail_verification') == 1)
-                                                
+                                            @php
+                                                $recaptchaForCustomerVerification = get_setting('google_recaptcha') == 1
+                                                    && get_setting('recaptcha_customer_mail_verification') == 1
+                                                    && env('CAPTCHA_KEY')
+                                                    && env('RECAPTCHA_SECRET_KEY');
+                                            @endphp
+                                            @if($recaptchaForCustomerVerification)
                                                 @if ($errors->has('g-recaptcha-response'))
                                                     <span class="border invalid-feedback rounded p-2 mb-3 bg-danger text-white" role="alert" style="display: block;">
                                                         <strong>{{ $errors->first('g-recaptcha-response') }}</strong>
@@ -106,7 +111,7 @@
 
 
 @section('script')
-    @if(get_setting('google_recaptcha') == 1 && get_setting('recaptcha_customer_mail_verification') == 1)
+    @if($recaptchaForCustomerVerification ?? false)
         <script src="https://www.google.com/recaptcha/api.js?render={{ env('CAPTCHA_KEY') }}"></script>
         
         <script type="text/javascript">

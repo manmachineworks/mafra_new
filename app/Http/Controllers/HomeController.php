@@ -944,9 +944,12 @@ class HomeController extends Controller
 
     public function sendRegVerificationCode(Request $request)
     {
-         $request->validate([
+        $recaptchaSettingEnabled = get_setting('google_recaptcha') == 1 && get_setting('recaptcha_customer_mail_verification') == 1;
+        $recaptchaKeysPresent = env('CAPTCHA_KEY') && env('RECAPTCHA_SECRET_KEY');
+
+        $request->validate([
             'g-recaptcha-response' => [
-                Rule::when(get_setting('google_recaptcha') == 1 && get_setting('recaptcha_customer_mail_verification') == 1, ['required', new Recaptcha()], ['sometimes'])
+                Rule::when($recaptchaSettingEnabled && $recaptchaKeysPresent, ['required', new Recaptcha()], ['sometimes'])
             ],
         ]);
 
